@@ -1,15 +1,19 @@
-import {Text, StyleSheet, View} from 'react-native';
+import {Text, StyleSheet, View, Button} from 'react-native';
+import {useNavigation} from '@react-navigation/native';
 function App() {
+  const navigation = useNavigation();
+
   return (
     <View style={styles.container}>
       <Text style={{fontSize: 20, color: 'red'}}>Home Page</Text>
+      <Button title="Login" onPress={() => navigation.navigate('Login')} />
     </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: '#F2F7FF',
+    backgroundColor: '#FFFFFF',
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
