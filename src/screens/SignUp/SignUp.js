@@ -14,16 +14,16 @@ const App = () => {
   return (
     <View style={styles.container}>
       <TouchableOpacity
-        style={styles.closeButton}
-        onPress={() => navigation.navigate('UserInfo')}>
-        <Text>Quay lại</Text>
+              style={styles.closeButton}
+              onPress={() => navigation.navigate('UserInfo')}>
+              <Text>Quay lại</Text>
       </TouchableOpacity>
 
-      <Text style={styles.welcomeText}>Welcome Back!</Text>
+      <Text style={styles.welcomeText}>Create an account</Text>
 
       <TextInput
         style={styles.input}
-        placeholder="Username or Email"
+        placeholder="Username"
         placeholderTextColor="#999"
       />
 
@@ -34,12 +34,27 @@ const App = () => {
         secureTextEntry
       />
 
-      <TouchableOpacity>
-        <Text style={styles.forgotPasswordText} onPress={() => navigation.navigate('ForgotPassword')}>Forgot Password?</Text>
-      </TouchableOpacity>
+      <TextInput
+        style={styles.input}
+        placeholder="Confirm Password"
+        placeholderTextColor="#999"
+        secureTextEntry
+      />
+
+      <TextInput
+        style={styles.input}
+        placeholder="Email"
+        placeholderTextColor="#999"
+      />
+
+      <TextInput
+        style={styles.input}
+        placeholder="Date of Birth"
+        placeholderTextColor="#999"
+      />
 
       <TouchableOpacity style={styles.loginButton}>
-        <Text style={styles.loginButtonText}>Login</Text>
+        <Text style={styles.loginButtonText}>Create Account</Text>
       </TouchableOpacity>
 
       <Text style={styles.orText}>- OR Continue with -</Text>
@@ -62,11 +77,11 @@ const App = () => {
       </View>
 
       <Text style={styles.createAccountText}>
-        Create An Account{' '}
+        I Already Have An Account{' '}
         <Text
           style={styles.signUpText}
-          onPress={() => navigation.navigate('SignUp')}>
-          Sign Up
+          onPress={() => navigation.navigate('Login')}>
+          Login
         </Text>
       </Text>
     </View>
@@ -83,7 +98,7 @@ const styles = StyleSheet.create({
   },
   closeButton: {
     position: 'absolute',
-    top: 10,
+    top: 2,
     right: 20,
     zIndex: 10,
     padding: 10,
@@ -91,7 +106,8 @@ const styles = StyleSheet.create({
   welcomeText: {
     fontSize: 32,
     fontWeight: 'bold',
-    marginBottom: 50,
+    marginBottom: 20,
+    top: 10,
   },
   input: {
     width: '100%',
@@ -102,11 +118,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     marginBottom: 15,
   },
-  forgotPasswordText: {
-    color: 'red',
-    marginBottom: 20,
-    marginLeft: 250,
-  },
   loginButton: {
     backgroundColor: 'blue',
     paddingVertical: 15,
@@ -114,8 +125,8 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     marginBottom: 20,
     width: '100%',
-    alignItems: 'center', // Căn chữ theo chiều ngang
-    justifyContent: 'center', // Căn chữ theo chiều dọc
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   loginButtonText: {
     color: 'white',
