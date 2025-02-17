@@ -1,29 +1,39 @@
-import {StyleSheet, Text} from 'react-native';
-import React from 'react';
-import Home from './src/screens/Home/Home';
-import Introduce from './src/screens/Introduce/Introduce';
-import Login from './src/screens/Login/Login';
-import ForgotPassword from './src/screens/Login/ForgotPassword';
-import SignUp from './src/screens/SignUp/SignUp';
-import UserInfo from './src/screens/UserInfo/UserInfo';
-import {NavigationContainer} from '@react-navigation/native';
-import {createNativeStackNavigator} from '@react-navigation/native-stack';
-const Stack = createNativeStackNavigator();
-function App() {
+import { View, Text, StatusBar } from 'react-native'
+import React, { useEffect, useState } from 'react'
+import { IntroduceScreen } from './src/screens';
+import { NavigationContainer } from '@react-navigation/native';
+import Navigation from './src/navigators/Navigation';
+
+const App = () => {
+  const [isShowIntroduce, setIsShowIntroduce] = useState(true);
+  const [accessToken, setAccessToken] = useState('');
+
+  //const {getItem, setItem} = useAsyncStorage('accessToken');
+
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      setIsShowIntroduce(false);
+    }, 1500);
+
+    return () => clearTimeout(timeout);
+  }, []);
+
   return (
-    <NavigationContainer>
-      <Stack.Navigator
-        initialRouteName="Introduce"
-        screenOptions={{headerShown: false}}>
-        <Stack.Screen name="Introduce" component={Introduce} />
-        <Stack.Screen name="Home" component={Home} />
-        <Stack.Screen name="UserInfo" component={UserInfo} />
-        <Stack.Screen name="Login" component={Login} />
-        <Stack.Screen name="ForgotPassword" component={ForgotPassword} />
-        <Stack.Screen name="SignUp" component={SignUp} />
-      </Stack.Navigator>
-    </NavigationContainer>
+    <>
+      <StatusBar
+        barStyle={'dark-content'}
+        backgroundColor={'transparent'}
+        translucent
+      />
+      {isShowIntroduce ? (
+        <IntroduceScreen />
+      ) : (
+        <NavigationContainer>
+          <Navigation/>
+        </NavigationContainer>
+      )}
+    </>
   );
 }
-const styles = StyleSheet.create({});
-export default App;
+
+export default App
