@@ -9,17 +9,36 @@ const IntroduceScreen = () => {
   return (
     <ImageBackground
       source={require('../../assets/images/IntroduceBackground.png')}
-      style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}
-      imageStyle={{flex: 1}}>
-      <Image
-        source={require('../../assets/images/logo.jpg')}
-        style={{
-          width: appInfo.sizes.WIDTH * 0.7,
-          resizeMode: 'contain',
-        }}
-      />
+      style={{
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+      }}>
+      <View style={{flexDirection: 'row', alignItems: 'center'}}>
+        <Image
+          source={require('../../assets/images/logo.jpg')}
+          style={{
+            width: 150,
+            height: 300,
+            resizeMode: 'contain',
+          }}
+        />
+        <Text
+          style={{
+            fontSize: 30,
+            color: appColors.blue,
+            fontWeight: 'bold',
+            marginLeft: 10,
+          }}>
+          PHARMACY
+        </Text>
+      </View>
       <SpaceComponent height={20} />
-      <ActivityIndicator color={appColors.gray} size={22} />
+      <ActivityIndicator
+        color={appColors.gray}
+        size={22}
+        style={{alignSelf: 'center'}}
+      />
     </ImageBackground>
   );
 }
