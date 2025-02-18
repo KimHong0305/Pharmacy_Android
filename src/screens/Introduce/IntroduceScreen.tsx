@@ -2,7 +2,6 @@ import { View, Text, Image, ImageBackground, ActivityIndicator } from 'react-nat
 
 import React from 'react'
 import { SpaceComponent } from '../../components';
-import { appInfo } from '../../constants/appInfos';
 import { appColors } from '../../constants/appColors';
 
 const IntroduceScreen = () => {
@@ -29,6 +28,7 @@ const IntroduceScreen = () => {
             color: appColors.blue,
             fontWeight: 'bold',
             marginLeft: 10,
+            fontFamily: 'Montserrat-SemiBold',
           }}>
           PHARMACY
         </Text>

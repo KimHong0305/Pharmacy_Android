@@ -46,31 +46,32 @@ const OnboardingScreen = () => {
 }
 
 const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        backgroundColor: appColors.white
-    },
-    swiper: {
-      alignItems: 'center'
-    },
-    image: {
-        marginTop: 100
-    },
-    text: {
-        marginTop: 50,
-        fontSize: 25
-    },
-    skip_next: {
-      paddingHorizontal: 16,
-      paddingVertical: 20,
-      position: 'absolute',
-      bottom: 0,
-      right: 0,
-      left: 0,
-      flexDirection: 'row',
-      justifyContent: 'space-between',
-      alignItems: 'center'
-    }
-})
+  container: {
+    flex: 1,
+    backgroundColor: appColors.white,
+  },
+  swiper: {
+    alignItems: 'center',
+  },
+  image: {
+    marginTop: 100,
+  },
+  text: {
+    marginTop: 50,
+    fontSize: 25,
+    fontFamily: 'Montserrat-Medium',
+  },
+  skip_next: {
+    paddingHorizontal: 16,
+    paddingVertical: 20,
+    position: 'absolute',
+    bottom: 0,
+    right: 0,
+    left: 0,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+});
 
 export default OnboardingScreen
