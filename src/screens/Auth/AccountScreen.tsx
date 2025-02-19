@@ -1,17 +1,12 @@
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native'
 import React from 'react'
 import { useNavigation } from '@react-navigation/native'
+import { fontFamilies } from '../../constants/fontFamilies';
 
 const AccountScreen = () => {
   const navigation = useNavigation();
   return (
     <View style={styles.container}>
-          {/* <TouchableOpacity
-            style={styles.closeButton}
-            onPress={() => navigation.goBack()}>
-            <Icon name="times" size={24} color="#000" />
-          </TouchableOpacity> */}
-    
           <Text style={styles.title}>Chào mừng đến với Pharmacy</Text>
           <Text style={styles.subtitle}>
             Hãy đăng nhập để được hưởng các đặc quyền của hội viên
@@ -56,15 +51,16 @@ const styles = StyleSheet.create({
     backgroundColor: 'white'
   },
   title: {
-    fontSize: 24,
-    fontWeight: 'bold',
+    fontSize: 22,
     marginBottom: 10,
-    marginTop: 30
+    marginTop: 30,
+    fontFamily: fontFamilies.SemiBold
   },
   subtitle: {
-    fontSize: 16,
+    fontSize: 14,
     textAlign: 'center',
     marginBottom: 40,
+    fontFamily: fontFamilies.Medium
   },
   loginButton: {
     backgroundColor: '#6200EE',
@@ -73,8 +69,8 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     marginBottom: 20,
     width: '100%',
-    alignItems: 'center', // Căn chữ theo chiều ngang
-    justifyContent: 'center', // Căn chữ theo chiều dọc
+    alignItems: 'center', 
+    justifyContent: 'center',
   },
   signupButton: {
     backgroundColor: '#E0E0E0',
@@ -82,12 +78,12 @@ const styles = StyleSheet.create({
     paddingHorizontal: 50,
     borderRadius: 5,
     width: '100%',
-    alignItems: 'center', // Căn chữ theo chiều ngang
-    justifyContent: 'center', // Căn chữ theo chiều dọc
+    alignItems: 'center', 
+    justifyContent: 'center', 
   },
   buttonText: {
     color: 'white',
-    fontWeight: 'bold',
+    fontFamily: fontFamilies.Medium,
   },
   footer: {
     flexDirection: 'row',

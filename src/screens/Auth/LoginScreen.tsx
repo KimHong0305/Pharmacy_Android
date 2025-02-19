@@ -1,6 +1,7 @@
 import { View, Text, TouchableOpacity, TextInput, Image, StyleSheet } from 'react-native'
 import React from 'react'
 import { useNavigation } from '@react-navigation/native'
+import { fontFamilies } from '../../constants/fontFamilies';
 
 const LoginScreen = () => {
   const navigation = useNavigation();
@@ -9,10 +10,10 @@ const LoginScreen = () => {
         <TouchableOpacity
           style={styles.closeButton}
           onPress={() => navigation.navigate('AccountScreen')}>
-          <Text>Quay lại</Text>
+          <Text style = {{fontFamily: fontFamilies.Medium}}>Quay lại</Text>
         </TouchableOpacity>
   
-        <Text style={styles.welcomeText}>Welcome Back!</Text>
+        <Text style={styles.title}>Welcome Back!</Text>
   
         <TextInput
           style={styles.input}
@@ -38,14 +39,14 @@ const LoginScreen = () => {
         <Text style={styles.orText}>- OR Continue with -</Text>
   
         <View style={styles.socialButtons}>
-          <TouchableOpacity style={styles.socialButton}>
+          <TouchableOpacity>
             <Image
               source={require('../../assets/images/google.png')}
               style={styles.socialButton}
               resizeMode="contain"
             />
           </TouchableOpacity>
-          <TouchableOpacity style={styles.socialButton}>
+          <TouchableOpacity>
             <Image
               source={require('../../assets/images/facebook.png')}
               style={styles.socialButton}
@@ -55,7 +56,7 @@ const LoginScreen = () => {
         </View>
   
         <Text style={styles.createAccountText}>
-          Create An Account{' '}
+          Create An Account ?{' '}
           <Text
             style={styles.signUpText}
             onPress={() => navigation.navigate('SignUpScreen')}>
@@ -72,18 +73,17 @@ const styles = StyleSheet.create({
       justifyContent: 'center',
       alignItems: 'center',
       padding: 20,
-      backgroundColor: 'white',
+      backgroundColor: 'white'
     },
     closeButton: {
       position: 'absolute',
       top: 25,
       right: 20,
       zIndex: 10,
-      padding: 10,
+      padding: 10
     },
-    welcomeText: {
+    title: {
       fontSize: 32,
-      fontWeight: 'bold',
       marginBottom: 50,
     },
     input: {
@@ -94,11 +94,14 @@ const styles = StyleSheet.create({
       borderRadius: 5,
       paddingHorizontal: 10,
       marginBottom: 15,
+      fontFamily: fontFamilies.Medium
     },
     forgotPasswordText: {
       color: 'red',
       marginBottom: 20,
       marginLeft: 250,
+      fontFamily: fontFamilies.Medium,
+      fontSize: 13
     },
     loginButton: {
       backgroundColor: 'blue',
@@ -107,16 +110,17 @@ const styles = StyleSheet.create({
       borderRadius: 5,
       marginBottom: 20,
       width: '100%',
-      alignItems: 'center', // Căn chữ theo chiều ngang
-      justifyContent: 'center', // Căn chữ theo chiều dọc
+      alignItems: 'center', 
+      justifyContent: 'center',
     },
     loginButtonText: {
       color: 'white',
-      fontWeight: 'bold',
+      fontFamily: fontFamilies.Medium,
       fontSize: 20,
     },
     orText: {
       marginVertical: 10,
+      fontFamily: fontFamilies.Medium
     },
     socialButtons: {
       flexDirection: 'row',
@@ -134,15 +138,13 @@ const styles = StyleSheet.create({
       justifyContent: 'center',
       alignItems: 'center',
     },
-    socialButtonText: {
-      fontSize: 24,
-    },
     createAccountText: {
       marginTop: 20,
+      fontFamily: fontFamilies.Medium
     },
     signUpText: {
       color: 'blue',
-      fontWeight: 'bold',
+      fontFamily: fontFamilies.SemiBold,
     },
 });
 

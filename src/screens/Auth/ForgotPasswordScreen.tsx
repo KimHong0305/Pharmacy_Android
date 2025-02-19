@@ -1,6 +1,7 @@
 import { useNavigation } from '@react-navigation/native'
 import React from 'react'
 import { StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native'
+import { fontFamilies } from '../../constants/fontFamilies';
 
 const ForgotPasswordScreen = () => {
   const navigation = useNavigation();
@@ -12,7 +13,7 @@ const ForgotPasswordScreen = () => {
             <Text>Quay lại</Text>
           </TouchableOpacity>
     
-          <Text style={styles.welcomeText}>Forgot Password!</Text>
+          <Text style={styles.title}>Forgot Password!</Text>
     
           <TextInput
             style={styles.input}
@@ -20,8 +21,8 @@ const ForgotPasswordScreen = () => {
             placeholderTextColor="#999"
           />
     
-          <TouchableOpacity style={styles.loginButton}>
-            <Text style={styles.loginButtonText}>Submit</Text>
+          <TouchableOpacity style={styles.submitButton}>
+            <Text style={styles.submitButtonText}>Submit</Text>
           </TouchableOpacity>
     
           <Text style={styles.orText}>- We will send a OTP to your email -</Text>
@@ -43,11 +44,12 @@ const styles = StyleSheet.create({
     right: 20,
     zIndex: 10,
     padding: 10,
+    fontFamily: fontFamilies.Medium
   },
-  welcomeText: {
+  title: {
     fontSize: 32,
-    fontWeight: 'bold',
-    bottom: 100,
+    fontFamily: fontFamilies.SemiBold,
+    bottom: 100
   },
   input: {
     width: '100%',
@@ -57,30 +59,27 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     paddingHorizontal: 10,
     bottom: 70,
+    fontFamily: fontFamilies.Medium
   },
-  forgotPasswordText: {
-    color: 'red',
-    marginBottom: 20,
-    marginLeft: 250,
-  },
-  loginButton: {
+  submitButton: {
     backgroundColor: 'blue',
     paddingVertical: 15,
     paddingHorizontal: 30,
     borderRadius: 5,
     width: '100%',
-    alignItems: 'center', // Căn chữ theo chiều ngang
-    justifyContent: 'center', // Căn chữ theo chiều dọc
+    alignItems: 'center',
+    justifyContent: 'center',
     bottom: 50,
   },
-  loginButtonText: {
+  submitButtonText: {
     color: 'white',
-    fontWeight: 'bold',
+    fontFamily: fontFamilies.Medium,
     fontSize: 20,
   },
   orText: {
     marginVertical: 10,
     bottom: 30,
+    fontFamily: fontFamilies.Medium
   },
 });
 

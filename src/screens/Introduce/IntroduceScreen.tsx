@@ -3,6 +3,7 @@ import { View, Text, Image, ImageBackground, ActivityIndicator } from 'react-nat
 import React from 'react'
 import { SpaceComponent } from '../../components';
 import { appColors } from '../../constants/appColors';
+import { fontFamilies } from '../../constants/fontFamilies';
 
 const IntroduceScreen = () => {
   return (
@@ -26,9 +27,8 @@ const IntroduceScreen = () => {
           style={{
             fontSize: 30,
             color: appColors.blue,
-            fontWeight: 'bold',
             marginLeft: 10,
-            fontFamily: 'Montserrat-SemiBold',
+            fontFamily: fontFamilies.SemiBold,
           }}>
           PHARMACY
         </Text>

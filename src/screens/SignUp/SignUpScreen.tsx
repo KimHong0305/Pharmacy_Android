@@ -1,6 +1,7 @@
 import { View, Text, TouchableOpacity, TextInput, Image, StyleSheet } from 'react-native'
 import React from 'react'
 import { useNavigation } from '@react-navigation/native'
+import { fontFamilies } from '../../constants/fontFamilies';
 
 const SignUpScreen = () => {
   const navigation = useNavigation();
@@ -9,10 +10,10 @@ const SignUpScreen = () => {
           <TouchableOpacity
                   style={styles.closeButton}
                   onPress={() => navigation.navigate('AccountScreen')}>
-                  <Text>Quay lại</Text>
+                  <Text style={{fontFamily: fontFamilies.Medium}}>Quay lại</Text>
           </TouchableOpacity>
     
-          <Text style={styles.welcomeText}>Create an account</Text>
+          <Text style={styles.title}>Create an account</Text>
     
           <TextInput
             style={styles.input}
@@ -69,10 +70,10 @@ const SignUpScreen = () => {
             </TouchableOpacity>
           </View>
     
-          <Text style={styles.createAccountText}>
-            I Already Have An Account{' '}
+          <Text style={styles.loginAccountText}>
+            I Already Have An Account ?{' '}
             <Text
-              style={styles.signUpText}
+              style={styles.loginText}
               onPress={() => navigation.navigate('LoginScreen')}>
               Login
             </Text>
@@ -88,17 +89,17 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     padding: 20,
     backgroundColor: 'white',
+    fontFamily: fontFamilies.Medium
   },
   closeButton: {
     position: 'absolute',
     top: 20,
     right: 20,
     zIndex: 10,
-    padding: 10,
+    padding: 10
   },
-  welcomeText: {
+  title: {
     fontSize: 32,
-    fontWeight: 'bold',
     marginBottom: 20,
     top: 10,
   },
@@ -110,6 +111,7 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     paddingHorizontal: 10,
     marginBottom: 15,
+    fontFamily: fontFamilies.Medium
   },
   loginButton: {
     backgroundColor: 'blue',
@@ -123,11 +125,12 @@ const styles = StyleSheet.create({
   },
   loginButtonText: {
     color: 'white',
-    fontWeight: 'bold',
     fontSize: 20,
+    fontFamily: fontFamilies.Medium
   },
   orText: {
     marginVertical: 10,
+    fontFamily: fontFamilies.Medium
   },
   socialButtons: {
     flexDirection: 'row',
@@ -145,15 +148,13 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
-  socialButtonText: {
-    fontSize: 24,
-  },
-  createAccountText: {
+  loginAccountText: {
     marginTop: 20,
+    fontFamily: fontFamilies.Medium
   },
-  signUpText: {
+  loginText: {
     color: 'blue',
-    fontWeight: 'bold',
+    fontFamily: fontFamilies.SemiBold
   },
 });
 
