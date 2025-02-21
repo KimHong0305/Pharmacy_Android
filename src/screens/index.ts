@@ -9,6 +9,8 @@ import OnboardingScreen from "./Auth/OnboardingScreen";
 import CategoryScreen from "./Category/CategoryScreen";
 import ConsultantScreen from "./Consultant/ConsultantScreen";
 import OrderScreen from "./Order/OrderScreen";
+import OtpScreen from "./OTP/OtpScreen";
+import ResetPasswordScreen from "./Auth/ResetPasswordScreen";
 
 export {
     AccountScreen,
@@ -22,4 +24,6 @@ export {
     CategoryScreen,
     ConsultantScreen,
     OrderScreen,
+    OtpScreen,
+    ResetPasswordScreen
 }

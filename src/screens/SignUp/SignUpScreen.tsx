@@ -7,79 +7,79 @@ const SignUpScreen = () => {
   const navigation = useNavigation();
   return (
     <View style={styles.container}>
-          <TouchableOpacity
-                  style={styles.closeButton}
-                  onPress={() => navigation.navigate('AccountScreen')}>
-                  <Text style={{fontFamily: fontFamilies.Medium}}>Quay lại</Text>
-          </TouchableOpacity>
-    
-          <Text style={styles.title}>Create an account</Text>
-    
-          <TextInput
-            style={styles.input}
-            placeholder="Username"
-            placeholderTextColor="#999"
+      <TouchableOpacity
+        style={styles.closeButton}
+        onPress={() => navigation.navigate('BottomTab')}>
+        <Text style={{fontFamily: fontFamilies.Medium}}>Quay lại</Text>
+      </TouchableOpacity>
+
+      <Text style={styles.title}>Create an account</Text>
+
+      <TextInput
+        style={styles.input}
+        placeholder="Username"
+        placeholderTextColor="#999"
+      />
+
+      <TextInput
+        style={styles.input}
+        placeholder="Password"
+        placeholderTextColor="#999"
+        secureTextEntry
+      />
+
+      <TextInput
+        style={styles.input}
+        placeholder="Confirm Password"
+        placeholderTextColor="#999"
+        secureTextEntry
+      />
+
+      <TextInput
+        style={styles.input}
+        placeholder="Email"
+        placeholderTextColor="#999"
+      />
+
+      <TextInput
+        style={styles.input}
+        placeholder="Date of Birth"
+        placeholderTextColor="#999"
+      />
+
+      <TouchableOpacity style={styles.loginButton}>
+        <Text style={styles.loginButtonText}>Create Account</Text>
+      </TouchableOpacity>
+
+      <Text style={styles.orText}>- OR Continue with -</Text>
+
+      <View style={styles.socialButtons}>
+        <TouchableOpacity style={styles.socialButton}>
+          <Image
+            source={require('../../assets/images/google.png')}
+            style={styles.socialButton}
+            resizeMode="contain"
           />
-    
-          <TextInput
-            style={styles.input}
-            placeholder="Password"
-            placeholderTextColor="#999"
-            secureTextEntry
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.socialButton}>
+          <Image
+            source={require('../../assets/images/facebook.png')}
+            style={styles.socialButton}
+            resizeMode="contain"
           />
-    
-          <TextInput
-            style={styles.input}
-            placeholder="Confirm Password"
-            placeholderTextColor="#999"
-            secureTextEntry
-          />
-    
-          <TextInput
-            style={styles.input}
-            placeholder="Email"
-            placeholderTextColor="#999"
-          />
-    
-          <TextInput
-            style={styles.input}
-            placeholder="Date of Birth"
-            placeholderTextColor="#999"
-          />
-    
-          <TouchableOpacity style={styles.loginButton}>
-            <Text style={styles.loginButtonText}>Create Account</Text>
-          </TouchableOpacity>
-    
-          <Text style={styles.orText}>- OR Continue with -</Text>
-    
-          <View style={styles.socialButtons}>
-            <TouchableOpacity style={styles.socialButton}>
-              <Image
-                source={require('../../assets/images/google.png')}
-                style={styles.socialButton}
-                resizeMode="contain"
-              />
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.socialButton}>
-              <Image
-                source={require('../../assets/images/facebook.png')}
-                style={styles.socialButton}
-                resizeMode="contain"
-              />
-            </TouchableOpacity>
-          </View>
-    
-          <Text style={styles.loginAccountText}>
-            I Already Have An Account ?{' '}
-            <Text
-              style={styles.loginText}
-              onPress={() => navigation.navigate('LoginScreen')}>
-              Login
-            </Text>
-          </Text>
-        </View>
-  )
+        </TouchableOpacity>
+      </View>
+
+      <Text style={styles.loginAccountText}>
+        I Already Have An Account ?{' '}
+        <Text
+          style={styles.loginText}
+          onPress={() => navigation.navigate('LoginScreen')}>
+          Login
+        </Text>
+      </Text>
+    </View>
+  );
 }
 
 const styles = StyleSheet.create({

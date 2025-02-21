@@ -9,7 +9,7 @@ const LoginScreen = () => {
       <View style={styles.container}>
         <TouchableOpacity
           style={styles.closeButton}
-          onPress={() => navigation.navigate('AccountScreen')}>
+          onPress={() => navigation.navigate('BottomTab')}>
           <Text style = {{fontFamily: fontFamilies.Medium}}>Quay lại</Text>
         </TouchableOpacity>
   

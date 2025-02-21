@@ -8,6 +8,8 @@ import {
   ProfileScreen,
   SignUpScreen,
   OnboardingScreen,
+  ResetPasswordScreen,
+  OtpScreen,
 } from '../screens';
 import BottomTabNavigation from './BottomTabNavigation';
 
@@ -19,9 +21,17 @@ const Navigation = () => {
       <Stack.Screen name="HomeScreen" component={HomeScreen} />
       <Stack.Screen name="AccountScreen" component={AccountScreen} />
       <Stack.Screen name="LoginScreen" component={LoginScreen} />
-      <Stack.Screen name="ForgotPasswordScreen" component={ForgotPasswordScreen} />
+      <Stack.Screen
+        name="ForgotPasswordScreen"
+        component={ForgotPasswordScreen}
+      />
+      <Stack.Screen
+        name="ResetPasswordScreen"
+        component={ResetPasswordScreen}
+      />
       <Stack.Screen name="ProfileScreen" component={ProfileScreen} />
       <Stack.Screen name="SignUpScreen" component={SignUpScreen} />
+      <Stack.Screen name="OtpScreen" component={OtpScreen} />
       <Stack.Screen name="BottomTab" component={BottomTabNavigation} />
     </Stack.Navigator>
   );

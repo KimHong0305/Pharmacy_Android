@@ -1,32 +1,32 @@
-import { useNavigation } from '@react-navigation/native'
+import { View, Text, StyleSheet, TouchableOpacity, TextInput } from 'react-native'
 import React from 'react'
-import { StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native'
 import { fontFamilies } from '../../constants/fontFamilies';
 import { TextComponent } from '../../components';
+import { useNavigation } from '@react-navigation/native';
 
-const ForgotPasswordScreen = () => {
+const ResetPasswordScreen = () => {
   const navigation = useNavigation();
   return (
-    <View style={styles.container}>
+    <View style = {styles.container}>
       <TouchableOpacity
         style={styles.closeButton}
-        onPress={() => navigation.navigate('LoginScreen')}>
+        onPress={() => navigation.goBack()}>
         <TextComponent text="Quay lại" />
       </TouchableOpacity>
 
-      <Text style={styles.title}>Forgot Password!</Text>
+      <Text style={styles.title}>Type new password?</Text>
 
       <TextInput
         style={styles.input}
-        placeholder="Email"
+        placeholder="New Password"
         placeholderTextColor="#999"
       />
 
-      <Text style={styles.orText}>- We will send a OTP to your email -</Text>
+      <Text style={styles.orText}>
+      - New password must have more than 8 characters -
+      </Text>
 
-      <TouchableOpacity
-        style={styles.submitButton}
-        onPress={() => navigation.navigate('OtpScreen')}>
+      <TouchableOpacity style={styles.submitButton} onPress={() => navigation.navigate('LoginScreen')}>
         <Text style={styles.submitButtonText}>Submit</Text>
       </TouchableOpacity>
     </View>
@@ -50,7 +50,7 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 32,
     fontFamily: fontFamilies.SemiBold,
-    bottom: 80
+    bottom: 100
   },
   input: {
     width: '100%',
@@ -59,7 +59,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderRadius: 5,
     paddingHorizontal: 10,
-    bottom: 65,
+    bottom: 70,
     fontFamily: fontFamilies.Medium
   },
   submitButton: {
@@ -78,10 +78,10 @@ const styles = StyleSheet.create({
     fontSize: 20,
   },
   orText: {
-    marginBottom: 20,
-    bottom: 45,
+    fontSize: 13,
+    bottom: 55,
     fontFamily: fontFamilies.Medium
   },
 });
 
-export default ForgotPasswordScreen
+export default ResetPasswordScreen
