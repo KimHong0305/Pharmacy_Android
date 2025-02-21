@@ -93,15 +93,15 @@ const styles = StyleSheet.create({
   },
   closeButton: {
     position: 'absolute',
-    top: 20,
-    right: 20,
-    zIndex: 10,
+    top: 15,
+    right: 10,
     padding: 10
   },
   title: {
     fontSize: 32,
     marginBottom: 20,
     top: 10,
+    fontFamily: fontFamilies.SemiBold
   },
   input: {
     width: '100%',

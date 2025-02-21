@@ -2,6 +2,7 @@ import { useNavigation } from '@react-navigation/native'
 import React from 'react'
 import { StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native'
 import { fontFamilies } from '../../constants/fontFamilies';
+import { TextComponent } from '../../components';
 
 const ForgotPasswordScreen = () => {
   const navigation = useNavigation();
@@ -10,7 +11,7 @@ const ForgotPasswordScreen = () => {
           <TouchableOpacity
             style={styles.closeButton}
             onPress={() => navigation.navigate('LoginScreen')}>
-            <Text>Quay lại</Text>
+            <TextComponent text='Quay lại'/>
           </TouchableOpacity>
     
           <Text style={styles.title}>Forgot Password!</Text>
@@ -42,9 +43,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     top: 25,
     right: 20,
-    zIndex: 10,
-    padding: 10,
-    fontFamily: fontFamilies.Medium
+    padding: 10
   },
   title: {
     fontSize: 32,

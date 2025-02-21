@@ -85,6 +85,7 @@ const styles = StyleSheet.create({
     title: {
       fontSize: 32,
       marginBottom: 50,
+      fontFamily: fontFamilies.SemiBold
     },
     input: {
       width: '100%',

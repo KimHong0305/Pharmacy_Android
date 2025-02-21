@@ -4,6 +4,7 @@ import Swiper from 'react-native-swiper'
 import { appColors } from '../../constants/appColors'
 import { appInfo } from '../../constants/appInfos'
 import { useNavigation } from '@react-navigation/native'
+import { TextComponent } from '../../components'
 
 const OnboardingScreen = () => {
   const navigation = useNavigation();
@@ -34,11 +35,11 @@ const OnboardingScreen = () => {
         </View>
       </Swiper>
       <View style={styles.skip_next}>
-        <TouchableOpacity onPress={() => navigation.navigate('HomeScreen')}>
-          <Text>Skip</Text>
+        <TouchableOpacity onPress={() => navigation.navigate('BottomTab')}>
+          <TextComponent text='Skip'/>
         </TouchableOpacity>
-        <TouchableOpacity onPress={() => index < 2 ? setIndex(index + 1) : navigation.navigate('HomeScreen')}>
-          <Text>Next</Text>
+        <TouchableOpacity onPress={() => index < 2 ? setIndex(index + 1) : navigation.navigate('BottomTab')}>
+          <TextComponent text='Next'/>
         </TouchableOpacity>
       </View>
     </View>

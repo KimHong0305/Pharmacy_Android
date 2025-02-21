@@ -1,35 +1,58 @@
-import { View, Text, TouchableOpacity, StyleSheet } from 'react-native'
+import { View, Text, TouchableOpacity, StyleSheet, TextInput, ScrollView } from 'react-native'
 import React from 'react'
 import { useNavigation } from '@react-navigation/native'
+import Icon from 'react-native-vector-icons/FontAwesome';
+import { TextComponent } from '../../components';
+import { fontFamilies } from '../../constants/fontFamilies';
+import { Image } from 'react-native-elements';
+import Swiper from 'react-native-swiper';
+import { appColors } from '../../constants/appColors';
 
 const HomeScreen = () => {
   const navigation = useNavigation();
   return (
     <View style={styles.container}>
-          <Text>Home Page</Text>
-          {/* Footer */}
-          <View style={styles.footer}>
-            <TouchableOpacity
-              style={styles.footerButton}
-              onPress={() => navigation.navigate('HomeScreen')}>
-              <Text style={styles.footerButtonText}>Trang chủ</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.footerButton}>
-              <Text style={styles.footerButtonText}>Danh mục</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.footerButton}>
-              <Text style={styles.footerButtonText}>Tư vấn</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.footerButton}>
-              <Text style={styles.footerButtonText}>Đơn hàng</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={styles.footerButton} onPress={() => navigation.navigate('AccountScreen')}>
-              <Text style={styles.footerButtonText}>Tài khoản</Text>
-            </TouchableOpacity>
+      {/* Header */}
+      <View style={styles.header}>
+        <TextComponent text="Pharmacy" size={25} />
+        <TextInput placeholder="Search" style={styles.input} />
+        <TouchableOpacity>
+          <Image
+            source={require('../../assets/images/logo.jpg')}
+            style={styles.avatar}
+            resizeMode="contain"
+          />
+        </TouchableOpacity>
+      </View>
+      {/* Body */}
+      <ScrollView>
+        <View style={styles.body}>
+          <View style={styles.slider}>
+            <Swiper activeDotColor={appColors.white}>
+              <Image
+                source={require('../../assets/images/Banner1.jpg')}
+                style={styles.image}
+                resizeMode="cover"
+              />
+              <Image
+                source={require('../../assets/images/Banner2.jpg')}
+                style={styles.image}
+                resizeMode="cover"
+              />
+              <Image
+                source={require('../../assets/images/Banner3.jpg')}
+                style={styles.image}
+                resizeMode="cover"
+              />
+            </Swiper>
+            <View style={{}}>
+              
+            </View>
           </View>
         </View>
-  )
+      </ScrollView>
+    </View>
+  );
 }
 
 const styles = StyleSheet.create({
@@ -40,6 +63,14 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     height: '100%',
   },
+  header: {
+    flexDirection: 'row',
+    gap: 10,
+    width: '100%',
+    backgroundColor: '#FFF',
+    marginTop: 40,
+    justifyContent: 'center'
+  },
   footer: {
     flexDirection: 'row',
     justifyContent: 'space-around',
@@ -47,8 +78,41 @@ const styles = StyleSheet.create({
     padding: 10,
     borderTopWidth: 1,
     borderTopColor: '#ccc',
-    position: 'absolute',
-    bottom: 0,
+  },
+  body:{
+    alignItems: 'center'
+  },
+  slider: {
+    width: '90%',
+    height: 150,
+    backgroundColor: '#EBEB13',
+    borderRadius: 25,
+    marginTop: 20
+  },
+  image: {
+    width: '100%',
+    height: '100%',
+    borderRadius: 25,
+  },
+  input: {
+    width: 180,
+    height: 40,
+    borderColor: '#ccc',
+    borderWidth: 1,
+    borderRadius: 25,
+    borderCurve: 'continuous',
+    paddingHorizontal: 10,
+    marginBottom: 15,
+    fontFamily: fontFamilies.Medium,
+  },
+  avatar: {
+    width: 40,
+    height: 40,
+    borderRadius: 25,
+    borderColor: '#ccc',
+    borderWidth: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   footerButton: {
     flex: 1,
@@ -57,7 +121,7 @@ const styles = StyleSheet.create({
   footerButtonText: {
     fontSize: 16,
     color: '#6200EE',
-  }
+  },
 });
 
 export default HomeScreen

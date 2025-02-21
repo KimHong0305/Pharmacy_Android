@@ -13,7 +13,7 @@ const App = () => {
   useEffect(() => {
     const timeout = setTimeout(() => {
       setIsShowIntroduce(false);
-    }, 1500);
+    }, 2100);
 
     return () => clearTimeout(timeout);
   }, []);

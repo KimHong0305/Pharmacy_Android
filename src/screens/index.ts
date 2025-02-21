@@ -6,6 +6,9 @@ import IntroduceScreen from "./Introduce/IntroduceScreen";
 import ProfileScreen from "./Profile/ProfileScreen";
 import SignUpScreen from "./SignUp/SignUpScreen";
 import OnboardingScreen from "./Auth/OnboardingScreen";
+import CategoryScreen from "./Category/CategoryScreen";
+import ConsultantScreen from "./Consultant/ConsultantScreen";
+import OrderScreen from "./Order/OrderScreen";
 
 export {
     AccountScreen,
@@ -15,5 +18,8 @@ export {
     IntroduceScreen,
     ProfileScreen,
     SignUpScreen,
-    OnboardingScreen
+    OnboardingScreen,
+    CategoryScreen,
+    ConsultantScreen,
+    OrderScreen,
 }

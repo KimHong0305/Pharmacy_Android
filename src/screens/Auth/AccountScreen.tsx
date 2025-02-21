@@ -1,45 +1,30 @@
-import { View, Text, TouchableOpacity, StyleSheet } from 'react-native'
-import React from 'react'
-import { useNavigation } from '@react-navigation/native'
+import { useNavigation } from '@react-navigation/native';
+import React from 'react';
+import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { fontFamilies } from '../../constants/fontFamilies';
 
 const AccountScreen = () => {
   const navigation = useNavigation();
   return (
     <View style={styles.container}>
-          <Text style={styles.title}>Chào mừng đến với Pharmacy</Text>
-          <Text style={styles.subtitle}>
-            Hãy đăng nhập để được hưởng các đặc quyền của hội viên
-          </Text>
-    
-          <TouchableOpacity style={styles.loginButton} onPress={() => navigation.navigate('LoginScreen')}>
-            <Text style={styles.buttonText}>Đăng Nhập</Text>
-          </TouchableOpacity>
-    
-          <TouchableOpacity style={styles.signupButton} onPress={() => navigation.navigate('SignUpScreen')}>
-            <Text style={styles.buttonText}>Đăng Ký</Text>
-          </TouchableOpacity>
-    
-          {/* Footer */}
-          <View style={styles.footer}>
-            <TouchableOpacity style={styles.footerButton} onPress={() => navigation.navigate('HomeScreen')}>
-              <Text style={styles.footerButtonText}>Trang chủ</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.footerButton}>
-              <Text style={styles.footerButtonText}>Danh mục</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.footerButton}>
-              <Text style={styles.footerButtonText}>Tư vấn</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.footerButton}>
-              <Text style={styles.footerButtonText}>Đơn hàng</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.footerButton}>
-              <Text style={styles.footerButtonText}>Tài khoản</Text>
-            </TouchableOpacity>
-          </View>
-        </View>
-  )
+      <Text style={styles.title}>Chào mừng đến với Pharmacy</Text>
+      <Text style={styles.subtitle}>
+        Hãy đăng nhập để được hưởng các đặc quyền của hội viên
+      </Text>
+
+      <TouchableOpacity
+        style={styles.loginButton}
+        onPress={() => navigation.navigate('LoginScreen')}>
+        <Text style={styles.buttonText}>Đăng Nhập</Text>
+      </TouchableOpacity>
+
+      <TouchableOpacity
+        style={styles.signupButton}
+        onPress={() => navigation.navigate('SignUpScreen')}>
+        <Text style={styles.buttonText}>Đăng Ký</Text>
+      </TouchableOpacity>
+    </View>
+  );
 }
 
 const styles = StyleSheet.create({
