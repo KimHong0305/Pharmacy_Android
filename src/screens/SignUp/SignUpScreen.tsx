@@ -9,7 +9,7 @@ const SignUpScreen = () => {
     <View style={styles.container}>
       <TouchableOpacity
         style={styles.closeButton}
-        onPress={() => navigation.navigate('BottomTab')}>
+        onPress={() => navigation.navigate('BottomTab', {screen: 'Tài khoản'})}>
         <Text style={{fontFamily: fontFamilies.Medium}}>Quay lại</Text>
       </TouchableOpacity>
 

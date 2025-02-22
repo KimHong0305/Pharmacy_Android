@@ -6,65 +6,69 @@ import { fontFamilies } from '../../constants/fontFamilies';
 const LoginScreen = () => {
   const navigation = useNavigation();
   return (
-      <View style={styles.container}>
-        <TouchableOpacity
-          style={styles.closeButton}
-          onPress={() => navigation.navigate('BottomTab')}>
-          <Text style = {{fontFamily: fontFamilies.Medium}}>Quay lại</Text>
-        </TouchableOpacity>
-  
-        <Text style={styles.title}>Welcome Back!</Text>
-  
-        <TextInput
-          style={styles.input}
-          placeholder="Username or Email"
-          placeholderTextColor="#999"
-        />
-  
-        <TextInput
-          style={styles.input}
-          placeholder="Password"
-          placeholderTextColor="#999"
-          secureTextEntry
-        />
-  
-        <TouchableOpacity>
-          <Text style={styles.forgotPasswordText} onPress={() => navigation.navigate('ForgotPasswordScreen')}>Forgot Password?</Text>
-        </TouchableOpacity>
-  
-        <TouchableOpacity style={styles.loginButton}>
-          <Text style={styles.loginButtonText}>Login</Text>
-        </TouchableOpacity>
-  
-        <Text style={styles.orText}>- OR Continue with -</Text>
-  
-        <View style={styles.socialButtons}>
-          <TouchableOpacity>
-            <Image
-              source={require('../../assets/images/google.png')}
-              style={styles.socialButton}
-              resizeMode="contain"
-            />
-          </TouchableOpacity>
-          <TouchableOpacity>
-            <Image
-              source={require('../../assets/images/facebook.png')}
-              style={styles.socialButton}
-              resizeMode="contain"
-            />
-          </TouchableOpacity>
-        </View>
-  
-        <Text style={styles.createAccountText}>
-          Create An Account ?{' '}
-          <Text
-            style={styles.signUpText}
-            onPress={() => navigation.navigate('SignUpScreen')}>
-            Sign Up
-          </Text>
+    <View style={styles.container}>
+      <TouchableOpacity
+        style={styles.closeButton}
+        onPress={() => navigation.navigate('BottomTab', {screen: 'Tài khoản'})}>
+        <Text style={{fontFamily: fontFamilies.Medium}}>Quay lại</Text>
+      </TouchableOpacity>
+
+      <Text style={styles.title}>Welcome Back!</Text>
+
+      <TextInput
+        style={styles.input}
+        placeholder="Username or Email"
+        placeholderTextColor="#999"
+      />
+
+      <TextInput
+        style={styles.input}
+        placeholder="Password"
+        placeholderTextColor="#999"
+        secureTextEntry
+      />
+
+      <TouchableOpacity>
+        <Text
+          style={styles.forgotPasswordText}
+          onPress={() => navigation.navigate('ForgotPasswordScreen')}>
+          Forgot Password?
         </Text>
+      </TouchableOpacity>
+
+      <TouchableOpacity style={styles.loginButton}>
+        <Text style={styles.loginButtonText}>Login</Text>
+      </TouchableOpacity>
+
+      <Text style={styles.orText}>- OR Continue with -</Text>
+
+      <View style={styles.socialButtons}>
+        <TouchableOpacity>
+          <Image
+            source={require('../../assets/images/google.png')}
+            style={styles.socialButton}
+            resizeMode="contain"
+          />
+        </TouchableOpacity>
+        <TouchableOpacity>
+          <Image
+            source={require('../../assets/images/facebook.png')}
+            style={styles.socialButton}
+            resizeMode="contain"
+          />
+        </TouchableOpacity>
       </View>
-    );
+
+      <Text style={styles.createAccountText}>
+        Create An Account ?{' '}
+        <Text
+          style={styles.signUpText}
+          onPress={() => navigation.navigate('SignUpScreen')}>
+          Sign Up
+        </Text>
+      </Text>
+    </View>
+  );
 };
   
 const styles = StyleSheet.create({
