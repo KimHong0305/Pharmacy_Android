@@ -5,6 +5,8 @@ import ForgotPasswordScreen from "./Auth/ForgotPasswordScreen";
 import IntroduceScreen from "./Introduce/IntroduceScreen";
 import ProfileScreen from "./Profile/ProfileScreen";
 import SignUpScreen from "./SignUp/SignUpScreen";
+import VerifyEmailSignup from "./SignUp/VerifyEmailSignup";
+import ResetPasswordScreen from "./Auth/ResetPasswordScreen";
 
 export {
     AccountScreen,
@@ -13,5 +15,7 @@ export {
     HomeScreen,
     IntroduceScreen,
     ProfileScreen,
-    SignUpScreen
+    SignUpScreen,
+    VerifyEmailSignup,
+    ResetPasswordScreen,
 }

@@ -1,83 +1,97 @@
-import { View, Text, TouchableOpacity, TextInput, Image, StyleSheet } from 'react-native'
-import React from 'react'
-import { useNavigation } from '@react-navigation/native'
+import { View, Text, TouchableOpacity, TextInput, Image, StyleSheet, Alert } from 'react-native'
+import React, { useState, useEffect } from 'react'
+import { useNavigation } from '@react-navigation/native';
+import { useDispatch, useSelector } from 'react-redux';
+import { register, clearMessages } from '../../lib/redux/reducers/auth.reducer';
+import { RootState } from '../../lib/redux/rootReducer';
 
 const SignUpScreen = () => {
   const navigation = useNavigation();
+
+  const dispatch = useDispatch();
+
+  // State cho form
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [email, setEmail] = useState('');
+  const [dob, setDob] = useState('');
+
+  // Lấy trạng thái từ Redux
+  const { loading, message, error } = useSelector((state: RootState) => state.auth);
+
+  // Xử lý đăng ký
+  const handleRegister = () => {
+    if (!username || !password || !confirmPassword || !email || !dob) {
+      Alert.alert('Lỗi', 'Vui lòng nhập đầy đủ thông tin!');
+      return;
+    }
+
+    if (password !== confirmPassword) {
+      Alert.alert('Lỗi', 'Mật khẩu và xác nhận không khớp!');
+      return;
+    }
+
+    dispatch(register({ username, password, confirmPassword, email, dob }) as any)
+      .unwrap()
+      .then(() => {
+        Alert.alert('Đăng ký thành công');
+        navigation.navigate('VerifyEmailSignup', { email });
+        dispatch(clearMessages());
+        setUsername('');
+        setPassword('');
+        setConfirmPassword('');
+        setEmail('');
+        setDob('');
+      })
+      .catch(() => {
+        Alert.alert('Đăng ký thất bại', 'Vui lòng kiểm tra lại thông tin.');
+        // if (message) {
+        //   Alert.alert('Thông báo', message);
+        //   dispatch(clearMessages());
+        // }
+      });
+  };
+
   return (
     <View style={styles.container}>
-          <TouchableOpacity
-                  style={styles.closeButton}
-                  onPress={() => navigation.navigate('AccountScreen')}>
-                  <Text>Quay lại</Text>
-          </TouchableOpacity>
-    
-          <Text style={styles.welcomeText}>Create an account</Text>
-    
-          <TextInput
-            style={styles.input}
-            placeholder="Username"
-            placeholderTextColor="#999"
-          />
-    
-          <TextInput
-            style={styles.input}
-            placeholder="Password"
-            placeholderTextColor="#999"
-            secureTextEntry
-          />
-    
-          <TextInput
-            style={styles.input}
-            placeholder="Confirm Password"
-            placeholderTextColor="#999"
-            secureTextEntry
-          />
-    
-          <TextInput
-            style={styles.input}
-            placeholder="Email"
-            placeholderTextColor="#999"
-          />
-    
-          <TextInput
-            style={styles.input}
-            placeholder="Date of Birth"
-            placeholderTextColor="#999"
-          />
-    
-          <TouchableOpacity style={styles.loginButton}>
-            <Text style={styles.loginButtonText}>Create Account</Text>
-          </TouchableOpacity>
-    
-          <Text style={styles.orText}>- OR Continue with -</Text>
-    
-          <View style={styles.socialButtons}>
-            <TouchableOpacity style={styles.socialButton}>
-              <Image
-                source={require('../../assets/images/google.png')}
-                style={styles.socialButton}
-                resizeMode="contain"
-              />
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.socialButton}>
-              <Image
-                source={require('../../assets/images/facebook.png')}
-                style={styles.socialButton}
-                resizeMode="contain"
-              />
-            </TouchableOpacity>
-          </View>
-    
-          <Text style={styles.createAccountText}>
-            I Already Have An Account{' '}
-            <Text
-              style={styles.signUpText}
-              onPress={() => navigation.navigate('LoginScreen')}>
-              Login
-            </Text>
-          </Text>
-        </View>
+      <TouchableOpacity style={styles.closeButton} onPress={() => navigation.navigate('AccountScreen')}>
+        <Text>Quay lại</Text>
+      </TouchableOpacity>
+
+      <Text style={styles.welcomeText}>Create an account</Text>
+
+      <TextInput style={styles.input} placeholder="Username" value={username} onChangeText={setUsername} />
+      <TextInput style={styles.input} placeholder="Password" secureTextEntry value={password} onChangeText={setPassword} />
+      <TextInput style={styles.input} placeholder="Confirm Password" secureTextEntry value={confirmPassword} onChangeText={setConfirmPassword} />
+      <TextInput style={styles.input} placeholder="Email" value={email} onChangeText={setEmail} />
+      <TextInput style={styles.input} placeholder="Date of Birth (dd/mm/yyyy)" value={dob} onChangeText={setDob} />
+
+      <TouchableOpacity style={styles.loginButton} onPress={handleRegister}>
+        <Text style={styles.loginButtonText}>{loading ? 'Đang xử lý...' : 'Create Account'}</Text>
+      </TouchableOpacity>
+
+      <Text style={styles.orText}>- OR Continue with -</Text>
+
+      <View style={styles.socialButtons}>
+        <TouchableOpacity style={styles.socialButton}>
+          <Image source={require('../../assets/images/google.png')} style={styles.socialButton} resizeMode="contain" />
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.socialButton}>
+          <Image source={require('../../assets/images/facebook.png')} style={styles.socialButton} resizeMode="contain" />
+        </TouchableOpacity>
+      </View>
+
+      <Text style={styles.createAccountText}>
+        I Already Have An Account{' '}
+        <Text style={styles.signUpText} onPress={() => navigation.navigate('LoginScreen')}>Login</Text>
+      </Text>
+
+      {/* <Text style={styles.createAccountText}>
+        Test{' '}
+        <Text style={styles.signUpText} onPress={() => navigation.navigate('VerifyEmailSignup')}>OTP</Text>
+      </Text> */}
+    </View>
   )
 }
 
