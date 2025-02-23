@@ -36,7 +36,7 @@ const IntroduceScreen = () => {
       }}>
       <View style={{flexDirection: 'row', alignItems: 'center'}}>
         <Image
-          source={require('../../assets/images/logo.jpg')}
+          source={require('../../assets/images/logo.png')}
           style={{
             width: 150,
             height: 300,

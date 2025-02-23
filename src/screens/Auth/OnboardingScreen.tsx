@@ -14,21 +14,21 @@ const OnboardingScreen = () => {
       <Swiper loop={false} activeDotColor={appColors.black} index={index} onIndexChanged={num => setIndex(num)}>
         <View style={styles.swiper}>
           <Image
-            source={require('../../assets/images/logo.jpg')}
+            source={require('../../assets/images/logo.png')}
             style={styles.image}
           />
           <Text style={styles.text}>Welcome to Pharmacy!</Text>
         </View>
         <View style={styles.swiper}>
           <Image
-            source={require('../../assets/images/logo.jpg')}
+            source={require('../../assets/images/logo.png')}
             style={styles.image}
           />
           <Text style={styles.text}>Buy Now!</Text>
         </View>
         <View style={styles.swiper}>
           <Image
-            source={require('../../assets/images/logo.jpg')}
+            source={require('../../assets/images/logo.png')}
             style={styles.image}
           />
           <Text style={styles.text}>Payment Now!</Text>
@@ -55,6 +55,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   image: {
+    width: 200,
+    height: 200,
     marginTop: 100,
   },
   text: {
