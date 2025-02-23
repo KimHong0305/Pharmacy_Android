@@ -10,6 +10,8 @@ import {
   ProfileScreen,
   SignUpScreen,
   ResetPasswordScreen,
+  UpdateEmailScreen,
+  VerifyEmailScreen,
 } from '../screens';
 
 const Navigation = () => {
@@ -27,6 +29,8 @@ const Navigation = () => {
       <Stack.Screen name="SignUpScreen" component={SignUpScreen} />
       <Stack.Screen name="VerifyEmailSignup" component={VerifyEmailSignup} />
       <Stack.Screen name="ResetPasswordScreen" component={ResetPasswordScreen} />
+      <Stack.Screen name="UpdateEmailScreen" component={UpdateEmailScreen} />
+      <Stack.Screen name="VerifyEmailScreen" component={VerifyEmailScreen} />
     </Stack.Navigator>
   );
 }

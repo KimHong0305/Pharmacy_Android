@@ -47,6 +47,14 @@ const removeToken = async (): Promise<void> => {
     }
 };
 
+export const loadToken = createAsyncThunk<string | null>(
+    'auth/loadToken',
+    async () => {
+        const token = await getToken();
+        return token;
+    }
+);
+
 // const returnRole = async (token: string | null): Promise<string> => {
 //     if (token) {
 //         try {
@@ -74,6 +82,10 @@ export const login = createAsyncThunk<LoginResponse, Login, { rejectValue: strin
     async (formData, { rejectWithValue }) => {
         try {
             const response = await api.post<LoginResponse>("/auth/log-in", formData);
+            const token = response.data.result?.token;
+            if (token) {
+                await saveToken(token);
+            }
             return response.data;
         } catch (error) {
             console.error("Error during login:", error);
@@ -182,10 +194,6 @@ const authSlice = createSlice({
                 state.message = action.payload.message;
                 if (action.payload.result) {
                     state.token = action.payload.result.token;
-                    saveToken(action.payload.result.token);
-                    // returnRole(action.payload.result.token).then((role) => {
-                    //     state.role = role;
-                    // });
                 }
             })
             .addCase(login.rejected, (state, action) => {
