@@ -217,7 +217,7 @@ const HomeScreen = () => {
             <Icon name="search" size={23} color={appColors.black} />
           </TouchableOpacity>
         </View>
-        <TouchableOpacity>
+        <TouchableOpacity onPress={() => navigation.navigate('ProfileScreen')}>
           <Image
             source={require('../../assets/images/logo.png')}
             style={styles.avatar}
