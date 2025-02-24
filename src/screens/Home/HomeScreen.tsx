@@ -1,5 +1,5 @@
 import { View, Text, TouchableOpacity, StyleSheet, TextInput, ScrollView, FlatList } from 'react-native'
-import React from 'react'
+import React, { useEffect } from 'react'
 import { useNavigation } from '@react-navigation/native'
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { TextComponent } from '../../components';
@@ -200,8 +200,9 @@ const topCompanies = [
   },
 ];
 
-const HomeScreen = () => {
+const HomeScreen = ({hasToken}: {hasToken: boolean}) => {
   const navigation = useNavigation();
+    
   return (
     <View style={styles.container}>
       {/* Header */}
@@ -217,7 +218,14 @@ const HomeScreen = () => {
             <Icon name="search" size={23} color={appColors.black} />
           </TouchableOpacity>
         </View>
-        <TouchableOpacity onPress={() => navigation.navigate('ProfileScreen')}>
+        <TouchableOpacity
+          onPress={() => {
+            if (hasToken) {
+              navigation.navigate('ProfileScreen');
+            } else {
+              navigation.navigate('BottomTab', {screen: 'Tài khoản'});
+            }
+          }}>
           <Image
             source={require('../../assets/images/logo.png')}
             style={styles.avatar}
@@ -303,15 +311,14 @@ const HomeScreen = () => {
       </ScrollView>
     </View>
   );
-}
+};
 
 const styles = StyleSheet.create({
   container: {
     backgroundColor: '#FFFFFF',
-    display: 'flex',
+    flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    height: '100%',
   },
   //Header
   header: {
@@ -453,4 +460,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default HomeScreen
+export default HomeScreen;

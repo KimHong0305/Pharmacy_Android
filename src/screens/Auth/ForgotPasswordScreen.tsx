@@ -1,17 +1,39 @@
 import { useNavigation } from '@react-navigation/native'
-import React from 'react'
-import { StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native'
+import React, { useState } from 'react'
 import { fontFamilies } from '../../constants/fontFamilies';
 import { TextComponent } from '../../components';
+import { StyleSheet, Text, TextInput, TouchableOpacity, View, Alert } from 'react-native';
+import { useDispatch } from 'react-redux';
+import { forgotPassword } from '../../lib/redux/reducers/auth.reducer'; // Import action Redux
 
 const ForgotPasswordScreen = () => {
   const navigation = useNavigation();
+  const dispatch = useDispatch();
+  const [email, setEmail] = useState(''); // State lưu email
+
+  const handleForgotPassword = () => {
+    if (!email) {
+      Alert.alert('Lỗi', 'Vui lòng nhập email.');
+      return;
+    }
+
+    dispatch(forgotPassword(email) as any)
+      .unwrap()
+      .then(() => {
+        Alert.alert('Thành công', 'Mã OTP đã được gửi đến email của bạn.');
+        navigation.navigate('ResetPasswordScreen', { email });
+      })
+      .catch(() => {
+        Alert.alert('Lỗi', 'Không thể gửi mã OTP. Vui lòng thử lại sau.');
+      });
+  };
+
   return (
     <View style={styles.container}>
       <TouchableOpacity
         style={styles.closeButton}
         onPress={() => navigation.navigate('LoginScreen')}>
-        <TextComponent text="Quay lại" />
+        <TextComponent text='Quay lại'/>
       </TouchableOpacity>
 
       <Text style={styles.title}>Forgot Password!</Text>
@@ -20,18 +42,20 @@ const ForgotPasswordScreen = () => {
         style={styles.input}
         placeholder="Email"
         placeholderTextColor="#999"
+        value={email}
+        onChangeText={setEmail}
       />
-
-      <Text style={styles.orText}>- We will send a OTP to your email -</Text>
 
       <TouchableOpacity
         style={styles.submitButton}
-        onPress={() => navigation.navigate('OtpScreen')}>
+        onPress={handleForgotPassword}>
         <Text style={styles.submitButtonText}>Submit</Text>
       </TouchableOpacity>
+
+      <Text style={styles.orText}>- We will send an OTP to your email -</Text>
     </View>
   );
-}
+};
 
 const styles = StyleSheet.create({
   container: {
@@ -45,7 +69,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     top: 25,
     right: 20,
-    padding: 10
+    padding: 10,
   },
   title: {
     fontSize: 32,
@@ -84,4 +108,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default ForgotPasswordScreen
+export default ForgotPasswordScreen;

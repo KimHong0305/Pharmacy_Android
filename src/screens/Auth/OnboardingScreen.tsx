@@ -5,6 +5,7 @@ import { appColors } from '../../constants/appColors'
 import { appInfo } from '../../constants/appInfos'
 import { useNavigation } from '@react-navigation/native'
 import { TextComponent } from '../../components'
+import { fontFamilies } from '../../constants/fontFamilies'
 
 const OnboardingScreen = () => {
   const navigation = useNavigation();
@@ -61,8 +62,8 @@ const styles = StyleSheet.create({
   },
   text: {
     marginTop: 50,
-    fontSize: 25,
-    fontFamily: 'Montserrat-Medium',
+    fontSize: 28,
+    fontFamily: fontFamilies.Medium,
   },
   skip_next: {
     paddingHorizontal: 16,

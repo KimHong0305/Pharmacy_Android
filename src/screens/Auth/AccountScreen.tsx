@@ -1,12 +1,20 @@
 import { useNavigation } from '@react-navigation/native';
-import React from 'react';
+import React, { useEffect } from 'react';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { fontFamilies } from '../../constants/fontFamilies';
 
-const AccountScreen = () => {
+const AccountScreen = ( { hasToken }: { hasToken: boolean } ) => {
   const navigation = useNavigation();
+
+  useEffect(() => {
+    if (hasToken) {
+      navigation.navigate('ProfileScreen'); 
+    }
+  }, [hasToken, navigation]);
+  
   return (
     <View style={styles.container}>
+      {/* Nội dung chính */}
       <Text style={styles.title}>Chào mừng đến với Pharmacy</Text>
       <Text style={styles.subtitle}>
         Hãy đăng nhập để được hưởng các đặc quyền của hội viên
@@ -23,9 +31,12 @@ const AccountScreen = () => {
         onPress={() => navigation.navigate('SignUpScreen')}>
         <Text style={styles.buttonText}>Đăng Ký</Text>
       </TouchableOpacity>
+
+      {/* TabBar */}
+      {/* <TabBar /> */}
     </View>
   );
-}
+};
 
 const styles = StyleSheet.create({
   container: {
@@ -33,18 +44,18 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-start',
     alignItems: 'center',
     padding: 20,
-    backgroundColor: 'white'
+    backgroundColor: 'white',
   },
   title: {
-    fontSize: 22,
+    fontSize: 24,
+    marginTop: 40,
+    fontFamily: fontFamilies.Medium,
     marginBottom: 10,
-    marginTop: 30,
-    fontFamily: fontFamilies.SemiBold
   },
   subtitle: {
     fontSize: 14,
     textAlign: 'center',
-    marginBottom: 40,
+    marginBottom: 20,
     fontFamily: fontFamilies.Medium
   },
   loginButton: {
@@ -54,7 +65,7 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     marginBottom: 20,
     width: '100%',
-    alignItems: 'center', 
+    alignItems: 'center',
     justifyContent: 'center',
   },
   signupButton: {
@@ -63,31 +74,13 @@ const styles = StyleSheet.create({
     paddingHorizontal: 50,
     borderRadius: 5,
     width: '100%',
-    alignItems: 'center', 
-    justifyContent: 'center', 
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   buttonText: {
     color: 'white',
     fontFamily: fontFamilies.Medium,
   },
-  footer: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    width: '100%',
-    marginBottom: 20,
-    borderTopWidth: 1,
-    borderTopColor: '#ccc',
-    position: 'absolute',
-    bottom: 0,
-  },
-  footerButton: {
-    flex: 1,
-    alignItems: 'center',
-  },
-  footerButtonText: {
-    fontSize: 16,
-    color: '#6200EE',
-  },
 });
 
-export default AccountScreen
+export default AccountScreen;

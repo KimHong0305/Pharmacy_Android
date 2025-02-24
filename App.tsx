@@ -3,6 +3,8 @@ import React, { useEffect, useState } from 'react'
 import { IntroduceScreen } from './src/screens';
 import { NavigationContainer } from '@react-navigation/native';
 import Navigation from './src/navigators/Navigation';
+import { Provider } from 'react-redux';
+import store from './src/lib/redux/store';
 
 const App = () => {
   const [isShowIntroduce, setIsShowIntroduce] = useState(true);
@@ -19,7 +21,7 @@ const App = () => {
   }, []);
 
   return (
-    <>
+    <Provider store={store}>
       <StatusBar
         barStyle={'dark-content'}
         backgroundColor={'transparent'}
@@ -32,7 +34,7 @@ const App = () => {
           <Navigation/>
         </NavigationContainer>
       )}
-    </>
+    </Provider>
   );
 }
 

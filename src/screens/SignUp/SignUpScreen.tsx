@@ -1,16 +1,66 @@
-import { View, Text, TouchableOpacity, TextInput, Image, StyleSheet } from 'react-native'
-import React from 'react'
-import { useNavigation } from '@react-navigation/native'
+import { View, Text, TouchableOpacity, TextInput, Image, StyleSheet, Alert } from 'react-native'
+import React, { useState, useEffect } from 'react'
+import { useNavigation } from '@react-navigation/native';
+import { useDispatch, useSelector } from 'react-redux';
+import { register, clearMessages } from '../../lib/redux/reducers/auth.reducer';
+import { RootState } from '../../lib/redux/rootReducer';
 import { fontFamilies } from '../../constants/fontFamilies';
+import { TextComponent } from '../../components';
 
 const SignUpScreen = () => {
   const navigation = useNavigation();
+
+  const dispatch = useDispatch();
+
+  // State cho form
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [email, setEmail] = useState('');
+  const [dob, setDob] = useState('');
+
+  // Lấy trạng thái từ Redux
+  const { loading, message, error } = useSelector((state: RootState) => state.auth);
+
+  // Xử lý đăng ký
+  const handleRegister = () => {
+    if (!username || !password || !confirmPassword || !email || !dob) {
+      Alert.alert('Lỗi', 'Vui lòng nhập đầy đủ thông tin!');
+      return;
+    }
+
+    if (password !== confirmPassword) {
+      Alert.alert('Lỗi', 'Mật khẩu và xác nhận không khớp!');
+      return;
+    }
+
+    dispatch(register({ username, password, confirmPassword, email, dob }) as any)
+      .unwrap()
+      .then(() => {
+        Alert.alert('Đăng ký thành công');
+        navigation.navigate('VerifyEmailSignup', { email });
+        dispatch(clearMessages());
+        setUsername('');
+        setPassword('');
+        setConfirmPassword('');
+        setEmail('');
+        setDob('');
+      })
+      .catch(() => {
+        Alert.alert('Đăng ký thất bại', 'Vui lòng kiểm tra lại thông tin.');
+        // if (message) {
+        //   Alert.alert('Thông báo', message);
+        //   dispatch(clearMessages());
+        // }
+      });
+  };
+
   return (
     <View style={styles.container}>
       <TouchableOpacity
         style={styles.closeButton}
         onPress={() => navigation.navigate('BottomTab', {screen: 'Tài khoản'})}>
-        <Text style={{fontFamily: fontFamilies.Medium}}>Quay lại</Text>
+        <TextComponent text='Quay lại' />
       </TouchableOpacity>
 
       <Text style={styles.title}>Create an account</Text>
@@ -18,37 +68,40 @@ const SignUpScreen = () => {
       <TextInput
         style={styles.input}
         placeholder="Username"
-        placeholderTextColor="#999"
+        value={username}
+        onChangeText={setUsername}
       />
-
       <TextInput
         style={styles.input}
         placeholder="Password"
-        placeholderTextColor="#999"
         secureTextEntry
+        value={password}
+        onChangeText={setPassword}
       />
-
       <TextInput
         style={styles.input}
         placeholder="Confirm Password"
-        placeholderTextColor="#999"
         secureTextEntry
+        value={confirmPassword}
+        onChangeText={setConfirmPassword}
       />
-
       <TextInput
         style={styles.input}
         placeholder="Email"
-        placeholderTextColor="#999"
+        value={email}
+        onChangeText={setEmail}
       />
-
       <TextInput
         style={styles.input}
-        placeholder="Date of Birth"
-        placeholderTextColor="#999"
+        placeholder="Date of Birth (dd/mm/yyyy)"
+        value={dob}
+        onChangeText={setDob}
       />
 
-      <TouchableOpacity style={styles.loginButton}>
-        <Text style={styles.loginButtonText}>Create Account</Text>
+      <TouchableOpacity style={styles.signUpButton} onPress={handleRegister}>
+        <Text style={styles.signUpButtonText}>
+          {loading ? 'Đang xử lý...' : 'Create Account'}
+        </Text>
       </TouchableOpacity>
 
       <Text style={styles.orText}>- OR Continue with -</Text>
@@ -70,10 +123,10 @@ const SignUpScreen = () => {
         </TouchableOpacity>
       </View>
 
-      <Text style={styles.loginAccountText}>
-        I Already Have An Account ?{' '}
+      <Text style={styles.orText}>
+        I Already Have An Account{' '}
         <Text
-          style={styles.loginText}
+          style={styles.signUpText}
           onPress={() => navigation.navigate('LoginScreen')}>
           Login
         </Text>
@@ -89,19 +142,19 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     padding: 20,
     backgroundColor: 'white',
-    fontFamily: fontFamilies.Medium
+    fontFamily: fontFamilies.Medium,
   },
   closeButton: {
     position: 'absolute',
     top: 15,
     right: 10,
-    padding: 10
+    padding: 10,
   },
   title: {
     fontSize: 32,
     marginBottom: 20,
     top: 10,
-    fontFamily: fontFamilies.SemiBold
+    fontFamily: fontFamilies.SemiBold,
   },
   input: {
     width: '100%',
@@ -111,9 +164,9 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     paddingHorizontal: 10,
     marginBottom: 15,
-    fontFamily: fontFamilies.Medium
+    fontFamily: fontFamilies.Medium,
   },
-  loginButton: {
+  signUpButton: {
     backgroundColor: 'blue',
     paddingVertical: 15,
     paddingHorizontal: 30,
@@ -123,14 +176,14 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  loginButtonText: {
+  signUpButtonText: {
     color: 'white',
     fontSize: 20,
-    fontFamily: fontFamilies.Medium
+    fontFamily: fontFamilies.Medium,
   },
   orText: {
     marginVertical: 10,
-    fontFamily: fontFamilies.Medium
+    fontFamily: fontFamilies.Medium,
   },
   socialButtons: {
     flexDirection: 'row',
@@ -148,13 +201,9 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
-  loginAccountText: {
-    marginTop: 20,
-    fontFamily: fontFamilies.Medium
-  },
-  loginText: {
+  signUpText: {
     color: 'blue',
-    fontFamily: fontFamilies.SemiBold
+    fontFamily: fontFamilies.SemiBold,
   },
 });
 

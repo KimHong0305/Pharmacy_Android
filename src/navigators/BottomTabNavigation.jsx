@@ -1,10 +1,26 @@
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { AccountScreen, CategoryScreen, ConsultantScreen, HomeScreen, OrderScreen } from '../screens';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const BottomTabNavigation = () => {
   const BottomTab = createBottomTabNavigator();
+  const [hasToken, setHasToken] = useState(false);
+
+  useEffect(() => {
+    const checkToken = async () => {
+      try {
+        const token = await AsyncStorage.getItem('token');
+        setHasToken(!!token);
+      } catch (error) {
+        console.error('Lỗi khi lấy token:', error);
+      }
+    };
+
+    checkToken();
+  }, []);
+
   return (
     <BottomTab.Navigator
       screenOptions={({route}) => ({
@@ -45,7 +61,10 @@ const BottomTabNavigation = () => {
       <BottomTab.Screen name="Danh mục" component={CategoryScreen} />
       <BottomTab.Screen name="Tư vấn" component={ConsultantScreen} />
       <BottomTab.Screen name="Đơn hàng" component={OrderScreen} />
-      <BottomTab.Screen name="Tài khoản" component={AccountScreen} />
+      <BottomTab.Screen
+        name="Tài khoản"
+        children={() => <AccountScreen hasToken={hasToken} />}
+      />
     </BottomTab.Navigator>
   );
 }

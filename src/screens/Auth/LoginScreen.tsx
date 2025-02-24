@@ -1,10 +1,44 @@
-import { View, Text, TouchableOpacity, TextInput, Image, StyleSheet } from 'react-native'
-import React from 'react'
-import { useNavigation } from '@react-navigation/native'
+import { View, Text, TouchableOpacity, TextInput, Image, StyleSheet, ActivityIndicator, Alert } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { useNavigation } from '@react-navigation/native';
+import { useDispatch, useSelector } from 'react-redux';
+import { login, clearMessages } from '../../lib/redux/reducers/auth.reducer';
+import { RootState } from '../../lib/redux/rootReducer';
 import { fontFamilies } from '../../constants/fontFamilies';
 
 const LoginScreen = () => {
   const navigation = useNavigation();
+  const dispatch = useDispatch();
+
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
+
+  const { loading, error, message, token } = useSelector((state: RootState) => state.auth);
+
+  const handleLogin = () => {
+    if (!username || !password) {
+      Alert.alert('Lỗi', 'Vui lòng nhập đầy đủ thông tin!');
+      return;
+    }
+
+    dispatch(login({ username, password }) as any)
+      .unwrap()
+      .then(() => {
+        if (message) {
+          Alert.alert('Thông báo', message);
+          dispatch(clearMessages());
+          navigation.navigate('ProfileScreen');
+          setUsername('');
+          setPassword('');
+        }
+      })
+      .catch(() => {
+        Alert.alert('Đăng nhập thất bại', 'Vui lòng kiểm tra lại tài khoản hoặc mật khẩu.');
+        setUsername('');
+        setPassword('');
+      });
+  };
+
   return (
     <View style={styles.container}>
       <TouchableOpacity
@@ -17,8 +51,10 @@ const LoginScreen = () => {
 
       <TextInput
         style={styles.input}
-        placeholder="Username or Email"
+        placeholder="Username"
         placeholderTextColor="#999"
+        value={username}
+        onChangeText={setUsername}
       />
 
       <TextInput
@@ -26,131 +62,139 @@ const LoginScreen = () => {
         placeholder="Password"
         placeholderTextColor="#999"
         secureTextEntry
+        value={password}
+        onChangeText={setPassword}
       />
 
       <TouchableOpacity>
-        <Text
-          style={styles.forgotPasswordText}
-          onPress={() => navigation.navigate('ForgotPasswordScreen')}>
+        <Text style={styles.forgotPasswordText} onPress={() => navigation.navigate('ForgotPasswordScreen')}>
           Forgot Password?
         </Text>
       </TouchableOpacity>
 
-      <TouchableOpacity style={styles.loginButton}>
-        <Text style={styles.loginButtonText}>Login</Text>
+      <TouchableOpacity style={styles.loginButton} onPress={handleLogin} disabled={loading}>
+        {loading ? (
+          <ActivityIndicator color="#fff" />
+        ) : (
+          <Text style={styles.loginButtonText}>Login</Text>
+        )}
       </TouchableOpacity>
 
       <Text style={styles.orText}>- OR Continue with -</Text>
 
       <View style={styles.socialButtons}>
-        <TouchableOpacity>
+        <TouchableOpacity style={styles.socialButton}>
           <Image
             source={require('../../assets/images/google.png')}
-            style={styles.socialButton}
+            style={styles.socialIcon}
             resizeMode="contain"
           />
         </TouchableOpacity>
-        <TouchableOpacity>
+        <TouchableOpacity style={styles.socialButton}>
           <Image
             source={require('../../assets/images/facebook.png')}
-            style={styles.socialButton}
+            style={styles.socialIcon}
             resizeMode="contain"
           />
         </TouchableOpacity>
       </View>
 
       <Text style={styles.createAccountText}>
-        Create An Account ?{' '}
+        Create An Account ? {' '}
         <Text
           style={styles.signUpText}
-          onPress={() => navigation.navigate('SignUpScreen')}>
+          onPress={() => navigation.navigate('SignUpScreen')}
+        >
           Sign Up
         </Text>
       </Text>
     </View>
   );
 };
-  
+
 const styles = StyleSheet.create({
-    container: {
-      flex: 1,
-      justifyContent: 'center',
-      alignItems: 'center',
-      padding: 20,
-      backgroundColor: 'white'
-    },
-    closeButton: {
-      position: 'absolute',
-      top: 25,
-      right: 20,
-      zIndex: 10,
-      padding: 10
-    },
-    title: {
-      fontSize: 32,
-      marginBottom: 50,
-      fontFamily: fontFamilies.SemiBold
-    },
-    input: {
-      width: '100%',
-      height: 50,
-      borderColor: '#ccc',
-      borderWidth: 1,
-      borderRadius: 5,
-      paddingHorizontal: 10,
-      marginBottom: 15,
-      fontFamily: fontFamilies.Medium
-    },
-    forgotPasswordText: {
-      color: 'red',
-      marginBottom: 20,
-      marginLeft: 250,
-      fontFamily: fontFamilies.Medium,
-      fontSize: 13
-    },
-    loginButton: {
-      backgroundColor: 'blue',
-      paddingVertical: 15,
-      paddingHorizontal: 30,
-      borderRadius: 5,
-      marginBottom: 20,
-      width: '100%',
-      alignItems: 'center', 
-      justifyContent: 'center',
-    },
-    loginButtonText: {
-      color: 'white',
-      fontFamily: fontFamilies.Medium,
-      fontSize: 20,
-    },
-    orText: {
-      marginVertical: 10,
-      fontFamily: fontFamilies.Medium
-    },
-    socialButtons: {
-      flexDirection: 'row',
-      justifyContent: 'center',
-      width: '100%',
-      marginBottom: 20,
-      gap: 40,
-    },
-    socialButton: {
-      width: 50,
-      height: 50,
-      borderRadius: 25,
-      borderColor: '#ccc',
-      borderWidth: 1,
-      justifyContent: 'center',
-      alignItems: 'center',
-    },
-    createAccountText: {
-      marginTop: 20,
-      fontFamily: fontFamilies.Medium
-    },
-    signUpText: {
-      color: 'blue',
-      fontFamily: fontFamilies.SemiBold,
-    },
+  container: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 20,
+    backgroundColor: 'white',
+  },
+  closeButton: {
+    position: 'absolute',
+    top: 25,
+    right: 20,
+    zIndex: 10,
+    padding: 10,
+  },
+  title: {
+    fontSize: 32,
+    fontFamily: fontFamilies.Medium,
+    marginBottom: 50,
+  },
+  input: {
+    width: '100%',
+    height: 50,
+    borderColor: '#ccc',
+    borderWidth: 1,
+    borderRadius: 5,
+    paddingHorizontal: 10,
+    marginBottom: 15,
+    fontFamily: fontFamilies.Medium,
+  },
+  forgotPasswordText: {
+    color: 'red',
+    marginBottom: 20,
+    right: -120,
+    fontFamily: fontFamilies.Medium,
+  },
+  loginButton: {
+    backgroundColor: 'blue',
+    paddingVertical: 15,
+    paddingHorizontal: 30,
+    borderRadius: 5,
+    marginBottom: 20,
+    width: '100%',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  loginButtonText: {
+    color: 'white',
+    fontFamily: fontFamilies.Medium,
+    fontSize: 20,
+  },
+  orText: {
+    marginVertical: 10,
+    fontFamily: fontFamilies.Medium,
+  },
+  socialButtons: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    width: '100%',
+    marginBottom: 20,
+    gap: 40,
+  },
+  socialButton: {
+    width: 50,
+    height: 50,
+    borderRadius: 25,
+    borderColor: '#ccc',
+    borderWidth: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  socialIcon: {
+    width: 50,
+    height: 50,
+  },
+  createAccountText: {
+    marginTop: 20,
+    fontFamily: fontFamilies.Medium,
+  },
+  signUpText: {
+    color: 'blue',
+    fontFamily: fontFamilies.Medium,
+  },
 });
 
-export default LoginScreen
+export default LoginScreen;
