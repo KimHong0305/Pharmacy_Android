@@ -15,6 +15,8 @@ import {
   VerifyEmailSignup,
   UpdateEmailScreen,
   VerifyEmailScreen,
+  SearchScreen,
+  SearchListScreen,
 } from '../screens';
 import BottomTabNavigation from './BottomTabNavigation';
 
@@ -55,6 +57,9 @@ const Navigation = () => {
       <Stack.Screen name="VerifyEmailSignup" component={VerifyEmailSignup} />
       <Stack.Screen name="UpdateEmailScreen" component={UpdateEmailScreen} />
       <Stack.Screen name="VerifyEmailScreen" component={VerifyEmailScreen} />
+      <Stack.Screen name="SearchScreen" component={SearchScreen} />
+      <Stack.Screen name="SearchList" component={SearchListScreen} />
+
     </Stack.Navigator>
   );
 }

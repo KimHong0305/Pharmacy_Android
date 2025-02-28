@@ -14,6 +14,8 @@ import OrderScreen from "./Order/OrderScreen";
 import OtpScreen from "./OTP/OtpScreen";
 import VerifyEmailSignup from "./SignUp/VerifyEmailSignup";
 import ResetPasswordScreen from "./Auth/ResetPasswordScreen";
+import SearchScreen from "./Search/SearchScreen";
+import SearchListScreen from "./Search/SearchListScreen";
 
 export {
     AccountScreen,
@@ -32,4 +34,6 @@ export {
     ResetPasswordScreen,
     UpdateEmailScreen,
     VerifyEmailScreen,
+    SearchScreen,
+    SearchListScreen,
 }

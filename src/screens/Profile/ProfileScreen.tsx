@@ -2,7 +2,6 @@ import { View, Text, TouchableOpacity, StyleSheet, Image, ActivityIndicator, Ale
 import React, { useEffect, useState } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useNavigation } from '@react-navigation/native';
-import TabBar from '../../components/TabBar';
 import { useDispatch, useSelector } from 'react-redux';
 import { getBio, updateBio } from '../../lib/redux/reducers/user.reducer';
 import { RootState } from '../../lib/redux/rootReducer';

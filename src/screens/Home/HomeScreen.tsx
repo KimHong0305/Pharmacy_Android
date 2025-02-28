@@ -208,16 +208,25 @@ const HomeScreen = ({hasToken}: {hasToken: boolean}) => {
       {/* Header */}
       <View style={styles.header}>
         <TextComponent text="Pharmacy" size={25} />
+
+        {/* Thanh search */}
         <View style={styles.searchContainer}>
-          <TextInput
-            placeholder="Search"
-            style={styles.input}
-            placeholderTextColor="#999"
-          />
-          <TouchableOpacity style={styles.icon}>
+          <TouchableOpacity onPress={() => navigation.navigate('SearchScreen')}>
+            <TextInput
+              placeholder="Search"
+              style={styles.input}
+              placeholderTextColor="#999"
+              editable={false}
+            />
+          </TouchableOpacity>
+          <TouchableOpacity 
+            style={styles.icon} 
+            onPress={() => navigation.navigate('SearchScreen')}
+          >
             <Icon name="search" size={23} color={appColors.black} />
           </TouchableOpacity>
         </View>
+
         <TouchableOpacity
           onPress={() => {
             if (hasToken) {
