@@ -1,11 +1,13 @@
-import { View, Text, ImageBackground, StyleSheet, TouchableOpacity} from 'react-native'
-import React from 'react'
-import { fontFamilies } from '../../constants/fontFamilies';
-import OtpInputs from 'react-native-otp-inputs';
 import { useNavigation } from '@react-navigation/native';
+import React, { useState } from 'react';
+import { ImageBackground, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import OtpInputs from 'react-native-otp-inputs';
+import { fontFamilies } from '../../constants/fontFamilies';
+import type {NavigationProp} from '../../navigators/index';
 
 const OtpScreen = () => {
-  const navigation = useNavigation();
+  const navigation = useNavigation<NavigationProp>();
+  const [email, setEmail] = useState('');
   return (
     <ImageBackground
       source={require('../../assets/images/OTPBackground.png')}
@@ -26,7 +28,7 @@ const OtpScreen = () => {
 
         <TouchableOpacity
                 style={styles.submitButton}
-                onPress={() => navigation.navigate('ResetPasswordScreen')}>
+                onPress={() => navigation.navigate('ResetPasswordScreen', { email })}>
                 <Text style={styles.submitButtonText}>Submit</Text>
         </TouchableOpacity>
       </View>

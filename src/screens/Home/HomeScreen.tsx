@@ -1,208 +1,38 @@
-import { View, Text, TouchableOpacity, StyleSheet, TextInput, ScrollView, FlatList } from 'react-native'
-import React, { useEffect } from 'react'
-import { useNavigation } from '@react-navigation/native'
-import Icon from 'react-native-vector-icons/FontAwesome';
-import { TextComponent } from '../../components';
-import { fontFamilies } from '../../constants/fontFamilies';
+import { useNavigation } from '@react-navigation/native';
+import React, { useEffect } from 'react';
+import { FlatList, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { Image } from 'react-native-elements';
 import Swiper from 'react-native-swiper';
+import Icon from 'react-native-vector-icons/FontAwesome';
+import { useDispatch, useSelector } from 'react-redux';
+import { TextComponent } from '../../components';
 import { appColors } from '../../constants/appColors';
+import { fontFamilies } from '../../constants/fontFamilies';
+import { getBestSellers, getCategories, getNewProducts, getTopCompanies } from '../../lib/redux/reducers/home.reducer';
+import { RootState } from '../../lib/redux/rootReducer';
+import { AppDispatch } from '../../lib/redux/store';
+import type { NavigationProp } from '../../navigators/index';
 
-const categories = [
-  {
-    id: 1,
-    name: 'Thuốc',
-    image: require('../../assets/images/category/thuoc.png'),
-  },
-  {
-    id: 2,
-    name: 'Thực phẩm chức năng',
-    image: require('../../assets/images/category/thucphamchucnang.jpg'),
-  },
-  {
-    id: 3,
-    name: 'Thiết bị y tế',
-    image: require('../../assets/images/category/thietbiyte.jpg'),
-  },
-  {
-    id: 4,
-    name: 'Chăm sóc cá nhân',
-    image: require('../../assets/images/category/chamsoccanhan.jpg'),
-  },
-  {
-    id: 5,
-    name: 'Chăm sóc sắc đẹp',
-    image: require('../../assets/images/category/chamsocsacdep.jpg'),
-  },
-  {
-    id: 6, 
-    name: 'Mẹ và bé', 
-    image: require('../../assets/images/category/mevabe.jpg')
-  },
-];
-
-const newProducts = [
-  {
-    id: 1,
-    name: 'Dung dịch uống Enterogermina',
-    image: require('../../assets/images/topproduct/product1.jpg'),
-  },
-  {
-    id: 2,
-    name: 'Khẩu trang mềm mại',
-    image: require('../../assets/images/topproduct/product2.jpg'),
-  },
-  {
-    id: 3,
-    name: 'Siro Prospan',
-    image: require('../../assets/images/topproduct/product3.jpg'),
-  },
-  {
-    id: 4,
-    name: 'Men vi sinh BioGaia',
-    image: require('../../assets/images/topproduct/product4.jpg'),
-  },
-  {
-    id: 5,
-    name: 'Gen hỗ trợ làm giảm sẹo',
-    image: require('../../assets/images/topproduct/product5.jpg'),
-  },
-  {
-    id: 6,
-    name: 'Dung dịch LIVESPO Clausy',
-    image: require('../../assets/images/topproduct/product6.jpg'),
-  },
-  {
-    id: 7,
-    name: 'Xịt keo ong xanh vị bạc',
-    image: require('../../assets/images/topproduct/product7.jpg'),
-  },
-  {
-    id: 8,
-    name: 'Viên uống OPTIBAC Intimate Flora',
-    image: require('../../assets/images/topproduct/product8.jpg'),
-  },
-  {
-    id: 9,
-    name: 'Khẩu trang y tế Pharmacy',
-    image: require('../../assets/images/topproduct/product9.jpg'),
-  },
-  {
-    id: 10,
-    name: 'Khẩu trang y tế 3 lớp màu trắng',
-    image: require('../../assets/images/topproduct/product10.jpg'),
-  },
-];
-
-const topProducts = [
-  {
-    id: 1,
-    name: 'Dung dịch uống Enterogermina',
-    image: require('../../assets/images/topproduct/product1.jpg'),
-  },
-  {
-    id: 2,
-    name: 'Khẩu trang mềm mại',
-    image: require('../../assets/images/topproduct/product2.jpg'),
-  },
-  {
-    id: 3,
-    name: 'Siro Prospan',
-    image: require('../../assets/images/topproduct/product3.jpg'),
-  },
-  {
-    id: 4,
-    name: 'Men vi sinh BioGaia',
-    image: require('../../assets/images/topproduct/product4.jpg'),
-  },
-  {
-    id: 5,
-    name: 'Gen hỗ trợ làm giảm sẹo',
-    image: require('../../assets/images/topproduct/product5.jpg'),
-  },
-  {
-    id: 6,
-    name: 'Dung dịch LIVESPO Clausy',
-    image: require('../../assets/images/topproduct/product6.jpg'),
-  },
-  {
-    id: 7,
-    name: 'Xịt keo ong xanh vị bạc',
-    image: require('../../assets/images/topproduct/product7.jpg'),
-  },
-  {
-    id: 8,
-    name: 'Viên uống OPTIBAC Intimate Flora',
-    image: require('../../assets/images/topproduct/product8.jpg'),
-  },
-  {
-    id: 9,
-    name: 'Khẩu trang y tế Pharmacy',
-    image: require('../../assets/images/topproduct/product9.jpg'),
-  },
-  {
-    id: 10,
-    name: 'Khẩu trang y tế 3 lớp màu trắng',
-    image: require('../../assets/images/topproduct/product10.jpg'),
-  },
-];
-
-const topCompanies = [
-  {
-    id: 1,
-    name: 'Swisse',
-    image: require('../../assets/images/topcompany/company1.jpg'),
-  },
-  {
-    id: 2,
-    name: 'Remos',
-    image: require('../../assets/images/topcompany/company2.jpg'),
-  },
-  {
-    id: 3,
-    name: 'Sanofi',
-    image: require('../../assets/images/topcompany/company3.jpg'),
-  },
-  {
-    id: 4,
-    name: 'Abbott',
-    image: require('../../assets/images/topcompany/company4.jpg'),
-  },
-  {
-    id: 5,
-    name: 'Rohto',
-    image: require('../../assets/images/topcompany/company5.jpg'),
-  },
-  {
-    id: 6,
-    name: 'ImexPharm',
-    image: require('../../assets/images/topcompany/company6.jpg'),
-  },
-  {
-    id: 7,
-    name: 'Efferalgan',
-    image: require('../../assets/images/topcompany/company7.jpg'),
-  },
-  {
-    id: 8,
-    name: 'JohnSon',
-    image: require('../../assets/images/topcompany/company8.jpg'),
-  },
-  {
-    id: 9,
-    name: 'EnfaGrow',
-    image: require('../../assets/images/topcompany/company9.jpg'),
-  },
-  {
-    id: 10,
-    name: 'Kotex',
-    image: require('../../assets/images/topcompany/company10.jpg'),
-  },
-];
+const truncateText = (text: string, maxLength: number) => {
+  if (text.length <= maxLength) return text;
+  return text.substring(0, maxLength) + '...';
+};
 
 const HomeScreen = ({hasToken}: {hasToken: boolean}) => {
-  const navigation = useNavigation();
-    
+  const navigation = useNavigation<NavigationProp>();
+  const dispatch: AppDispatch = useDispatch<AppDispatch>();
+
+  const {categories, bestSellers, newProducts, topCompanies} = useSelector(
+    (state: RootState) => state.home,
+  );
+
+  useEffect(() => {
+    dispatch(getCategories());
+    dispatch(getBestSellers());
+    dispatch(getNewProducts());
+    dispatch(getTopCompanies());
+  }, []);
+
   return (
     <View style={styles.container}>
       {/* Header */}
@@ -237,7 +67,10 @@ const HomeScreen = ({hasToken}: {hasToken: boolean}) => {
       <ScrollView>
         <View style={styles.body}>
           <View style={styles.slider}>
-            <Swiper activeDotColor={appColors.white}>
+            <Swiper
+              activeDotColor={appColors.white}
+              autoplay={true}
+              autoplayTimeout={3}>
               <Image
                 source={require('../../assets/images/Banner1.jpg')}
                 style={styles.banner}
@@ -258,51 +91,79 @@ const HomeScreen = ({hasToken}: {hasToken: boolean}) => {
           {/* List Category */}
           <Text style={styles.categoryTitle}>Danh mục sản phẩm</Text>
           <View style={styles.categoryContainer}>
-            {categories.map(item => (
-              <View key={item.id} style={styles.categoryItem}>
-                <Image source={item.image} style={styles.categoryImage} />
-                <Text style={styles.categoryText}>{item.name}</Text>
-              </View>
-            ))}
+            {(
+              categories.map(item => (
+                <TouchableOpacity key={item.id} style={styles.categoryItem}>
+                  <Image
+                    source={{uri: item.image}}
+                    style={styles.categoryImage}
+                  />
+                  <Text style={styles.categoryText}>{item.name}</Text>
+                </TouchableOpacity>
+              ))
+            )}
           </View>
           {/* Top 10 Product */}
           <Text style={styles.topProductTitle}>Sản phẩm nổi bật</Text>
           <FlatList
-            data={topProducts}
+            data={bestSellers}
             horizontal
             showsHorizontalScrollIndicator={false}
-            keyExtractor={item => item.id.toString()}
+            keyExtractor={item => item.id}
             renderItem={({item}) => (
-              <View style={styles.productItem}>
-                <Image source={item.image} style={styles.productImage} />
-                <Text style={styles.productText}>{item.name}</Text>
-              </View>
+              <TouchableOpacity
+                style={styles.productItem}
+                onPress={() => navigation.navigate('ProductDetailScreen', {productId: item.id})}>
+                <Image 
+                  source={{uri: item.image}} 
+                  style={styles.productImage} 
+                />
+                <Text style={styles.productText}>
+                  {truncateText(item.name, 20)}
+                </Text>
+                <Text style={styles.priceText}>
+                  {item.prices[0]?.price.toLocaleString('vi-VN')}đ/{item.prices[0]?.unit.name}
+                </Text>
+              </TouchableOpacity>
             )}
           />
           {/* New Product */}
           <Text style={styles.newProductTitle}>Sản phẩm mới</Text>
           <FlatList
-            data={topProducts}
+            data={newProducts}
             horizontal
             showsHorizontalScrollIndicator={false}
-            keyExtractor={item => item.id.toString()}
+            keyExtractor={item => item.id}
             renderItem={({item}) => (
-              <View style={styles.productItem}>
-                <Image source={item.image} style={styles.productImage} />
-                <Text style={styles.productText}>{item.name}</Text>
-              </View>
+              <TouchableOpacity
+                style={styles.productItem}
+                onPress={() => navigation.navigate('ProductDetailScreen', {productId: item.id})}>
+                <Image 
+                  source={{uri: item.image}} 
+                  style={styles.productImage} 
+                />
+                <Text style={styles.productText}>
+                  {truncateText(item.name, 20)}
+                </Text>
+                <Text style={styles.priceText}>
+                  {item.prices[0]?.price.toLocaleString('vi-VN')}đ/{item.prices[0]?.unit.name}
+                </Text>
+              </TouchableOpacity>
             )}
           />
-          {/* Top 10 Company */}
+          {/* Top Company */}
           <Text style={styles.topCompanyTitle}>Công ty nổi bật</Text>
           <FlatList
             data={topCompanies}
             horizontal
             showsHorizontalScrollIndicator={true}
-            keyExtractor={item => item.id.toString()}
+            keyExtractor={item => item.id}
             renderItem={({item}) => (
               <View style={styles.companyItem}>
-                <Image source={item.image} style={styles.companyImage} />
+                <Image 
+                  source={{uri: item.image}} 
+                  style={styles.companyImage} 
+                />
                 <Text style={styles.companyText}>{item.name}</Text>
               </View>
             )}
@@ -427,7 +288,15 @@ const styles = StyleSheet.create({
   productText: {
     marginTop: 5,
     fontSize: 14,
-    textAlign: 'center'
+    textAlign: 'center',
+    height: 40,
+    width: '100%',
+  },
+  priceText: {
+    marginTop: 5,
+    fontSize: 13,
+    color: appColors.primary,
+    fontFamily: fontFamilies.Medium,
   },
   //New Product
   newProductTitle: {
@@ -456,7 +325,7 @@ const styles = StyleSheet.create({
   companyText: {
     marginTop: 5,
     fontSize: 14,
-    textAlign: 'center'
+    textAlign: 'center',
   },
 });
 

@@ -5,9 +5,10 @@ import { TextComponent } from '../../components';
 import { StyleSheet, Text, TextInput, TouchableOpacity, View, Alert } from 'react-native';
 import { useDispatch } from 'react-redux';
 import { forgotPassword } from '../../lib/redux/reducers/auth.reducer'; // Import action Redux
+import type {NavigationProp} from '../../navigators/index';
 
 const ForgotPasswordScreen = () => {
-  const navigation = useNavigation();
+  const navigation = useNavigation<NavigationProp>();
   const dispatch = useDispatch();
   const [email, setEmail] = useState(''); // State lưu email
 

@@ -6,9 +6,10 @@ import { appInfo } from '../../constants/appInfos'
 import { useNavigation } from '@react-navigation/native'
 import { TextComponent } from '../../components'
 import { fontFamilies } from '../../constants/fontFamilies'
+import type {NavigationProp} from '../../navigators/index';
 
 const OnboardingScreen = () => {
-  const navigation = useNavigation();
+  const navigation = useNavigation<NavigationProp>();
   const [index, setIndex] = useState(0);
   return (
     <View style={styles.container}>

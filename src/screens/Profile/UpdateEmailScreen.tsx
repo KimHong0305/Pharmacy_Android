@@ -1,13 +1,15 @@
-import { View, Text, TextInput, TouchableOpacity, Alert, StyleSheet } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, Alert, StyleSheet, ImageBackground } from 'react-native';
 import React, { useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { updateEmail } from '../../lib/redux/reducers/user.reducer';
 import { useNavigation } from '@react-navigation/native';
+import type {NavigationProp} from '../../navigators/index';
+import { AppDispatch } from '../../lib/redux/store';
 
 const UpdateEmailScreen = () => {
   const [email, setEmail] = useState('');
-  const dispatch = useDispatch();
-  const navigation = useNavigation();
+  const dispatch: AppDispatch = useDispatch<AppDispatch>();
+  const navigation = useNavigation<NavigationProp>();
 
   const handleUpdateEmail = () => {
     if (!email) {
@@ -27,7 +29,7 @@ const UpdateEmailScreen = () => {
   };
 
   return (
-    <View style={styles.container}>
+    <ImageBackground source={require('../../assets/images/OTPBackground.png')} style={styles.container}>
       <TouchableOpacity style={styles.backButton} onPress={() => navigation.navigate('ProfileScreen')}>
           <Text>Quay lại</Text>
       </TouchableOpacity>
@@ -41,7 +43,7 @@ const UpdateEmailScreen = () => {
       <TouchableOpacity style={styles.button} onPress={handleUpdateEmail}>
         <Text style={styles.buttonText}>Cập nhật</Text>
       </TouchableOpacity>
-    </View>
+    </ImageBackground>
   );
 };
 
@@ -73,10 +75,13 @@ const styles = StyleSheet.create({
     backgroundColor: '#007BFF',
     padding: 15,
     borderRadius: 8,
+    width: '90%',
+    alignItems: 'center'
   },
   buttonText: {
     color: '#fff',
     fontWeight: 'bold',
+    fontSize: 15
   },
 });
 

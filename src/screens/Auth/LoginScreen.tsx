@@ -5,9 +5,10 @@ import { useDispatch, useSelector } from 'react-redux';
 import { login, clearMessages } from '../../lib/redux/reducers/auth.reducer';
 import { RootState } from '../../lib/redux/rootReducer';
 import { fontFamilies } from '../../constants/fontFamilies';
+import type {NavigationProp} from '../../navigators/index';
 
 const LoginScreen = () => {
-  const navigation = useNavigation();
+  const navigation = useNavigation<NavigationProp>();
   const dispatch = useDispatch();
 
   const [username, setUsername] = useState('');

@@ -7,7 +7,7 @@ interface UserState {
     bio: UserBio | null;
     loading: boolean;
     error: string | null;
-  }  
+}  
 
 export const getBio = createAsyncThunk<BioResponse, void, { rejectValue: string }>(
   'user/getBio',

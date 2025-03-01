@@ -6,9 +6,10 @@ import { register, clearMessages } from '../../lib/redux/reducers/auth.reducer';
 import { RootState } from '../../lib/redux/rootReducer';
 import { fontFamilies } from '../../constants/fontFamilies';
 import { TextComponent } from '../../components';
+import type {NavigationProp} from '../../navigators/index';
 
 const SignUpScreen = () => {
-  const navigation = useNavigation();
+  const navigation = useNavigation<NavigationProp>();
 
   const dispatch = useDispatch();
 

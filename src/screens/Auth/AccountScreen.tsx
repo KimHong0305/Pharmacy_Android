@@ -2,9 +2,10 @@ import { useNavigation } from '@react-navigation/native';
 import React, { useEffect } from 'react';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { fontFamilies } from '../../constants/fontFamilies';
+import type { NavigationProp } from '../../navigators/index';
 
 const AccountScreen = ( { hasToken }: { hasToken: boolean } ) => {
-  const navigation = useNavigation();
+  const navigation = useNavigation<NavigationProp>();
 
   useEffect(() => {
     if (hasToken) {

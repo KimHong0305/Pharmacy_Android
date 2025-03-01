@@ -15,6 +15,8 @@ import {
   VerifyEmailSignup,
   UpdateEmailScreen,
   VerifyEmailScreen,
+  ProductDetailScreen,
+  OrderScreen,
 } from '../screens';
 import BottomTabNavigation from './BottomTabNavigation';
 
@@ -37,7 +39,10 @@ const Navigation = () => {
   return (
     <Stack.Navigator screenOptions={{headerShown: false}}>
       <Stack.Screen name="OnboardingScreen" component={OnboardingScreen} />
-      <Stack.Screen name="HomeScreen" children={() => <HomeScreen hasToken = {hasToken}/>} />
+      <Stack.Screen
+        name="HomeScreen"
+        children={() => <HomeScreen hasToken={hasToken} />}
+      />
       <Stack.Screen name="AccountScreen" component={AccountScreen} />
       <Stack.Screen name="LoginScreen" component={LoginScreen} />
       <Stack.Screen
@@ -55,6 +60,11 @@ const Navigation = () => {
       <Stack.Screen name="VerifyEmailSignup" component={VerifyEmailSignup} />
       <Stack.Screen name="UpdateEmailScreen" component={UpdateEmailScreen} />
       <Stack.Screen name="VerifyEmailScreen" component={VerifyEmailScreen} />
+      <Stack.Screen
+        name="ProductDetailScreen"
+        component={ProductDetailScreen}
+      />
+      <Stack.Screen name="OrderScreen" component={OrderScreen} />
     </Stack.Navigator>
   );
 }

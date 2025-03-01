@@ -1,17 +1,15 @@
-import api from "../../api/api";
-import { jwtDecode } from "jwt-decode";
-import { 
-    Login, 
-    DecodedToken,
-    Register, 
-    RegisterResponse,
-    VerifySignup,
-    VerifySignupResponse,
-    ResetPassword,
-} from "../../schemas/auth.schema";
-import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import { LoginResponse } from "../../schemas/auth.schema";
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import api from "../../api/api";
+import {
+    Login,
+    LoginResponse,
+    Register,
+    RegisterResponse,
+    ResetPassword,
+    VerifySignup,
+    VerifySignupResponse
+} from "../../schemas/auth.schema";
 
 interface AuthState {
     loading: boolean;

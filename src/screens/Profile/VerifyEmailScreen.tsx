@@ -3,11 +3,12 @@ import React, { useRef, useState } from 'react';
 import { useNavigation} from '@react-navigation/native';
 import { useDispatch } from 'react-redux';
 import { verifyEmail } from '../../lib/redux/reducers/user.reducer';
+import type {NavigationProp} from '../../navigators/index';
 
 const VerifyEmailScreen = () => {
     const [otpCode, setOtpCode] = useState(['', '', '', '', '', '']);
     const inputRefs = useRef<(TextInput | null)[]>([]);
-    const navigation = useNavigation();
+    const navigation = useNavigation<NavigationProp>();
     const dispatch = useDispatch();
 
     const handleOtpChange = (text: string, index: number) => {

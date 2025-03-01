@@ -1,11 +1,11 @@
-import { View, Text, StyleSheet, TouchableOpacity, Image, FlatList } from 'react-native'
+import { View, Text, StyleSheet, FlatList, TouchableOpacity, ScrollView, Image, Button } from 'react-native'
 import React from 'react'
-import { appColors } from '../../constants/appColors';
-import { fontFamilies } from '../../constants/fontFamilies';
-import TextComponent from '../../components/TextComponent';
-import Icon from 'react-native-vector-icons/FontAwesome';
-import { useNavigation } from '@react-navigation/native';
-import { NavigationProp } from '../../navigators';
+import { TextComponent } from '../../components'
+import { appColors } from '../../constants/appColors'
+import Icon  from 'react-native-vector-icons/FontAwesome'
+import { fontFamilies } from '../../constants/fontFamilies'
+import { useNavigation } from '@react-navigation/native'
+import { NavigationProp } from '../../navigators'
 
 const carts = [
   {
@@ -13,41 +13,36 @@ const carts = [
     name: 'Thuốc nhỏ mắt',
     image: require('../../assets/images/product/product1.jpg'),
     price: 100000,
-    unit: 'Hộp',
+    unit: 'Hộp'
   },
   {
     id: 2,
     name: 'Khẩu trang',
     image: require('../../assets/images/product/product2.jpg'),
     price: 100000,
-    unit: 'Hộp',
+    unit: 'Hộp'
   },
   {
     id: 3,
     name: 'Thuốc ho',
     image: require('../../assets/images/product/product3.jpg'),
     price: 100000,
-    unit: 'Hộp',
+    unit: 'Hộp'
   },
   {
     id: 4,
     name: 'Thuốc tiêu hoá',
     image: require('../../assets/images/product/product4.jpg'),
     price: 100000,
-    unit: 'Hộp',
+    unit: 'Hộp'
   },
-];
-
-const OrderScreen = () => {
+]
+const CartScreen = () => {
   const navigation = useNavigation<NavigationProp>();
-  const navigations = useNavigation();
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <TextComponent text="Thanh Toán" size={30}/>
-        <TouchableOpacity style= {{marginBottom: 10}} onPress={() => navigation.navigate('BottomTab', {screen: 'Giỏ hàng'})}>
-            <TextComponent text='Quay lại' size={15} color={appColors.black}/>
-        </TouchableOpacity>
+        <TextComponent text="Cart" size={30} styles={styles.title} />
       </View>
       <View style={styles.body}>
         <View style={styles.address}>
@@ -93,7 +88,7 @@ const OrderScreen = () => {
                       right: 10,
                       bottom: 5,
                       flexDirection: 'row',
-                      gap: 10,
+                      gap: 10
                     }}>
                     <TouchableOpacity style={styles.add_sub}>
                       <TextComponent
@@ -102,7 +97,7 @@ const OrderScreen = () => {
                         color={appColors.black}
                       />
                     </TouchableOpacity>
-                    <TextComponent text="1" size={20} color={appColors.black} />
+                    <TextComponent text='1' size={20} color={appColors.black}/>
                     <TouchableOpacity style={styles.add_sub}>
                       <TextComponent
                         text="-"
@@ -116,69 +111,6 @@ const OrderScreen = () => {
             )}
           />
         </View>
-        <View style={styles.payment_method}>
-          <TextComponent
-            text="Phương Thức Thanh Toán"
-            size={16}
-            color={appColors.black}
-            styles={{
-              marginTop: 5,
-              marginLeft: 10,
-              fontFamily: fontFamilies.SemiBold,
-            }}
-          />
-          <View
-            style={{flexDirection: 'row', justifyContent: 'center', gap: 10}}>
-            <TouchableOpacity>
-              <TextComponent
-                text="CASH"
-                size={16}
-                color={appColors.blue}
-                styles={{
-                  padding: 10,
-                  backgroundColor: appColors.gray2,
-                  borderRadius: 20,
-                }}
-              />
-            </TouchableOpacity>
-            <TouchableOpacity>
-              <TextComponent
-                text="VNPAY"
-                size={16}
-                color={appColors.blue}
-                styles={{
-                  padding: 10,
-                  backgroundColor: appColors.gray2,
-                  borderRadius: 20,
-                }}
-              />
-            </TouchableOpacity>
-            <TouchableOpacity>
-              <TextComponent
-                text="MOMO"
-                size={16}
-                color={appColors.blue}
-                styles={{
-                  padding: 10,
-                  backgroundColor: appColors.gray2,
-                  borderRadius: 20,
-                }}
-              />
-            </TouchableOpacity>
-            <TouchableOpacity>
-              <TextComponent
-                text="ZALO PAY"
-                size={16}
-                color={appColors.blue}
-                styles={{
-                  padding: 10,
-                  backgroundColor: appColors.gray2,
-                  borderRadius: 20,
-                }}
-              />
-            </TouchableOpacity>
-          </View>
-        </View>
         <View style={styles.footer}>
           <View style={{flexDirection: 'row'}}>
             <TextComponent
@@ -188,9 +120,7 @@ const OrderScreen = () => {
             />
             <TextComponent text="400.000đ" size={16} styles={{marginTop: 16}} />
           </View>
-          <TouchableOpacity
-            style={styles.button}
-            onPress={() => navigation.navigate('OrderScreen')}>
+          <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('OrderScreen')}>
             <TextComponent text="Thanh Toán" size={16} />
           </TouchableOpacity>
         </View>
@@ -202,12 +132,12 @@ const OrderScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: appColors.white,
+    backgroundColor: appColors.white
   },
   header: {
-    flexDirection: 'row',
-    alignItems: 'flex-end',
-    gap: 120,
+    alignItems: 'flex-start',
+  },
+  title: {
     marginTop: 30,
     marginLeft: 20,
   },
@@ -224,7 +154,7 @@ const styles = StyleSheet.create({
   },
   content: {
     marginTop: 20,
-    height: '50%',
+    height: '60%',
     borderRadius: 20,
   },
   item: {
@@ -233,7 +163,7 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     borderRadius: 20,
     borderWidth: 1,
-    borderColor: appColors.gray,
+    borderColor: appColors.gray
   },
   image: {
     width: 100,
@@ -244,7 +174,7 @@ const styles = StyleSheet.create({
     shadowColor: appColors.gray,
   },
   text: {
-    fontSize: 13,
+    fontSize: 13
   },
   priceText: {
     marginTop: 5,
@@ -252,22 +182,17 @@ const styles = StyleSheet.create({
     color: appColors.primary,
     fontFamily: fontFamilies.Medium,
   },
-  add_sub: {
+  add_sub:{
     height: 30,
     width: 30,
     borderRadius: 15,
     backgroundColor: appColors.gray,
     alignItems: 'center',
-    justifyContent: 'center',
+    justifyContent: 'center'
   },
-  payment_method: {
-    height: '12%',
-    borderRadius: 20,
-  },
-  footer: {
+  footer:{
     flexDirection: 'row',
-    gap: 100,
-    height: '20%',
+    gap: 100
   },
   button: {
     height: 35,
@@ -277,8 +202,7 @@ const styles = StyleSheet.create({
     marginTop: 10,
     alignItems: 'center',
     justifyContent: 'center',
-    marginLeft: -15,
-  },
+    marginLeft: -15
+  }
 });
-
-export default OrderScreen
+export default CartScreen

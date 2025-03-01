@@ -10,10 +10,12 @@ import SignUpScreen from "./SignUp/SignUpScreen";
 import OnboardingScreen from "./Auth/OnboardingScreen";
 import CategoryScreen from "./Category/CategoryScreen";
 import ConsultantScreen from "./Consultant/ConsultantScreen";
-import OrderScreen from "./Order/OrderScreen";
+import CartScreen from "./Cart/CartScreen";
 import OtpScreen from "./OTP/OtpScreen";
 import VerifyEmailSignup from "./SignUp/VerifyEmailSignup";
 import ResetPasswordScreen from "./Auth/ResetPasswordScreen";
+import ProductDetailScreen from "./Product/ProductDetailScreen";
+import OrderScreen from "./Order/OrderScreen";
 
 export {
     AccountScreen,
@@ -26,10 +28,12 @@ export {
     OnboardingScreen,
     CategoryScreen,
     ConsultantScreen,
-    OrderScreen,
+    CartScreen,
     OtpScreen,
     VerifyEmailSignup,
     ResetPasswordScreen,
     UpdateEmailScreen,
     VerifyEmailScreen,
+    ProductDetailScreen,
+    OrderScreen
 }

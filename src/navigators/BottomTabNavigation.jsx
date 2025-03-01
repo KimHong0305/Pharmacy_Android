@@ -1,7 +1,7 @@
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import React, {useEffect, useState} from 'react';
 import Icon from 'react-native-vector-icons/FontAwesome';
-import { AccountScreen, CategoryScreen, ConsultantScreen, HomeScreen, OrderScreen } from '../screens';
+import { AccountScreen, CategoryScreen, ConsultantScreen, HomeScreen, CartScreen } from '../screens';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const BottomTabNavigation = () => {
@@ -44,7 +44,7 @@ const BottomTabNavigation = () => {
             case 'Tư vấn':
               iconName = 'comments';
               break;
-            case 'Đơn hàng':
+            case 'Giỏ hàng':
               iconName = 'shopping-cart';
               break;
             case 'Tài khoản':
@@ -60,7 +60,7 @@ const BottomTabNavigation = () => {
       <BottomTab.Screen name="Trang chủ" component={HomeScreen} />
       <BottomTab.Screen name="Danh mục" component={CategoryScreen} />
       <BottomTab.Screen name="Tư vấn" component={ConsultantScreen} />
-      <BottomTab.Screen name="Đơn hàng" component={OrderScreen} />
+      <BottomTab.Screen name="Giỏ hàng" component={CartScreen} />
       <BottomTab.Screen
         name="Tài khoản"
         children={() => <AccountScreen hasToken={hasToken} />}

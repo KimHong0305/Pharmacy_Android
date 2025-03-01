@@ -5,9 +5,10 @@ import { useDispatch } from 'react-redux';
 import { resetPassword } from '../../lib/redux/reducers/auth.reducer';
 import { fontFamilies } from '../../constants/fontFamilies';
 import { TextComponent } from '../../components';
+import type {NavigationProp} from '../../navigators/index';
 
 const ResetPasswordScreen = () => {
-    const navigation = useNavigation();
+    const navigation = useNavigation<NavigationProp>();
     const dispatch = useDispatch();
 
     const route = useRoute();

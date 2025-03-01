@@ -2,7 +2,6 @@ import { View, Text, TouchableOpacity, StyleSheet, Image, ActivityIndicator, Ale
 import React, { useEffect, useState } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useNavigation } from '@react-navigation/native';
-import TabBar from '../../components/TabBar';
 import { useDispatch, useSelector } from 'react-redux';
 import { getBio, updateBio } from '../../lib/redux/reducers/user.reducer';
 import { RootState } from '../../lib/redux/rootReducer';
@@ -10,12 +9,12 @@ import { launchImageLibrary } from 'react-native-image-picker';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { AppDispatch } from '../../lib/redux/store';
 import { TextComponent } from '../../components';
+import type {NavigationProp} from '../../navigators/index';
 
 const ProfileScreen = () => {
-  const navigation = useNavigation();
+  const navigation = useNavigation<NavigationProp>();
 
   const dispatch: AppDispatch = useDispatch<AppDispatch>();
-
 
   const { bio, loading, error } = useSelector((state: RootState) => state.user);
 
@@ -38,9 +37,13 @@ const ProfileScreen = () => {
       } else if (response.errorCode) {
         console.log('Lỗi:', response.errorMessage);
       } else if (response.assets && response.assets.length > 0) {
-        const imageUri = response.assets[0].uri;
-        console.log('Ảnh đã chọn:', imageUri);
-        setSelectedImage(imageUri);
+        const imageUri = response.assets?.[0]?.uri;
+        if (imageUri) {
+          console.log('Ảnh đã chọn:', imageUri);
+          setSelectedImage(imageUri);
+        } else {
+          console.log('Không tìm thấy ảnh nào');
+        }
       } else {
         console.log('Không tìm thấy ảnh nào');
       }
@@ -78,8 +81,10 @@ const ProfileScreen = () => {
   
   return (
     <View style={styles.container}>
-      <TouchableOpacity style={styles.closeButton} onPress={() => navigation.navigate('BottomTab')}>
-        <TextComponent text='Quay lại'/>
+      <TouchableOpacity
+        style={styles.closeButton}
+        onPress={() => navigation.navigate('BottomTab')}>
+        <TextComponent text="Quay lại" />
       </TouchableOpacity>
       <Text style={styles.title}>Trang cá nhân</Text>
 
@@ -94,7 +99,11 @@ const ProfileScreen = () => {
         <View style={styles.profileContainer}>
           <View style={styles.avatarContainer}>
             <Image
-              source={{uri: selectedImage || bio.image}}
+              source={
+                selectedImage
+                  ? {uri: bio.image}
+                  : require('../../assets/images/avatar.jpg')
+              }
               style={styles.avatar}
             />
 
@@ -141,7 +150,7 @@ const ProfileScreen = () => {
         </View>
       )}
 
-      <View style={{flexDirection: 'row', gap: 20}}>
+      <View style={{flexDirection: 'column', gap: 10, width: '90%'}}>
         {/* Nút cập nhật thông tin */}
         <TouchableOpacity
           style={styles.updateButton}
@@ -154,8 +163,6 @@ const ProfileScreen = () => {
           <Text style={styles.logoutButtonText}>Đăng xuất</Text>
         </TouchableOpacity>
       </View>
-
-      {/* TabBar */}
     </View>
   );
 };
@@ -228,6 +235,7 @@ const styles = StyleSheet.create({
     padding: 15,
     borderRadius: 10,
     marginTop: 10,
+    alignItems: 'center'
   },
   logoutButtonText: {
     color: '#fff',
@@ -242,11 +250,11 @@ const styles = StyleSheet.create({
     padding: 15,
     borderRadius: 10,
     marginTop: 10,
+    alignItems: 'center'
   },
   updateButtonText: {
     color: '#fff',
     fontWeight: 'bold',
-    textAlign: 'center',
   },
 });
 
