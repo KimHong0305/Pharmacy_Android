@@ -24,8 +24,9 @@ import {
 } from '../../components/Product/ProductTabs'
 import { fontFamilies } from '../../constants/fontFamilies'
 import { ReviewItem } from '../../components/Product/ReviewItem'
-import { ProductDetailItem, ProductDetailResponse, ProductPrice } from '../../lib/schemas/product.schema'
+import { ProductDetailItem, ProductDetailResponse, } from '../../lib/schemas/product.schema'
 import type {NavigationProp} from '../../navigators/index';
+import { Price } from '../../lib/schemas/price.schema';
 
 const Tab = createMaterialTopTabNavigator()
 
@@ -53,7 +54,7 @@ const ProductDetailScreen = () => {
   const route = useRoute();
   const { productId } = route.params as { productId: string };
   const dispatch: AppDispatch = useDispatch();
-  const [selectedUnit, setSelectedUnit] = useState<ProductPrice | null>(null);
+  const [selectedUnit, setSelectedUnit] = useState<Price | null>(null);
 
   const { productDetail, loading, error } = useSelector(
     (state: RootState) => state.product

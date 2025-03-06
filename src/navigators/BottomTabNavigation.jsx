@@ -1,5 +1,6 @@
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import React, {useEffect, useState} from 'react';
+import {Linking} from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { AccountScreen, CategoryScreen, ConsultantScreen, HomeScreen, CartScreen } from '../screens';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -20,6 +21,10 @@ const BottomTabNavigation = () => {
 
     checkToken();
   }, []);
+
+  const openZalo = () => {
+    Linking.openURL('https://zalo.me/0363437324');
+  };
 
   return (
     <BottomTab.Navigator
@@ -59,7 +64,13 @@ const BottomTabNavigation = () => {
       })}>
       <BottomTab.Screen name="Trang chủ" component={HomeScreen} />
       <BottomTab.Screen name="Danh mục" component={CategoryScreen} />
-      <BottomTab.Screen name="Tư vấn" component={ConsultantScreen} />
+      <BottomTab.Screen name="Tư vấn" component={ConsultantScreen} 
+                  listeners={{
+                    tabPress: (e) => {
+                      e.preventDefault();
+                      openZalo();
+                    }
+        }}/>
       <BottomTab.Screen name="Giỏ hàng" component={CartScreen} />
       <BottomTab.Screen
         name="Tài khoản"

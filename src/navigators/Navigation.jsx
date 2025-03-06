@@ -17,6 +17,8 @@ import {
   VerifyEmailScreen,
   ProductDetailScreen,
   OrderScreen,
+  SearchScreen,
+  SearchListScreen,
 } from '../screens';
 import BottomTabNavigation from './BottomTabNavigation';
 
@@ -36,8 +38,11 @@ const Navigation = () => {
 
     checkToken();
   }, []);
+
   return (
-    <Stack.Navigator screenOptions={{headerShown: false}}>
+    <Stack.Navigator
+      initialRouteName={hasToken ? 'BottomTab' : 'OnboardingScreen'}
+      screenOptions={{headerShown: false}}>
       <Stack.Screen name="OnboardingScreen" component={OnboardingScreen} />
       <Stack.Screen
         name="HomeScreen"
@@ -65,6 +70,8 @@ const Navigation = () => {
         component={ProductDetailScreen}
       />
       <Stack.Screen name="OrderScreen" component={OrderScreen} />
+      <Stack.Screen name="SearchScreen" component={SearchScreen} />
+      <Stack.Screen name="SearchList" component={SearchListScreen} />
     </Stack.Navigator>
   );
 }

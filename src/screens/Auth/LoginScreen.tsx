@@ -28,7 +28,7 @@ const LoginScreen = () => {
         if (message) {
           Alert.alert('Thông báo', message);
           dispatch(clearMessages());
-          navigation.navigate('ProfileScreen');
+          navigation.navigate('BottomTab');
           setUsername('');
           setPassword('');
         }

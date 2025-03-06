@@ -32,22 +32,31 @@ const HomeScreen = ({hasToken}: {hasToken: boolean}) => {
     dispatch(getNewProducts());
     dispatch(getTopCompanies());
   }, []);
-
+    
   return (
     <View style={styles.container}>
       {/* Header */}
       <View style={styles.header}>
         <TextComponent text="Pharmacy" size={25} />
+
+        {/* Thanh search */}
         <View style={styles.searchContainer}>
+          <TouchableOpacity onPress={() => navigation.navigate('SearchScreen')}>
           <TextInput
             placeholder="Search"
             style={styles.input}
             placeholderTextColor="#999"
-          />
-          <TouchableOpacity style={styles.icon}>
+              editable={false}
+            />
+          </TouchableOpacity>
+          <TouchableOpacity 
+            style={styles.icon} 
+            onPress={() => navigation.navigate('SearchScreen')}
+          >
             <Icon name="search" size={23} color={appColors.black} />
           </TouchableOpacity>
         </View>
+
         <TouchableOpacity
           onPress={() => {
             if (hasToken) {
@@ -93,13 +102,13 @@ const HomeScreen = ({hasToken}: {hasToken: boolean}) => {
           <View style={styles.categoryContainer}>
             {(
               categories.map(item => (
-                <TouchableOpacity key={item.id} style={styles.categoryItem}>
+              <TouchableOpacity key={item.id} style={styles.categoryItem}>
                   <Image
                     source={{uri: item.image}}
                     style={styles.categoryImage}
                   />
-                  <Text style={styles.categoryText}>{item.name}</Text>
-                </TouchableOpacity>
+                <Text style={styles.categoryText}>{item.name}</Text>
+              </TouchableOpacity>
               ))
             )}
           </View>

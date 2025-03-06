@@ -16,6 +16,8 @@ import VerifyEmailSignup from "./SignUp/VerifyEmailSignup";
 import ResetPasswordScreen from "./Auth/ResetPasswordScreen";
 import ProductDetailScreen from "./Product/ProductDetailScreen";
 import OrderScreen from "./Order/OrderScreen";
+import SearchScreen from "./Search/SearchScreen";
+import SearchListScreen from "./Search/SearchListScreen";
 
 export {
     AccountScreen,
@@ -35,5 +37,7 @@ export {
     UpdateEmailScreen,
     VerifyEmailScreen,
     ProductDetailScreen,
-    OrderScreen
+    OrderScreen,
+    SearchScreen,
+    SearchListScreen,
 }

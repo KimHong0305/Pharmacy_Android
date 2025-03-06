@@ -1,35 +1,8 @@
-export interface Unit {
-  id: string;
-  name: string;
-}
+import { Category } from "./category.schema";
+import { Company } from "./company.schema";
+import { Price } from "./price.schema";
 
-export interface Price {
-  id: string;
-  unit: Unit;
-  price: number;
-}
-
-export interface Company {
-  id: string;
-  name: string;
-  image: string;
-  origin: string;
-}
-
-export interface Category {
-  id: string;
-  name: string;
-  image: string;
-  parent?: Category;
-}
-
-// Response type cho API categories
-export interface CategoryResponse {
-  code: number;
-  result: Category[];
-}
-
-export interface Product {
+export interface HomeProduct {
   id: string;
   name: string;
   quantity: number;
@@ -51,18 +24,7 @@ export interface Product {
 }
 
 // Response type cho API products (best sellers, new products, etc)
-export interface ProductResponse {
+export interface HomeProductResponse {
   code: number;
-  result: Product[];
-}
-
-export interface TopCompany {
-  id: string;
-  name: string;
-  image: string;
-}
-
-export interface TopCompanyResponse {
-  code: number;
-  result: TopCompany[];
+  result: HomeProduct[];
 }

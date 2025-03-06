@@ -1,10 +1,6 @@
-import { Category, Company, Unit } from './home.schema';
-
-export interface ProductPrice {
-  id: string;
-  unit: Unit;
-  price: number;
-}
+import { Category } from './category.schema';
+import { Company } from './company.schema';
+import { Price } from './price.schema';
 
 export interface ProductDetailItem {
   id: string;
@@ -22,7 +18,7 @@ export interface ProductDetailItem {
   dateExpiration: string;
   company: Company;
   category: Category;
-  price: ProductPrice;
+  price: Price;
   images: string[];
 }
 
@@ -30,3 +26,25 @@ export interface ProductDetailResponse {
   code: number;
   result: ProductDetailItem[];
 } 
+
+export interface Product {
+  id: string;
+  name: string;
+  quantity: number;
+  benefits: string;
+  ingredients: string;
+  category: Category;
+  company: Company;
+  prices: Price[];
+  image: string;
+}
+
+export interface ProductResponse {
+  code: number,
+  result: {
+    totalPages: number,
+    totalElements: number,
+    size: number,
+    content: Product[]
+  }
+}

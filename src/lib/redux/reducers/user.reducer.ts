@@ -1,6 +1,6 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import api from "../../api/api";
-import { BioResponse, UserBio, UpdateBioResponse } from '../../schemas/user.chema';
+import { BioResponse, UserBio, UpdateBioResponse } from '../../schemas/user.schema';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 interface UserState {
