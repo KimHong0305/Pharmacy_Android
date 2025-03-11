@@ -1,16 +1,16 @@
+import { useNavigation } from '@react-navigation/native'
 import React, { useState } from 'react'
 import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import Swiper from 'react-native-swiper'
-import { appColors } from '../../constants/appColors'
-import { appInfo } from '../../constants/appInfos'
-import { useNavigation } from '@react-navigation/native'
 import { TextComponent } from '../../components'
+import { appColors } from '../../constants/appColors'
 import { fontFamilies } from '../../constants/fontFamilies'
-import type {NavigationProp} from '../../navigators/index';
+import type { NavigationProp } from '../../navigators/index'
 
 const OnboardingScreen = () => {
   const navigation = useNavigation<NavigationProp>();
   const [index, setIndex] = useState(0);
+  
   return (
     <View style={styles.container}>
       <Swiper loop={false} activeDotColor={appColors.black} index={index} onIndexChanged={num => setIndex(num)}>

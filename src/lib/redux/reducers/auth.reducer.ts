@@ -92,6 +92,22 @@ export const login = createAsyncThunk<LoginResponse, Login, { rejectValue: strin
     }
 );
 
+export const logout = createAsyncThunk(
+  'auth/logout',
+  async (_, {rejectWithValue}) => {
+    try {
+      const token = await AsyncStorage.getItem('token');
+      const response = await api.post('/auth/logout', {token});
+      
+      await AsyncStorage.removeItem('token');
+
+      return {message: response.data.message};
+    } catch (error:any) {
+      return rejectWithValue(error.response.data.message);
+    }
+  },
+);
+
 export const register = createAsyncThunk<RegisterResponse, Register, { rejectValue: string }>(
     "auth/register",
     async (formData, { rejectWithValue }) => {
@@ -182,92 +198,95 @@ const authSlice = createSlice({
     },
     extraReducers: (builder) => {
         builder
-        // LOGIN
-            .addCase(login.pending, (state) => {
-                state.loading = true;
-                state.error = null;
-            })
-            .addCase(login.fulfilled, (state, action) => {
-                state.loading = false;
-                state.message = action.payload.message;
-                if (action.payload.result) {
-                    state.token = action.payload.result.token;
-                }
-            })
-            .addCase(login.rejected, (state, action) => {
-                state.loading = false;
-                state.error = action.payload || "Login failed";
-            })
+          // LOGIN
+          .addCase(login.pending, state => {
+            state.loading = true;
+            state.error = null;
+          })
+          .addCase(login.fulfilled, (state, action) => {
+            state.loading = false;
+            state.message = action.payload.message;
+            if (action.payload.result) {
+              state.token = action.payload.result.token;
+            }
+          })
+          .addCase(login.rejected, (state, action) => {
+            state.loading = false;
+            state.error = action.payload || 'Login failed';
+          })
+          //LOGOUT
+          .addCase(logout.fulfilled, (state, action) => {
+            state.token = null;
+          })
+          // REGISTER
+          .addCase(register.pending, state => {
+            state.loading = true;
+            state.error = null;
+          })
+          .addCase(register.fulfilled, (state, action) => {
+            state.loading = false;
+            state.message = action.payload.message;
+          })
+          .addCase(register.rejected, (state, action) => {
+            state.loading = false;
+            state.error = action.payload || 'Register failed';
+          })
 
-        // REGISTER
-            .addCase(register.pending, (state) => {
-                state.loading = true;
-                state.error = null;
-            })
-            .addCase(register.fulfilled, (state, action) => {
-                state.loading = false;
-                state.message = action.payload.message;
-            })
-            .addCase(register.rejected, (state, action) => {
-                state.loading = false;
-                state.error = action.payload || "Register failed";
-            })
-        
-        // VERIFY EMAIL SIGNUP
-            .addCase(verifyOtpSignup.pending, (state) => {
-                state.loading = true;
-                state.error = null;
-            })
-            .addCase(verifyOtpSignup.fulfilled, (state, action) => {
-                state.loading = false;
-                state.message = action.payload.message;
-            })
-            .addCase(verifyOtpSignup.rejected, (state, action) => {
-                state.loading = false;
-                state.error = action.payload || "Verify failed";
-            })
+          // VERIFY EMAIL SIGNUP
+          .addCase(verifyOtpSignup.pending, state => {
+            state.loading = true;
+            state.error = null;
+          })
+          .addCase(verifyOtpSignup.fulfilled, (state, action) => {
+            state.loading = false;
+            state.message = action.payload.message;
+          })
+          .addCase(verifyOtpSignup.rejected, (state, action) => {
+            state.loading = false;
+            state.error = action.payload || 'Verify failed';
+          })
 
-        // REFRESH OTP
-            .addCase(refreshOtp.pending, (state) => {
-                state.loading = true;
-                state.error = null;
-            })
-            .addCase(refreshOtp.fulfilled, (state, action) => {
-                state.loading = false;
-                state.message = action.payload.message;
-            })
-            .addCase(refreshOtp.rejected, (state, action) => {
-                state.loading = false;
-                state.error = action.payload || "refresh failed";
-            })
+          // REFRESH OTP
+          .addCase(refreshOtp.pending, state => {
+            state.loading = true;
+            state.error = null;
+          })
+          .addCase(refreshOtp.fulfilled, (state, action) => {
+            state.loading = false;
+            state.message = action.payload.message;
+          })
+          .addCase(refreshOtp.rejected, (state, action) => {
+            state.loading = false;
+            state.error = action.payload || 'refresh failed';
+          })
 
-        // FORGOT PASSWORD
-            .addCase(forgotPassword.pending, (state) => {
-                state.loading = true;
-                state.error = null;
-            })
-            .addCase(forgotPassword.fulfilled, (state, action) => {
-                state.loading = false;
-                state.message = action.payload.message;
-            })
-            .addCase(forgotPassword.rejected, (state, action) => {
-                state.loading = false;
-                state.error = action.payload || "forgot password failed";
-            })
-        
-        // RESET PASSWORD
-            .addCase(resetPassword.pending, (state) => {
-                state.loading = true;
-                state.error = null;
-            })
-            .addCase(resetPassword.fulfilled, (state, action) => {
-                state.loading = false;
-                state.message = action.payload.message;
-            })
-            .addCase(resetPassword.rejected, (state, action) => {
-                state.loading = false;
-                state.error = action.payload || "reset password failed";
-            })
+          // FORGOT PASSWORD
+          .addCase(forgotPassword.pending, state => {
+            state.loading = true;
+            state.error = null;
+          })
+          .addCase(forgotPassword.fulfilled, (state, action) => {
+            state.loading = false;
+            state.message = action.payload.message;
+          })
+          .addCase(forgotPassword.rejected, (state, action) => {
+            state.loading = false;
+            state.error = action.payload || 'forgot password failed';
+          })
+
+          // RESET PASSWORD
+          .addCase(resetPassword.pending, state => {
+            state.loading = true;
+            state.error = null;
+          })
+          .addCase(resetPassword.fulfilled, (state, action) => {
+            state.loading = false;
+            state.message = action.payload.message;
+          })
+          .addCase(resetPassword.rejected, (state, action) => {
+            state.loading = false;
+            state.error = action.payload || 'reset password failed';
+          });
     }
 });
 

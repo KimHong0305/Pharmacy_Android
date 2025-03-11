@@ -10,6 +10,8 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 import { AppDispatch } from '../../lib/redux/store';
 import { TextComponent } from '../../components';
 import type {NavigationProp} from '../../navigators/index';
+import { getCartGuest } from '../../lib/redux/reducers/cart.reducer';
+import { logout } from '../../lib/redux/reducers/auth.reducer';
 
 const ProfileScreen = () => {
   const navigation = useNavigation<NavigationProp>();
@@ -25,7 +27,7 @@ const ProfileScreen = () => {
   }, []);
 
   const handleLogout = async () => {
-    await AsyncStorage.removeItem('token');
+    dispatch(logout());
     console.log('Đã đăng xuất');
     navigation.navigate('BottomTab', {screen: 'Tài khoản'});
   };

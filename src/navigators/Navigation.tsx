@@ -48,7 +48,10 @@ const Navigation = () => {
         name="HomeScreen"
         children={() => <HomeScreen hasToken={hasToken} />}
       />
-      <Stack.Screen name="AccountScreen" component={AccountScreen} />
+      <Stack.Screen
+        name="AccountScreen"
+        children={() => <AccountScreen hasToken={hasToken} />}
+      />
       <Stack.Screen name="LoginScreen" component={LoginScreen} />
       <Stack.Screen
         name="ForgotPasswordScreen"

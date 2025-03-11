@@ -1,130 +1,161 @@
-import { View, Text, StyleSheet, FlatList, TouchableOpacity, ScrollView, Image, Button } from 'react-native'
-import React from 'react'
+import { useNavigation } from '@react-navigation/native'
+import React, { useEffect } from 'react'
+import { FlatList, Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
+import { useDispatch, useSelector } from 'react-redux'
 import { TextComponent } from '../../components'
 import { appColors } from '../../constants/appColors'
-import Icon  from 'react-native-vector-icons/FontAwesome'
 import { fontFamilies } from '../../constants/fontFamilies'
-import { useNavigation } from '@react-navigation/native'
+import { getCartGuest, getCartUser, updateCartGuest, updateCartUser } from '../../lib/redux/reducers/cart.reducer'
+import { RootState } from '../../lib/redux/rootReducer'
+import { AppDispatch } from '../../lib/redux/store'
 import { NavigationProp } from '../../navigators'
 
-const carts = [
-  {
-    id: 1,
-    name: 'Thuốc nhỏ mắt',
-    image: require('../../assets/images/product/product1.jpg'),
-    price: 100000,
-    unit: 'Hộp'
-  },
-  {
-    id: 2,
-    name: 'Khẩu trang',
-    image: require('../../assets/images/product/product2.jpg'),
-    price: 100000,
-    unit: 'Hộp'
-  },
-  {
-    id: 3,
-    name: 'Thuốc ho',
-    image: require('../../assets/images/product/product3.jpg'),
-    price: 100000,
-    unit: 'Hộp'
-  },
-  {
-    id: 4,
-    name: 'Thuốc tiêu hoá',
-    image: require('../../assets/images/product/product4.jpg'),
-    price: 100000,
-    unit: 'Hộp'
-  },
-]
+const truncateText = (text: string, maxLength: number) => {
+  if (text.length <= maxLength) return text;
+  return text.substring(0, maxLength) + '...';
+};
+
 const CartScreen = () => {
   const navigation = useNavigation<NavigationProp>();
+  const dispatch: AppDispatch = useDispatch<AppDispatch>();
+  const {cart, loading} = useSelector((state: RootState) => state.cart);
+  const {token} = useSelector((state: RootState) => state.auth);
+
+  useEffect(() => {
+    if (token) {
+      dispatch(getCartUser());
+    } else {
+      dispatch(getCartGuest());
+    }
+  }, [dispatch, token]);
+  
+  const handleIncreaseQuantity = (id: string) => {
+    const existingItem = cart?.result?.cartItemResponses.find(item => item.id === id);
+    if (existingItem) {
+      const updatedItem = {priceId: existingItem.priceId, quantity: 1};
+      if (token) {
+        dispatch(updateCartUser(updatedItem)).then(() =>
+          dispatch(getCartUser()),
+        );
+      } else {
+        dispatch(updateCartGuest(updatedItem)).then(() =>
+          dispatch(getCartGuest()),
+        );
+      }
+    }
+  }; 
+
+  const handleDecreaseQuantity = (id: string) => {
+    const existingItem = cart?.result?.cartItemResponses.find(
+      item => item.id === id,
+    );
+    if (existingItem) {
+      const updatedItem = {priceId: existingItem.priceId, quantity: -1};
+      if (token) {
+        dispatch(updateCartUser(updatedItem)).then(() =>
+          dispatch(getCartUser()),
+        );
+      } else {
+        dispatch(updateCartGuest(updatedItem)).then(() =>
+          dispatch(getCartGuest()),
+        );
+      }
+    }
+  }; 
+
   return (
     <View style={styles.container}>
       <View style={styles.header}>
         <TextComponent text="Cart" size={30} styles={styles.title} />
       </View>
-      <View style={styles.body}>
-        <View style={styles.address}>
-          <TextComponent
-            text="Địa chỉ nhận hàng"
-            size={16}
-            styles={{marginTop: 10, marginLeft: 10}}
-          />
-          <View style={{flexDirection: 'row'}}>
-            <TextComponent
-              text="45/7 đường số 4, Tam Hà, Thủ Đức"
-              size={13}
-              styles={{padding: 10}}
-            />
-            <TouchableOpacity>
-              <Icon
-                name="edit"
-                size={23}
-                color={appColors.black}
-                style={{marginTop: 5, marginLeft: 80}}
+      {loading ? (
+        <TextComponent text="Đang tải giỏ hàng" />
+      ) : (cart?.result?.cartItemResponses ?? []).length > 0 ? (
+        <>
+          <View style={styles.body}>
+            <View style={styles.content}>
+              <FlatList
+                data={cart?.result?.cartItemResponses}
+                showsVerticalScrollIndicator={false}
+                keyExtractor={item => item.id.toString()}
+                renderItem={({item}) => (
+                  <TouchableOpacity>
+                    <View style={styles.item}>
+                      <Image source={{uri: item.image}} style={styles.image} />
+                      <View>
+                        <TextComponent
+                          text={truncateText(item.productName, 20)}
+                          size={16}
+                        />
+                        <Text style={styles.priceText}>
+                          {item.price.toLocaleString('vi-VN')}đ/{item.unitName}
+                        </Text>
+                      </View>
+                      <View
+                        style={{
+                          position: 'absolute',
+                          right: 10,
+                          bottom: 5,
+                          flexDirection: 'row',
+                          gap: 10,
+                        }}>
+                        <TouchableOpacity
+                          style={styles.add_sub}
+                          onPress={() => handleIncreaseQuantity(item.id)}>
+                          <TextComponent
+                            text="+"
+                            size={20}
+                            color={appColors.black}
+                          />
+                        </TouchableOpacity>
+                        <TextComponent
+                          text={item.quantity.toString()}
+                          size={20}
+                          color={appColors.black}
+                        />
+                        <TouchableOpacity
+                          style={styles.add_sub}
+                          onPress={() => handleDecreaseQuantity(item.id)}>
+                          <TextComponent
+                            text="-"
+                            size={20}
+                            color={appColors.black}
+                          />
+                        </TouchableOpacity>
+                      </View>
+                    </View>
+                  </TouchableOpacity>
+                )}
               />
-            </TouchableOpacity>
-          </View>
-        </View>
-        <View style={styles.content}>
-          <FlatList
-            data={carts}
-            showsVerticalScrollIndicator={false}
-            keyExtractor={item => item.id.toString()}
-            renderItem={({item}) => (
-              <TouchableOpacity>
-                <View style={styles.item}>
-                  <Image source={item.image} style={styles.image} />
-                  <View>
-                    <TextComponent text={item.name} size={16} />
-                    <Text style={styles.priceText}>
-                      {item.price.toLocaleString('vi-VN')}đ/{item.unit}
-                    </Text>
-                  </View>
-                  <View
-                    style={{
-                      position: 'absolute',
-                      right: 10,
-                      bottom: 5,
-                      flexDirection: 'row',
-                      gap: 10
-                    }}>
-                    <TouchableOpacity style={styles.add_sub}>
-                      <TextComponent
-                        text="+"
-                        size={20}
-                        color={appColors.black}
-                      />
-                    </TouchableOpacity>
-                    <TextComponent text='1' size={20} color={appColors.black}/>
-                    <TouchableOpacity style={styles.add_sub}>
-                      <TextComponent
-                        text="-"
-                        size={20}
-                        color={appColors.black}
-                      />
-                    </TouchableOpacity>
-                  </View>
-                </View>
+            </View>
+            <View style={styles.footer}>
+              <View style={{flexDirection: 'row'}}>
+                <TextComponent
+                  text="Tổng tiền: "
+                  size={16}
+                  styles={{marginTop: 16, marginLeft: 10}}
+                />
+                <TextComponent
+                  text={cart?.result.totalPrice.toString() || '0'}
+                  size={16}
+                  styles={{marginTop: 16}}
+                />
+              </View>
+              <TouchableOpacity
+                style={styles.button}
+                onPress={() => navigation.navigate('OrderScreen')}>
+                <TextComponent text="Thanh Toán" size={16} />
               </TouchableOpacity>
-            )}
-          />
-        </View>
-        <View style={styles.footer}>
-          <View style={{flexDirection: 'row'}}>
-            <TextComponent
-              text="Tổng tiền: "
-              size={16}
-              styles={{marginTop: 16}}
-            />
-            <TextComponent text="400.000đ" size={16} styles={{marginTop: 16}} />
+            </View>
           </View>
-          <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('OrderScreen')}>
-            <TextComponent text="Thanh Toán" size={16} />
-          </TouchableOpacity>
-        </View>
-      </View>
+        </>
+      ) : (
+        <>
+          <View style={styles.cart_null}>
+            <TextComponent text="Giỏ hàng trống" size={20} />
+          </View>
+        </>
+      )}
     </View>
   );
 }
@@ -145,17 +176,11 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     height: '100%',
     width: '90%',
-    marginTop: 10,
-  },
-  address: {
-    height: '15%',
-    backgroundColor: appColors.gray2,
-    borderRadius: 20,
+    marginTop: 10
   },
   content: {
-    marginTop: 20,
-    height: '60%',
-    borderRadius: 20,
+    height: '75%',
+    borderRadius: 20
   },
   item: {
     flexDirection: 'row',
@@ -191,6 +216,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center'
   },
   footer:{
+    marginTop: 10,
     flexDirection: 'row',
     gap: 100
   },
@@ -202,7 +228,12 @@ const styles = StyleSheet.create({
     marginTop: 10,
     alignItems: 'center',
     justifyContent: 'center',
-    marginLeft: -15
+    marginLeft: -10
+  },
+  cart_null: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center'
   }
 });
 export default CartScreen

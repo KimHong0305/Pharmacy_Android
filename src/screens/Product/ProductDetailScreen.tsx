@@ -27,6 +27,7 @@ import { ReviewItem } from '../../components/Product/ReviewItem'
 import { ProductDetailItem, ProductDetailResponse, } from '../../lib/schemas/product.schema'
 import type {NavigationProp} from '../../navigators/index';
 import { Price } from '../../lib/schemas/price.schema';
+import { addCartGuest, getCartGuest } from '../../lib/redux/reducers/cart.reducer';
 
 const Tab = createMaterialTopTabNavigator()
 
@@ -51,18 +52,18 @@ const reviews = [
 
 const ProductDetailScreen = () => {
   const navigation = useNavigation<NavigationProp>();
+
   const route = useRoute();
   const { productId } = route.params as { productId: string };
+
   const dispatch: AppDispatch = useDispatch();
+
   const [selectedUnit, setSelectedUnit] = useState<Price | null>(null);
+  const [quantity, setQuantity] = useState(1);
 
   const { productDetail, loading, error } = useSelector(
     (state: RootState) => state.product
-  ) as {
-    productDetail: ProductDetailResponse | null;
-    loading: boolean;
-    error: string | null;
-  };
+  )
 
   useEffect(() => {
     if (productId) {
@@ -78,6 +79,37 @@ const ProductDetailScreen = () => {
       setSelectedUnit(productDetail.result[0].price);
     }
   }, [productDetail]);
+
+  const handleAddToCart = () => {
+    if (!selectedUnit?.id) {
+      console.error('Error: priceId is undefined');
+      return;
+    }
+
+    const newItem = {
+      priceId: selectedUnit?.id,
+      quantity
+    };
+
+    dispatch(addCartGuest(newItem))
+      .then(response => {
+        console.log('Add to cart response:', response);
+
+        // Log kết quả của getCartGuest()
+        dispatch(getCartGuest())
+          .then(cartResponse => {
+            console.log('Get cart response:', cartResponse);
+          })
+          .catch(error => {
+            console.error('Error getting cart:', error);
+          });
+      })
+      .catch(error => {
+        console.error('Error adding to cart:', error);
+      });
+  };
+
+
 
   const renderHeader = () => (
     <View style={styles.header}>
@@ -121,18 +153,20 @@ const ProductDetailScreen = () => {
       <ScrollView style={styles.scrollView}>
         <View style={styles.slider}>
           <Swiper activeDotColor={appColors.blue}>
-            {productDetail.result[0].images.map((image: string, index: number) => (
-              <View key={index}>
-                <Image source={{uri: image}} style={styles.image}/>
-              </View>
-            ))}
+            {productDetail.result[0].images.map(
+              (image: string, index: number) => (
+                <View key={index}>
+                  <Image source={{uri: image}} style={styles.image} />
+                </View>
+              ),
+            )}
           </Swiper>
         </View>
 
         <View style={styles.productInfo}>
-          <TextComponent 
+          <TextComponent
             text={productDetail.result[0].name}
-            size={24} 
+            size={24}
             styles={styles.productName}
           />
 
@@ -142,21 +176,26 @@ const ProductDetailScreen = () => {
                 key={item.price.id}
                 style={[
                   styles.unitButton,
-                  selectedUnit?.id === item.price.id && styles.selectedUnit
+                  selectedUnit?.id === item.price.id && styles.selectedUnit,
                 ]}
-                onPress={() => setSelectedUnit(item.price)}
-              >
-                <TextComponent 
+                onPress={() => setSelectedUnit(item.price)}>
+                <TextComponent
                   text={item.price.unit.name}
-                  color={selectedUnit?.id === item.price.id ? appColors.white : appColors.text}
+                  color={
+                    selectedUnit?.id === item.price.id
+                      ? appColors.white
+                      : appColors.text
+                  }
                 />
               </TouchableOpacity>
             ))}
           </View>
 
           {selectedUnit && (
-            <TextComponent 
-              text={`${selectedUnit.price.toLocaleString()}đ/${selectedUnit.unit.name}`}
+            <TextComponent
+              text={`${selectedUnit.price.toLocaleString()}đ/${
+                selectedUnit.unit.name
+              }`}
               size={20}
               color={appColors.blue}
               styles={styles.price}
@@ -169,53 +208,78 @@ const ProductDetailScreen = () => {
             screenOptions={{
               tabBarScrollEnabled: true,
               tabBarLabelStyle: styles.tabLabel,
-              tabBarIndicatorStyle: { backgroundColor: appColors.blue },
-              tabBarStyle: { elevation: 0, borderBottomWidth: 1, borderBottomColor: appColors.gray2 },
-            }}
-          >
-            <Tab.Screen 
-              name="Lợi ích" 
-              children={() => <BenefitsTab benefits={productDetail.result[0].benefits} />}
+              tabBarIndicatorStyle: {backgroundColor: appColors.blue},
+              tabBarStyle: {
+                elevation: 0,
+                borderBottomWidth: 1,
+                borderBottomColor: appColors.gray2,
+              },
+            }}>
+            <Tab.Screen
+              name="Lợi ích"
+              children={() => (
+                <BenefitsTab benefits={productDetail.result[0].benefits} />
+              )}
             />
-            <Tab.Screen 
-              name="Thành phần" 
-              children={() => <IngredientsTab ingredients={productDetail.result[0].ingredients} />}
+            <Tab.Screen
+              name="Thành phần"
+              children={() => (
+                <IngredientsTab
+                  ingredients={productDetail.result[0].ingredients}
+                />
+              )}
             />
-            <Tab.Screen 
-              name="Chống chỉ định" 
-              children={() => <ContraindicationsTab contraindication={productDetail.result[0].constraindication} />}
+            <Tab.Screen
+              name="Chống chỉ định"
+              children={() => (
+                <ContraindicationsTab
+                  contraindication={productDetail.result[0].constraindication}
+                />
+              )}
             />
-            <Tab.Screen 
-              name="Đối tượng SD" 
-              children={() => <UsageTab objectUse={productDetail.result[0].object_use} />}
+            <Tab.Screen
+              name="Đối tượng SD"
+              children={() => (
+                <UsageTab objectUse={productDetail.result[0].object_use} />
+              )}
             />
-            <Tab.Screen 
-              name="Hướng dẫn SD" 
-              children={() => <InstructionsTab instruction={productDetail.result[0].instruction} />}
+            <Tab.Screen
+              name="Hướng dẫn SD"
+              children={() => (
+                <InstructionsTab
+                  instruction={productDetail.result[0].instruction}
+                />
+              )}
             />
-            <Tab.Screen 
-              name="Bảo quản" 
-              children={() => <StorageTab preserve={productDetail.result[0].preserve} />}
+            <Tab.Screen
+              name="Bảo quản"
+              children={() => (
+                <StorageTab preserve={productDetail.result[0].preserve} />
+              )}
             />
-            <Tab.Screen 
-              name="Lưu ý" 
+            <Tab.Screen
+              name="Lưu ý"
               children={() => <NotesTab note={productDetail.result[0].note} />}
             />
-            <Tab.Screen 
-              name="Công ty" 
-              children={() => <CompanyTab company={productDetail.result[0].company} />}
+            <Tab.Screen
+              name="Công ty"
+              children={() => (
+                <CompanyTab company={productDetail.result[0].company} />
+              )}
             />
-            <Tab.Screen 
-              name="Danh mục" 
-              children={() => <CategoryTab category={productDetail.result[0].category} />}
+            <Tab.Screen
+              name="Danh mục"
+              children={() => (
+                <CategoryTab category={productDetail.result[0].category} />
+              )}
             />
           </Tab.Navigator>
         </View>
 
         <View style={styles.reviewsSection}>
-          <TextComponent 
-            text="Đánh giá sản phẩm" 
-            size={18} 
+          <TextComponent
+            text="Đánh giá sản phẩm"
+            size={18}
             styles={styles.sectionTitle}
           />
           {reviews.map((review, index) => (
@@ -225,17 +289,15 @@ const ProductDetailScreen = () => {
       </ScrollView>
 
       <View style={styles.footer}>
-        <TouchableOpacity 
+        <TouchableOpacity
           style={[styles.button, styles.addToCartButton]}
-          onPress={() => {/* handle add to cart */}}
-        >
+          onPress={handleAddToCart}>
           <TextComponent text="Thêm vào giỏ" color={appColors.blue} />
         </TouchableOpacity>
-        
-        <TouchableOpacity 
+
+        <TouchableOpacity
           style={[styles.button, styles.buyNowButton]}
-          onPress={() => {/* handle buy now */}}
-        >
+          onPress={handleAddToCart}>
           <TextComponent text="Mua ngay" color={appColors.white} />
         </TouchableOpacity>
       </View>

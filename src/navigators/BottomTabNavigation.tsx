@@ -1,13 +1,22 @@
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import React, {useEffect, useState} from 'react';
-import {Linking} from 'react-native';
+import {Linking, View} from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { AccountScreen, CategoryScreen, ConsultantScreen, HomeScreen, CartScreen } from '../screens';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useDispatch, useSelector } from 'react-redux';
+import { AppDispatch } from '../lib/redux/store';
+import { RootState } from '../lib/redux/rootReducer';
 
 const BottomTabNavigation = () => {
   const BottomTab = createBottomTabNavigator();
   const [hasToken, setHasToken] = useState(false);
+
+  const dispatch: AppDispatch = useDispatch<AppDispatch>();
+  const cartItemsCount = useSelector(
+    (state: RootState) =>
+      (state.cart.cart?.result?.cartItemResponses ?? []).length,
+  );
 
   useEffect(() => {
     const checkToken = async () => {
@@ -47,8 +56,22 @@ const BottomTabNavigation = () => {
               iconName = 'list';
               break;
             case 'Tư vấn':
-              iconName = 'comments';
-              break;
+              return (
+                <View
+                  style={{
+                    width: 40,
+                    height: 40,
+                    backgroundColor: '#007AFF',
+                    borderRadius: 32,
+                    padding: 8,
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    position: 'absolute',
+                    bottom: 5, // Nâng lên so với các icon khác
+                  }}>
+                  <Icon name="phone" size={24} color="#fff" />
+                </View>
+              );
             case 'Giỏ hàng':
               iconName = 'shopping-cart';
               break;
@@ -62,16 +85,33 @@ const BottomTabNavigation = () => {
           return <Icon name={iconName} size={size} color={color} />;
         },
       })}>
-      <BottomTab.Screen name="Trang chủ" component={HomeScreen} />
+      <BottomTab.Screen
+        name="Trang chủ"
+        children={() => <HomeScreen hasToken={hasToken} />}
+      />
       <BottomTab.Screen name="Danh mục" component={CategoryScreen} />
-      <BottomTab.Screen name="Tư vấn" component={ConsultantScreen} 
-                  listeners={{
-                    tabPress: (e) => {
-                      e.preventDefault();
-                      openZalo();
-                    }
-        }}/>
-      <BottomTab.Screen name="Giỏ hàng" component={CartScreen} />
+      <BottomTab.Screen
+        name="Tư vấn"
+        component={ConsultantScreen}
+        listeners={{
+          tabPress: e => {
+            e.preventDefault();
+            openZalo();
+          },
+        }}
+      />
+      <BottomTab.Screen
+        name="Giỏ hàng"
+        component={CartScreen}
+        options={{
+          tabBarBadge: cartItemsCount > 0 ? cartItemsCount : undefined, // Hiển thị số lượng sản phẩm
+          tabBarBadgeStyle: {
+            backgroundColor: 'red',
+            color: 'white',
+            fontSize: 12,
+          },
+        }}
+      />
       <BottomTab.Screen
         name="Tài khoản"
         children={() => <AccountScreen hasToken={hasToken} />}
