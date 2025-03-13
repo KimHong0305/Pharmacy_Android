@@ -1,7 +1,7 @@
 import { useNavigation, useRoute } from '@react-navigation/native'
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import React, { useState, useEffect } from 'react'
-import { Image, StyleSheet, TouchableOpacity, View, ScrollView } from 'react-native'
+import { Image, StyleSheet, TouchableOpacity, View, ScrollView, Alert } from 'react-native'
 import { useDispatch, useSelector } from 'react-redux'
 import { AppDispatch } from '../../lib/redux/store'
 import { RootState } from '../../lib/redux/rootReducer'
@@ -27,7 +27,7 @@ import { ReviewItem } from '../../components/Product/ReviewItem'
 import { ProductDetailItem, ProductDetailResponse, } from '../../lib/schemas/product.schema'
 import type {NavigationProp} from '../../navigators/index';
 import { Price } from '../../lib/schemas/price.schema';
-import { addCartGuest, getCartGuest } from '../../lib/redux/reducers/cart.reducer';
+import { addCartGuest, addCartUser, getCartGuest, getCartUser } from '../../lib/redux/reducers/cart.reducer';
 
 const Tab = createMaterialTopTabNavigator()
 
@@ -61,9 +61,9 @@ const ProductDetailScreen = () => {
   const [selectedUnit, setSelectedUnit] = useState<Price | null>(null);
   const [quantity, setQuantity] = useState(1);
 
-  const { productDetail, loading, error } = useSelector(
-    (state: RootState) => state.product
-  )
+  const { productDetail, loading, error } = useSelector((state: RootState) => state.product);
+  const {token} = useSelector((state : RootState) => state.auth);
+  const {cart} = useSelector((state: RootState) => state.cart);
 
   useEffect(() => {
     if (productId) {
@@ -91,25 +91,45 @@ const ProductDetailScreen = () => {
       quantity
     };
 
-    dispatch(addCartGuest(newItem))
-      .then(response => {
-        console.log('Add to cart response:', response);
+    if(token){
+      dispatch(addCartUser(newItem))
+        .then(() => Alert.alert('Thông báo', 'Thêm vào giỏ hàng thành công'))
+        .then(() => dispatch(getCartUser()));
+    } else {
+      dispatch(addCartGuest(newItem))
+        .then(() => Alert.alert('Thông báo', 'Thêm vào giỏ hàng thành công'))
+        .then(response => {
+          console.log('Add to cart response:', response);
 
-        // Log kết quả của getCartGuest()
-        dispatch(getCartGuest())
-          .then(cartResponse => {
-            console.log('Get cart response:', cartResponse);
-          })
-          .catch(error => {
-            console.error('Error getting cart:', error);
-          });
-      })
-      .catch(error => {
-        console.error('Error adding to cart:', error);
-      });
+          dispatch(getCartGuest())
+            .then(cartResponse => {
+              console.log('Get cart response:', cartResponse);
+            })
+            .catch(error => {
+              console.error('Error getting cart:', error);
+            });
+        })
+        .catch(error => {
+          console.error('Error adding to cart:', error);
+        });
+    }
   };
 
+  const handleOrderGuest = () => {
+    if (!selectedUnit?.id) {
+      console.error('Error: priceId is undefined');
+      return;
+    }
 
+    const newItem = {
+      priceId: selectedUnit?.id,
+      quantity,
+    };
+
+    dispatch(addCartGuest(newItem))
+      .then(() => dispatch(getCartGuest()))
+      .then(() => navigation.navigate('OrderScreen', {cart: cart}))
+  }
 
   const renderHeader = () => (
     <View style={styles.header}>
@@ -297,7 +317,7 @@ const ProductDetailScreen = () => {
 
         <TouchableOpacity
           style={[styles.button, styles.buyNowButton]}
-          onPress={handleAddToCart}>
+          onPress={handleOrderGuest}>
           <TextComponent text="Mua ngay" color={appColors.white} />
         </TouchableOpacity>
       </View>

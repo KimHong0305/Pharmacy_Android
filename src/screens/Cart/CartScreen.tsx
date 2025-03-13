@@ -136,14 +136,14 @@ const CartScreen = () => {
                   styles={{marginTop: 16, marginLeft: 10}}
                 />
                 <TextComponent
-                  text={cart?.result.totalPrice.toString() || '0'}
+                  text={cart?.result.totalPrice.toLocaleString('vi-VN') + 'đ' || '0'}
                   size={16}
                   styles={{marginTop: 16}}
                 />
               </View>
               <TouchableOpacity
                 style={styles.button}
-                onPress={() => navigation.navigate('OrderScreen')}>
+                onPress={() => navigation.navigate('OrderScreen', {cart: cart})}>
                 <TextComponent text="Thanh Toán" size={16} />
               </TouchableOpacity>
             </View>

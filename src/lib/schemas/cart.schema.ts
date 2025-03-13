@@ -1,4 +1,3 @@
-//GUEST
 export interface CartItem {
   id: string;
   priceId: string;

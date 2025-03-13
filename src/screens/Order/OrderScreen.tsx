@@ -1,52 +1,70 @@
-import { View, Text, StyleSheet, TouchableOpacity, Image, FlatList } from 'react-native'
-import React from 'react'
+import { View, Text, StyleSheet, TouchableOpacity, Image, FlatList, Alert } from 'react-native'
+import React, { useEffect, useState } from 'react'
 import { appColors } from '../../constants/appColors';
 import { fontFamilies } from '../../constants/fontFamilies';
 import TextComponent from '../../components/TextComponent';
 import Icon from 'react-native-vector-icons/FontAwesome';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, useRoute } from '@react-navigation/native';
 import { NavigationProp } from '../../navigators';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { CartResponse } from '../../lib/schemas/cart.schema';
+import { useDispatch } from 'react-redux';
+import { AppDispatch } from '../../lib/redux/store';
+import { createOrderCartGuest } from '../../lib/redux/reducers/order.reducer';
+import { getCartGuest } from '../../lib/redux/reducers/cart.reducer';
 
-const carts = [
-  {
-    id: 1,
-    name: 'Thuốc nhỏ mắt',
-    image: require('../../assets/images/product/product1.jpg'),
-    price: 100000,
-    unit: 'Hộp',
-  },
-  {
-    id: 2,
-    name: 'Khẩu trang',
-    image: require('../../assets/images/product/product2.jpg'),
-    price: 100000,
-    unit: 'Hộp',
-  },
-  {
-    id: 3,
-    name: 'Thuốc ho',
-    image: require('../../assets/images/product/product3.jpg'),
-    price: 100000,
-    unit: 'Hộp',
-  },
-  {
-    id: 4,
-    name: 'Thuốc tiêu hoá',
-    image: require('../../assets/images/product/product4.jpg'),
-    price: 100000,
-    unit: 'Hộp',
-  },
-];
+const truncateText = (text: string, maxLength: number) => {
+  if (text.length <= maxLength) return text;
+  return text.substring(0, maxLength) + '...';
+};
 
 const OrderScreen = () => {
   const navigation = useNavigation<NavigationProp>();
-  const navigations = useNavigation();
+  const [addressData, setAddressData] = useState({fullname: '', phone: '', province: '', district: '', village: '', address: '', addressCategory: ''});
+
+  const route = useRoute();
+  const orderItems = route.params as {cart: CartResponse};
+
+  const [paymentMethod, setPaymentMethod] = useState('');
+
+  const dispatch: AppDispatch = useDispatch<AppDispatch>();
+  
+  useEffect(() => {
+    const getData = async () => {
+      const data = await AsyncStorage.getItem('AddressData');
+      if (data !== null) {
+        setAddressData(JSON.parse(data)); // Chuyển từ JSON về object
+      }
+    };
+    getData();
+  }, []);
+
+  const handleOrderForGuest = () => {
+    const order = {
+      fullname: addressData.fullname,
+      phone: addressData.phone,
+      province: addressData.province,
+      district: addressData.district,
+      village: addressData.village,
+      address: addressData.address,
+      addressCategory: addressData.addressCategory,
+      paymentMethod: paymentMethod
+    };
+    dispatch(createOrderCartGuest(order))
+    .then(() => dispatch(getCartGuest()))
+    .then(() => Alert.alert('Thông báo', 'Đặt hàng thành công'))
+  }
+
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <TextComponent text="Thanh Toán" size={30}/>
-        <TouchableOpacity style= {{marginBottom: 10}} onPress={() => navigation.navigate('BottomTab', {screen: 'Giỏ hàng'})}>
-            <TextComponent text='Quay lại' size={15} color={appColors.black}/>
+        <TextComponent text="Thanh Toán" size={30} />
+        <TouchableOpacity
+          style={{marginBottom: 10}}
+          onPress={() =>
+            navigation.navigate('BottomTab', {screen: 'Giỏ hàng'})
+          }>
+          <TextComponent text="Quay lại" size={15} color={appColors.black} />
         </TouchableOpacity>
       </View>
       <View style={styles.body}>
@@ -56,35 +74,43 @@ const OrderScreen = () => {
             size={16}
             styles={{marginTop: 10, marginLeft: 10}}
           />
-          <View style={{flexDirection: 'row'}}>
+          <View>
             <TextComponent
-              text="45/7 đường số 4, Tam Hà, Thủ Đức"
+              text={
+                addressData.address +
+                ', ' +
+                addressData.village +
+                ', ' +
+                addressData.district +
+                ', ' +
+                addressData.province
+              }
               size={13}
               styles={{padding: 10}}
             />
-            <TouchableOpacity>
-              <Icon
-                name="edit"
-                size={23}
-                color={appColors.black}
-                style={{marginTop: 5, marginLeft: 80}}
-              />
+            <TouchableOpacity
+              style={{position: 'absolute', top: 8, right: 10}}
+              onPress={() => navigation.navigate('AddressScreen')}>
+              <Icon name="edit" size={23} color={appColors.black} />
             </TouchableOpacity>
           </View>
         </View>
         <View style={styles.content}>
           <FlatList
-            data={carts}
+            data={orderItems.cart.result.cartItemResponses}
             showsVerticalScrollIndicator={false}
             keyExtractor={item => item.id.toString()}
             renderItem={({item}) => (
               <TouchableOpacity>
                 <View style={styles.item}>
-                  <Image source={item.image} style={styles.image} />
+                  <Image source={{uri: item.image}} style={styles.image} />
                   <View>
-                    <TextComponent text={item.name} size={16} />
+                    <TextComponent
+                      text={truncateText(item.productName, 20)}
+                      size={16}
+                    />
                     <Text style={styles.priceText}>
-                      {item.price.toLocaleString('vi-VN')}đ/{item.unit}
+                      {item.price.toLocaleString('vi-VN')}đ/{item.unitName}
                     </Text>
                   </View>
                   <View
@@ -95,21 +121,11 @@ const OrderScreen = () => {
                       flexDirection: 'row',
                       gap: 10,
                     }}>
-                    <TouchableOpacity style={styles.add_sub}>
-                      <TextComponent
-                        text="+"
-                        size={20}
-                        color={appColors.black}
-                      />
-                    </TouchableOpacity>
-                    <TextComponent text="1" size={20} color={appColors.black} />
-                    <TouchableOpacity style={styles.add_sub}>
-                      <TextComponent
-                        text="-"
-                        size={20}
-                        color={appColors.black}
-                      />
-                    </TouchableOpacity>
+                    <TextComponent
+                      text={item.quantity.toString()}
+                      size={20}
+                      color={appColors.black}
+                    />
                   </View>
                 </View>
               </TouchableOpacity>
@@ -129,50 +145,74 @@ const OrderScreen = () => {
           />
           <View
             style={{flexDirection: 'row', justifyContent: 'center', gap: 10}}>
-            <TouchableOpacity>
+            <TouchableOpacity
+              style={{
+                borderRadius: 20,
+                borderColor: paymentMethod === 'CASH' ? 'blue' : 'gray',
+                backgroundColor:
+                  paymentMethod === 'CASH' ? '#E3F2FD' : appColors.gray2,
+              }}
+              onPress={() => setPaymentMethod('CASH')}>
               <TextComponent
                 text="CASH"
                 size={16}
                 color={appColors.blue}
                 styles={{
                   padding: 10,
-                  backgroundColor: appColors.gray2,
                   borderRadius: 20,
                 }}
               />
             </TouchableOpacity>
-            <TouchableOpacity>
+            <TouchableOpacity
+              style={{
+                borderRadius: 20,
+                borderColor: paymentMethod === 'VNPAY' ? 'blue' : 'gray',
+                backgroundColor:
+                  paymentMethod === 'VNPAY' ? '#E3F2FD' : appColors.gray2,
+              }}
+              onPress={() => setPaymentMethod('VNPAY')}>
               <TextComponent
                 text="VNPAY"
                 size={16}
                 color={appColors.blue}
                 styles={{
                   padding: 10,
-                  backgroundColor: appColors.gray2,
                   borderRadius: 20,
                 }}
               />
             </TouchableOpacity>
-            <TouchableOpacity>
+            <TouchableOpacity
+              style={{
+                borderRadius: 20,
+                borderColor: paymentMethod === 'MOMO' ? 'blue' : 'gray',
+                backgroundColor:
+                  paymentMethod === 'MOMO' ? '#E3F2FD' : appColors.gray2,
+              }}
+              onPress={() => setPaymentMethod('MOMO')}>
               <TextComponent
                 text="MOMO"
                 size={16}
                 color={appColors.blue}
                 styles={{
                   padding: 10,
-                  backgroundColor: appColors.gray2,
                   borderRadius: 20,
                 }}
               />
             </TouchableOpacity>
-            <TouchableOpacity>
+            <TouchableOpacity
+              style={{
+                borderRadius: 20,
+                borderColor: paymentMethod === 'ZALOPAY' ? 'blue' : 'gray',
+                backgroundColor:
+                  paymentMethod === 'ZALOPAY' ? '#E3F2FD' : appColors.gray2,
+              }}
+              onPress={() => setPaymentMethod('ZALOPAY')}>
               <TextComponent
                 text="ZALO PAY"
                 size={16}
                 color={appColors.blue}
                 styles={{
                   padding: 10,
-                  backgroundColor: appColors.gray2,
                   borderRadius: 20,
                 }}
               />
@@ -186,11 +226,15 @@ const OrderScreen = () => {
               size={16}
               styles={{marginTop: 16}}
             />
-            <TextComponent text="400.000đ" size={16} styles={{marginTop: 16}} />
+            <TextComponent
+              text={
+                orderItems.cart.result.totalPrice.toLocaleString('vi-VN') + 'đ'
+              }
+              size={16}
+              styles={{marginTop: 16}}
+            />
           </View>
-          <TouchableOpacity
-            style={styles.button}
-            onPress={() => navigation.navigate('OrderScreen')}>
+          <TouchableOpacity style={styles.button} onPress={() => handleOrderForGuest()}>
             <TextComponent text="Thanh Toán" size={16} />
           </TouchableOpacity>
         </View>

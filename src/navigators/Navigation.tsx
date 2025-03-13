@@ -19,6 +19,7 @@ import {
   OrderScreen,
   SearchScreen,
   SearchListScreen,
+  AddressScreen,
 } from '../screens';
 import BottomTabNavigation from './BottomTabNavigation';
 
@@ -73,6 +74,7 @@ const Navigation = () => {
         component={ProductDetailScreen}
       />
       <Stack.Screen name="OrderScreen" component={OrderScreen} />
+      <Stack.Screen name="AddressScreen" component={AddressScreen} />
       <Stack.Screen name="SearchScreen" component={SearchScreen} />
       <Stack.Screen name="SearchList" component={SearchListScreen} />
     </Stack.Navigator>

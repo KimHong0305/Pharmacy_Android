@@ -1,4 +1,5 @@
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { CartResponse } from '../lib/schemas/cart.schema';
 
 export type RootStackParamList = {
   HomeScreen: undefined;
@@ -15,7 +16,8 @@ export type RootStackParamList = {
   OnboardingScreen: undefined;
   AccountScreen: undefined;
   ProductScreen: undefined;
-  OrderScreen: undefined,
+  OrderScreen: {cart: CartResponse | null},
+  AddressScreen: undefined,
   SearchList: {query : string},
   SearchScreen: undefined
 };

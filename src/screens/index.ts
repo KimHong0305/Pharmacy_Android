@@ -18,6 +18,7 @@ import ProductDetailScreen from "./Product/ProductDetailScreen";
 import OrderScreen from "./Order/OrderScreen";
 import SearchScreen from "./Search/SearchScreen";
 import SearchListScreen from "./Search/SearchListScreen";
+import AddressScreen from "./Address/AddressScreen";
 
 export {
     AccountScreen,
@@ -40,4 +41,5 @@ export {
     OrderScreen,
     SearchScreen,
     SearchListScreen,
+    AddressScreen
 }
