@@ -1,131 +1,67 @@
-import React, {useState} from 'react';
-import {View, Text, TouchableOpacity, StyleSheet, FlatList} from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { View, Text, TouchableOpacity, StyleSheet, FlatList, Image, ActivityIndicator } from 'react-native';
 import { appColors } from '../../constants/appColors';
-import { Image } from 'react-native-elements';
 import { useNavigation } from '@react-navigation/native';
 import { NavigationProp } from '../../navigators';
-
-const categories = [
-  {
-    name: 'Thuốc',
-    image: require('../../assets/images/category/thuoc.png'),
-    subCategories: [
-      {
-        name: 'Thuốc kê đơn',
-        image: require('../../assets/images/category/thuoc.png'),
-      },
-      {
-        name: 'Thuốc không kê đơn',
-        image: require('../../assets/images/category/thuoc.png'),
-      },
-    ],
-  },
-  {
-    name: 'Thực phẩm chức năng',
-    image: require('../../assets/images/category/thucphamchucnang.jpg'),
-    subCategories: [
-      {
-        name: 'Dành cho mắt',
-        image: require('../../assets/images/category/thucphamchucnang.jpg'),
-      },
-      {
-        name: 'Dành cho máu',
-        image: require('../../assets/images/category/thucphamchucnang.jpg'),
-      },
-    ],
-  },
-  {
-    name: 'Chăm sóc cá nhân',
-    image: require('../../assets/images/category/chamsoccanhan.jpg'),
-    subCategories: [
-      {
-        name: 'Dầu gội',
-        image: require('../../assets/images/category/chamsoccanhan.jpg'),
-      },
-      {
-        name: 'Mỹ phẩm',
-        image: require('../../assets/images/category/chamsoccanhan.jpg'),
-      },
-    ],
-  },
-  {
-    name: 'Mẹ và Bé',
-    image: require('../../assets/images/category/mevabe.jpg'),
-    subCategories: [
-      {
-        name: 'Sửa cho bé',
-        image: require('../../assets/images/category/mevabe.jpg'),
-      },
-      {
-        name: 'Tả bỉm',
-        image: require('../../assets/images/category/mevabe.jpg'),
-      },
-    ],
-  },
-  {
-    name: 'Chăm sóc sắc đẹp',
-    image: require('../../assets/images/category/chamsocsacdep.jpg'),
-    subCategories: [
-      {
-        name: 'Mỹ phẩm',
-        image: require('../../assets/images/category/chamsocsacdep.jpg'),
-      },
-      {
-        name: 'Kem dưỡng',
-        image: require('../../assets/images/category/chamsocsacdep.jpg'),
-      },
-    ],
-  },
-  {
-    name: 'Thiết bị y tế',
-    image: require('../../assets/images/category/thietbiyte.jpg'),
-    subCategories: [
-      {
-        name: 'Nhiệt kế',
-        image: require('../../assets/images/category/thietbiyte.jpg'),
-      },
-      {
-        name: 'Máy đo huyết áp',
-        image: require('../../assets/images/category/thietbiyte.jpg'),
-      },
-    ],
-  },
-];
+import { getCategories } from '../../lib/redux/reducers/home.reducer';
+import { AppDispatch } from '../../lib/redux/store';
+import { useDispatch, useSelector } from 'react-redux';
+import { RootState } from '../../lib/redux/rootReducer';
+import { getCategoryDetail } from '../../lib/redux/reducers/category.reducer';
 
 export default function CategoryScreen() {
-  const [activeCategory, setActiveCategory] = useState<number | null>(null);
+  const [activeCategory, setActiveCategory] = useState<string | null>(null);
 
+  const dispatch: AppDispatch = useDispatch();
   const navigation = useNavigation<NavigationProp>();
+
+  const { categories, loading } = useSelector((state: RootState) => state.home);
+  const { subCategories, loading: detailLoading } = useSelector((state: RootState) => state.category);
+
+  useEffect(() => {
+    dispatch(getCategories());
+  }, [dispatch]);
+
+  const handleCategoryPress = (categoryId: string) => {
+    setActiveCategory(categoryId);
+    dispatch(getCategoryDetail(categoryId));
+  };
 
   return (
     <View style={styles.container}>
+      {/* Sidebar danh mục lớn */}
       <View style={styles.sidebar}>
-        {categories.map((category, index) => (
+        {categories.map((category) => (
           <TouchableOpacity
-            key={index}
-            style={[
-              styles.categoryItem,
-              activeCategory === index && styles.activeCategory,
-            ]}
-            onPress={() => setActiveCategory(index)}>
-            <Image source={category.image} style={styles.image} />
+            key={category.id}
+            style={[styles.categoryItem, activeCategory === category.id && styles.activeCategory]}
+            onPress={() => handleCategoryPress(category.id)}>
+            <Image 
+                source={{ uri: category.image }} 
+                style={styles.image} 
+            />
             <Text style={styles.categoryText}>{category.name}</Text>
           </TouchableOpacity>
         ))}
       </View>
 
+      {/* Danh mục con */}
       <View style={styles.content}>
-        {activeCategory !== null && (
+        {detailLoading ? (
+          <ActivityIndicator size="large" color="#007AFF" />
+        ) : subCategories.length > 0 ? (
           <FlatList
-            data={categories[activeCategory].subCategories}
-            keyExtractor={(item, index) => index.toString()}
-            renderItem={({item}) => (
+            data={subCategories}
+            keyExtractor={(item) => item.id}
+            renderItem={({ item }) => (
               <TouchableOpacity style={styles.subCategoryItem}>
-                <Image source={item.image} style={styles.image} />
-                <Text>{item.name}</Text>
+                <Image source={{ uri: item.image }} style={styles.image} />
+                <Text style={styles.categoryText}>{item.name}</Text>
               </TouchableOpacity>
             )}
           />
+        ) : (
+          <Text style={styles.noCategoryText}>Chọn danh mục để xem chi tiết</Text>
         )}
       </View>
     </View>
@@ -135,39 +71,46 @@ export default function CategoryScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1, 
-    flexDirection: 'row'
+    flexDirection: 'row',
+    paddingTop: 40,
   },
   sidebar: {
     width: '30%', 
     backgroundColor: appColors.white,
   },
   content: {
-    width: '60%', 
-    padding: 10
+    width: '70%', 
+    padding: 10,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   categoryItem: {
     padding: 14, 
     borderBottomWidth: 1, 
     borderBottomColor: '#ccc',
     flexDirection: 'column',
-    alignItems: 'center'
+    alignItems: 'center',
   },
   activeCategory: {
-    backgroundColor: '#2196F3'
+    backgroundColor: '#2196F3',
   },
   categoryText: {
     color: '#000',
-    textAlign: 'center'
+    textAlign: 'center',
   },
   subCategoryItem: {
     padding: 10,
     borderBottomWidth: 1,
     borderBottomColor: '#ddd',
-    alignItems: 'center'
+    alignItems: 'center',
   },
   image: {
-    width: 50,
-    height: 50,
-    borderRadius: 20
-  }
+    width: 70,
+    height: 70,
+  },
+  noCategoryText: {
+    fontSize: 16,
+    color: '#888',
+    textAlign: 'center',
+  },
 });

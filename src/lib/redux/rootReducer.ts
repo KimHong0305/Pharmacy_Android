@@ -4,6 +4,7 @@ import userReducer from './reducers/user.reducer';
 import homeReducer from './reducers/home.reducer';
 import productReducer from './reducers/product.reducer';
 import orderReducer from './reducers/order.reducer';
+import categoryReducer from './reducers/category.reducer';
 
 const rootReducer = combineReducers({
   auth: authReducer,
@@ -11,6 +12,7 @@ const rootReducer = combineReducers({
   home: homeReducer,
   product: productReducer,
   order: orderReducer,
+  category: categoryReducer,
 });
 
 export type RootState = ReturnType<typeof rootReducer>;
