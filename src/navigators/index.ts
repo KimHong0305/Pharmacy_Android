@@ -17,7 +17,9 @@ export type RootStackParamList = {
   ProductScreen: undefined;
   OrderScreen: undefined,
   SearchList: {query : string},
-  SearchScreen: undefined
+  SearchScreen: undefined,
+  HistoryOrderScreen: {active: string},
+  AccScreen: undefined,
 };
 
 export type NavigationProp = NativeStackNavigationProp<RootStackParamList>; 

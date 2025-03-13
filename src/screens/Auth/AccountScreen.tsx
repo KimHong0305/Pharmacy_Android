@@ -9,7 +9,7 @@ const AccountScreen = ( { hasToken }: { hasToken: boolean } ) => {
 
   useEffect(() => {
     if (hasToken) {
-      navigation.navigate('ProfileScreen'); 
+      navigation.navigate('AccScreen'); 
     }
   }, [hasToken, navigation]);
   

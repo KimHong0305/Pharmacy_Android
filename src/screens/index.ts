@@ -18,6 +18,8 @@ import ProductDetailScreen from "./Product/ProductDetailScreen";
 import OrderScreen from "./Order/OrderScreen";
 import SearchScreen from "./Search/SearchScreen";
 import SearchListScreen from "./Search/SearchListScreen";
+import AccScreen from "./Profile/AccScreen";
+import HistoryOrderScreen from "./Profile/HistoryOrderScreen";
 
 export {
     AccountScreen,
@@ -40,4 +42,6 @@ export {
     OrderScreen,
     SearchScreen,
     SearchListScreen,
+    AccScreen,
+    HistoryOrderScreen,
 }
