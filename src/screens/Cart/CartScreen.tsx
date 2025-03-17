@@ -10,6 +10,7 @@ import { RootState } from '../../lib/redux/rootReducer'
 import { AppDispatch } from '../../lib/redux/store'
 import { NavigationProp } from '../../navigators'
 
+//... Text
 const truncateText = (text: string, maxLength: number) => {
   if (text.length <= maxLength) return text;
   return text.substring(0, maxLength) + '...';
@@ -21,6 +22,7 @@ const CartScreen = () => {
   const {cart, loading} = useSelector((state: RootState) => state.cart);
   const {token} = useSelector((state: RootState) => state.auth);
 
+  //Get Cart
   useEffect(() => {
     if (token) {
       dispatch(getCartUser());
@@ -29,6 +31,7 @@ const CartScreen = () => {
     }
   }, [dispatch, token]);
   
+  //Increase Quantity
   const handleIncreaseQuantity = (id: string) => {
     const existingItem = cart?.result?.cartItemResponses.find(item => item.id === id);
     if (existingItem) {
@@ -45,6 +48,7 @@ const CartScreen = () => {
     }
   }; 
 
+  //Decrease Quantity
   const handleDecreaseQuantity = (id: string) => {
     const existingItem = cart?.result?.cartItemResponses.find(
       item => item.id === id,
@@ -136,14 +140,14 @@ const CartScreen = () => {
                   styles={{marginTop: 16, marginLeft: 10}}
                 />
                 <TextComponent
-                  text={cart?.result.totalPrice.toLocaleString('vi-VN') + 'đ' || '0'}
+                  text={cart?.result?.totalPrice.toLocaleString('vi-VN') + 'đ' || '0'}
                   size={16}
                   styles={{marginTop: 16}}
                 />
               </View>
               <TouchableOpacity
                 style={styles.button}
-                onPress={() => navigation.navigate('OrderScreen', {cart: cart})}>
+                onPress={() => navigation.navigate('OrderCartScreen')}>
                 <TextComponent text="Thanh Toán" size={16} />
               </TouchableOpacity>
             </View>

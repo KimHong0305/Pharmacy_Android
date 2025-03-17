@@ -1,19 +1,20 @@
-import {View, Text, StyleSheet, Touchable, TouchableOpacity, TextInput, Switch, StatusBar} from 'react-native';
-import React, { useCallback, useEffect, useState } from 'react';
-import {appColors} from '../../constants/appColors';
-import {TextComponent} from '../../components';
-import Icon from 'react-native-vector-icons/FontAwesome';
-import { useFocusEffect, useNavigation } from '@react-navigation/native';
-import { NavigationProp } from '../../navigators';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { useSelector } from 'react-redux';
+import { useFocusEffect, useNavigation, useRoute } from '@react-navigation/native';
+import React, { useCallback, useState } from 'react';
+import { StatusBar, StyleSheet, Switch, TextInput, TouchableOpacity, View } from 'react-native';
+import Icon from 'react-native-vector-icons/FontAwesome';
+import { useDispatch, useSelector } from 'react-redux';
+import { TextComponent } from '../../components';
+import { appColors } from '../../constants/appColors';
+import { addAddress } from '../../lib/redux/reducers/address.reducer';
 import { RootState } from '../../lib/redux/rootReducer';
+import { AppDispatch } from '../../lib/redux/store';
+import { ProductDetailItem } from '../../lib/schemas/product.schema';
+import { NavigationProp } from '../../navigators';
 
 const AddressScreen = () => {
-  const navigation = useNavigation<NavigationProp>();
-
-  const {cart} = useSelector((state: RootState) => state.cart);
   
+  const navigation = useNavigation<NavigationProp>();
   const [fullname, setFullname] = useState('');
   const [phone, setPhone] = useState('');
   const [province, setProvince] = useState('');
@@ -21,8 +22,14 @@ const AddressScreen = () => {
   const [village, setVillage] = useState('');
   const [address, setAddress] = useState('');
   const [addressCategory, setAddressCategory] = useState('');
-  
+  const [addressDefault, setAddressDefault] = useState(false);
+  const {token} = useSelector((state:RootState) => state.auth);
+  const dispatch : AppDispatch = useDispatch<AppDispatch>();
+  const route = useRoute();
+  const {home} = route.params as {home : boolean};
+  const {product} = route.params as {product: ProductDetailItem};
 
+  //Update Status Bar
   useFocusEffect(
     useCallback(() => {
       // Đặt StatusBar cho màn hình này khi được focus
@@ -37,6 +44,7 @@ const AddressScreen = () => {
     }, []),
   );
 
+  //Save Address
   const handleSave = async () => {
     const AddressData = {
       fullname,
@@ -45,19 +53,48 @@ const AddressScreen = () => {
       district,
       village,
       address,
-      addressCategory
+      addressCategory,
+      addressDefault,
     };
-    await AsyncStorage.setItem('AddressData', JSON.stringify(AddressData));
-    navigation.navigate('OrderScreen', {cart: cart})
-    console.log(AddressData);
-  }
 
+    if (token) {
+      try {
+        const resultAction = await dispatch(addAddress(AddressData)).unwrap();
+
+        const newId = resultAction.result?.id;
+
+        const updatedAddressData = {...AddressData, id: newId};
+
+        await AsyncStorage.setItem(
+          'AddressUser',
+          JSON.stringify(updatedAddressData),
+        );
+      } catch (error) {
+        console.error('Lỗi khi lưu địa chỉ:', error);
+      }
+    } else {
+      await AsyncStorage.setItem('AddressGuest', JSON.stringify(AddressData));
+    }
+
+    handleNavigate();
+  };
+
+  //Switch Address Default
+  const toggleSwitch = () => setAddressDefault(previousState => !previousState);
+
+  //Handle Navigate
+  const handleNavigate = () => {
+    if(home == true) {
+      navigation.navigate('OrderHomeScreen', {product: product});
+    } else {
+      navigation.navigate('OrderCartScreen');
+    }
+  }
+  
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <TouchableOpacity
-          style={styles.icon}
-          onPress={() => navigation.navigate('OrderScreen', {cart: cart})}>
+        <TouchableOpacity style={styles.icon} onPress={handleNavigate}>
           <Icon name="chevron-left" size={20} color={appColors.white} />
         </TouchableOpacity>
         <TextComponent
@@ -181,7 +218,14 @@ const AddressScreen = () => {
                 size={15}
                 styles={styles.title}
               />
-              <Switch style={{marginTop: -25}}></Switch>
+              <Switch
+                style={{marginTop: -25}}
+                trackColor={{false: '#767577', true: '#81b0ff'}}
+                thumbColor={addressDefault ? '#f5dd4b' : '#f4f3f4'}
+                ios_backgroundColor="#3e3e3e"
+                onValueChange={toggleSwitch}
+                value={addressDefault}
+              />
             </View>
             <TouchableOpacity
               style={styles.button}

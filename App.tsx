@@ -27,7 +27,8 @@ const AppContent = () => {
 
   useEffect(() => {
     if (token) {
-      dispatch(transfer()).then(() => dispatch(getCartUser()));
+      dispatch(transfer())
+        .then(() => dispatch(getCartUser())); 
     } else {
       dispatch(getCartGuest());
     }

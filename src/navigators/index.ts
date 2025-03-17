@@ -1,5 +1,5 @@
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { CartResponse } from '../lib/schemas/cart.schema';
+import { ProductDetailItem } from '../lib/schemas/product.schema';
 
 export type RootStackParamList = {
   HomeScreen: undefined;
@@ -8,18 +8,22 @@ export type RootStackParamList = {
   ForgotPasswordScreen: undefined;
   ResetPasswordScreen: {email: string};
   ProfileScreen: undefined;
-  BottomTab? : { screen: string };
+  BottomTab?: {screen: string};
   VerifyEmailSignup?: {email: string};
   UpdateEmailScreen: undefined;
   VerifyEmailScreen: undefined;
-  ProductDetailScreen: { productId: string };
+  ProductDetailScreen: {productId: string};
   OnboardingScreen: undefined;
   AccountScreen: undefined;
   ProductScreen: undefined;
-  OrderScreen: {cart: CartResponse | null},
-  AddressScreen: undefined,
-  SearchList: {query : string},
-  SearchScreen: undefined
+  OrderCartScreen: undefined;
+  OrderHomeScreen: {product: ProductDetailItem};
+  AddressScreen: {home?: boolean; product?: ProductDetailItem};
+  ListAddressScreen: {home?: boolean; product?: ProductDetailItem};
+  SearchList: {query: string};
+  SearchScreen: undefined;
+  HistoryOrderScreen: {active: string};
+  AccScreen: undefined;
 };
 
 export type NavigationProp = NativeStackNavigationProp<RootStackParamList>; 

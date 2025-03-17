@@ -18,14 +18,15 @@ const truncateText = (text: string, maxLength: number) => {
   return text.substring(0, maxLength) + '...';
 };
 
-const HomeScreen = ({hasToken}: {hasToken: boolean}) => {
+const HomeScreen = () => {
+
   const navigation = useNavigation<NavigationProp>();
   const dispatch: AppDispatch = useDispatch<AppDispatch>();
-
   const {categories, bestSellers, newProducts, topCompanies} = useSelector(
     (state: RootState) => state.home,
   );
-
+  const {token} = useSelector((state: RootState) => state.auth);
+  
   useEffect(() => {
     dispatch(getCategories());
     dispatch(getBestSellers());
@@ -59,7 +60,7 @@ const HomeScreen = ({hasToken}: {hasToken: boolean}) => {
 
         <TouchableOpacity
           onPress={() => {
-            if (hasToken) {
+            if (token) {
               navigation.navigate('ProfileScreen');
             } else {
               navigation.navigate('BottomTab', {screen: 'Tài khoản'});

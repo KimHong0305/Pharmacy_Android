@@ -98,8 +98,6 @@ export const logout = createAsyncThunk(
     try {
       const token = await AsyncStorage.getItem('token');
       const response = await api.post('/auth/logout', {token});
-      
-      await AsyncStorage.removeItem('token');
 
       return {message: response.data.message};
     } catch (error:any) {

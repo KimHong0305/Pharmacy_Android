@@ -15,10 +15,14 @@ import OtpScreen from "./OTP/OtpScreen";
 import VerifyEmailSignup from "./SignUp/VerifyEmailSignup";
 import ResetPasswordScreen from "./Auth/ResetPasswordScreen";
 import ProductDetailScreen from "./Product/ProductDetailScreen";
-import OrderScreen from "./Order/OrderScreen";
+import OrderScreen from "./Order/OrderCartScreen";
 import SearchScreen from "./Search/SearchScreen";
 import SearchListScreen from "./Search/SearchListScreen";
 import AddressScreen from "./Address/AddressScreen";
+import AccScreen from "./Profile/AccScreen";
+import HistoryOrderScreen from "./Profile/HistoryOrderScreen";
+import ListAddressScreen from "./Address/ListAddressScreen";
+import OrderHomeScreen from "./Order/OrderHomeScreen";
 
 export {
     AccountScreen,
@@ -39,7 +43,11 @@ export {
     VerifyEmailScreen,
     ProductDetailScreen,
     OrderScreen,
+    OrderHomeScreen,
     SearchScreen,
     SearchListScreen,
-    AddressScreen
+    AddressScreen,
+    ListAddressScreen,
+    AccScreen,
+    HistoryOrderScreen
 }

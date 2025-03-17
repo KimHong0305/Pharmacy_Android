@@ -1,5 +1,4 @@
-//For GUEST
-export interface OrderItemGuest {
+export interface OrderItem {
     priceId: string,
     productName: string,
     unitName: string,
@@ -9,26 +8,26 @@ export interface OrderItemGuest {
     image: string
 }
 
-export interface OrderGuest {
-    id: string,
-    fullname: string,
-    phone: number,
-    province: string,
-    district: string,
-    village: string,
-    address: string,
-    addressCategory: string,
-    orderItemTemporaries: OrderItemGuest[];
-    orderDate: Date,
-    paymentMethod: string,
-    status: string,
-    isConfirm: boolean,
-    totalPrice: number
+export interface Order {
+  id: string;
+  fullname: string;
+  phone: number;
+  province: string;
+  district: string;
+  village: string;
+  address: string;
+  addressCategory: string;
+  orderItemResponses: OrderItem[];
+  orderDate: string;
+  paymentMethod: string;
+  status: string;
+  isConfirm: boolean;
+  totalPrice: number;
 }
 
-export interface OrderGuestResponse {
+export interface OrderResponse {
     code: number,
-    result: OrderGuest
+    result: Order
 }
 
 export interface AddOrderGuest {
@@ -41,4 +40,14 @@ export interface AddOrderGuest {
     address: string,
     addressCategory: string,
     paymentMethod: string
+}
+
+export interface AddOrderUser {
+    priceId?: string,
+    addressId: string,
+    paymentMethod: string
+}
+
+export interface HistoryOrderResponse {
+    result: Order[];
 }

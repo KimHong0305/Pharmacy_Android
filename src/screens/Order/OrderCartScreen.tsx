@@ -1,58 +1,86 @@
-import { View, Text, StyleSheet, TouchableOpacity, Image, FlatList, Alert } from 'react-native'
-import React, { useEffect, useState } from 'react'
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useNavigation } from '@react-navigation/native';
+import React, { useEffect, useState } from 'react';
+import { Alert, FlatList, Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import Icon from 'react-native-vector-icons/FontAwesome';
+import { useDispatch, useSelector } from 'react-redux';
+import TextComponent from '../../components/TextComponent';
 import { appColors } from '../../constants/appColors';
 import { fontFamilies } from '../../constants/fontFamilies';
-import TextComponent from '../../components/TextComponent';
-import Icon from 'react-native-vector-icons/FontAwesome';
-import { useNavigation, useRoute } from '@react-navigation/native';
-import { NavigationProp } from '../../navigators';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import { CartResponse } from '../../lib/schemas/cart.schema';
-import { useDispatch } from 'react-redux';
+import { getCartGuest, getCartUser } from '../../lib/redux/reducers/cart.reducer';
+import { createOrderCartGuest, createOrderCartUser } from '../../lib/redux/reducers/order.reducer';
+import { RootState } from '../../lib/redux/rootReducer';
 import { AppDispatch } from '../../lib/redux/store';
-import { createOrderCartGuest } from '../../lib/redux/reducers/order.reducer';
-import { getCartGuest } from '../../lib/redux/reducers/cart.reducer';
+import { NavigationProp } from '../../navigators';
 
 const truncateText = (text: string, maxLength: number) => {
   if (text.length <= maxLength) return text;
   return text.substring(0, maxLength) + '...';
 };
 
-const OrderScreen = () => {
+const OrderCartScreen = () => {
+  
   const navigation = useNavigation<NavigationProp>();
-  const [addressData, setAddressData] = useState({fullname: '', phone: '', province: '', district: '', village: '', address: '', addressCategory: ''});
-
-  const route = useRoute();
-  const orderItems = route.params as {cart: CartResponse};
-
+  const [addressData, setAddressData] = useState({id: '', fullname: '', phone: '', province: '', district: '', village: '', address: '', addressCategory: ''});
+  const {cart} = useSelector((state: RootState) => state.cart);
+  const {token} = useSelector((state: RootState) => state.auth);
   const [paymentMethod, setPaymentMethod] = useState('');
-
   const dispatch: AppDispatch = useDispatch<AppDispatch>();
   
+  //Get Address
   useEffect(() => {
-    const getData = async () => {
-      const data = await AsyncStorage.getItem('AddressData');
+    const getData = async () => { 
+      let data;
+      if(token) {
+        data = await AsyncStorage.getItem('AddressUser');
+      }
+      else{
+        data = await AsyncStorage.getItem('AddressGuest');
+      }
       if (data !== null) {
         setAddressData(JSON.parse(data)); // Chuyển từ JSON về object
       }
     };
     getData();
   }, []);
-
-  const handleOrderForGuest = () => {
-    const order = {
-      fullname: addressData.fullname,
-      phone: addressData.phone,
-      province: addressData.province,
-      district: addressData.district,
-      village: addressData.village,
-      address: addressData.address,
-      addressCategory: addressData.addressCategory,
-      paymentMethod: paymentMethod
-    };
-    dispatch(createOrderCartGuest(order))
-    .then(() => dispatch(getCartGuest()))
-    .then(() => Alert.alert('Thông báo', 'Đặt hàng thành công'))
+  
+  const handleOrder = async () => {
+    try {
+      if(token){
+        const orderUser = {
+          addressId: addressData.id,
+          paymentMethod: paymentMethod
+        }
+        await dispatch(createOrderCartUser(orderUser))
+          .then(() => getCartUser())
+      } else {
+        const orderGuest = {
+          fullname: addressData.fullname,
+          phone: addressData.phone,
+          province: addressData.province,
+          district: addressData.district,
+          village: addressData.village,
+          address: addressData.address,
+          addressCategory: addressData.addressCategory,
+          paymentMethod: paymentMethod,
+        };
+        await dispatch(createOrderCartGuest(orderGuest))
+        .then(() => getCartGuest());
+      }
+      Alert.alert('Thông báo', 'Đặt hàng thành công')
+      navigation.navigate('BottomTab', {screen: 'Giỏ hàng'})
+    } catch (error) {
+      
+    }
+  }
+  
+  //Handle Click Update Address
+  const handleClickAddress = () => {
+    if(token) {
+      navigation.navigate('ListAddressScreen', {home: false})
+    } else {
+      navigation.navigate('AddressScreen', {home: false});
+    }
   }
 
   return (
@@ -74,30 +102,30 @@ const OrderScreen = () => {
             size={16}
             styles={{marginTop: 10, marginLeft: 10}}
           />
-          <View>
-            <TextComponent
-              text={
-                addressData.address +
-                ', ' +
-                addressData.village +
-                ', ' +
-                addressData.district +
-                ', ' +
-                addressData.province
-              }
-              size={13}
-              styles={{padding: 10}}
-            />
-            <TouchableOpacity
-              style={{position: 'absolute', top: 8, right: 10}}
-              onPress={() => navigation.navigate('AddressScreen')}>
+          <View style={{flexDirection: 'row'}}>
+            <View style = {{flex: 1}}>
+              <TextComponent
+                text={
+                  addressData.address +
+                  ', ' +
+                  addressData.village +
+                  ', ' +
+                  addressData.district +
+                  ', ' +
+                  addressData.province
+                }
+                size={13}
+                styles={{padding: 10}}
+              />
+            </View>
+            <TouchableOpacity onPress={handleClickAddress} style={{marginTop: 10}}>
               <Icon name="edit" size={23} color={appColors.black} />
             </TouchableOpacity>
           </View>
         </View>
         <View style={styles.content}>
           <FlatList
-            data={orderItems.cart.result.cartItemResponses}
+            data={cart?.result?.cartItemResponses}
             showsVerticalScrollIndicator={false}
             keyExtractor={item => item.id.toString()}
             renderItem={({item}) => (
@@ -227,14 +255,12 @@ const OrderScreen = () => {
               styles={{marginTop: 16}}
             />
             <TextComponent
-              text={
-                orderItems.cart.result.totalPrice.toLocaleString('vi-VN') + 'đ'
-              }
+              text={cart?.result?.totalPrice.toLocaleString('vi-VN') + 'đ'}
               size={16}
               styles={{marginTop: 16}}
             />
           </View>
-          <TouchableOpacity style={styles.button} onPress={() => handleOrderForGuest()}>
+          <TouchableOpacity style={styles.button} onPress={() => handleOrder()}>
             <TextComponent text="Thanh Toán" size={16} />
           </TouchableOpacity>
         </View>
@@ -325,4 +351,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default OrderScreen
+export default OrderCartScreen

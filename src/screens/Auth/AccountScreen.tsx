@@ -4,14 +4,8 @@ import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { fontFamilies } from '../../constants/fontFamilies';
 import type { NavigationProp } from '../../navigators/index';
 
-const AccountScreen = ( { hasToken }: { hasToken: boolean } ) => {
+const AccountScreen = () => {
   const navigation = useNavigation<NavigationProp>();
-
-  useEffect(() => {
-    if (hasToken) {
-      navigation.navigate('ProfileScreen'); 
-    }
-  }, [hasToken, navigation]);
   
   return (
     <View style={styles.container}>

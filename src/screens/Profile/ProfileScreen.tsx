@@ -1,17 +1,15 @@
-import { View, Text, TouchableOpacity, StyleSheet, Image, ActivityIndicator, Alert } from 'react-native';
-import React, { useEffect, useState } from 'react';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useNavigation } from '@react-navigation/native';
-import { useDispatch, useSelector } from 'react-redux';
-import { getBio, updateBio } from '../../lib/redux/reducers/user.reducer';
-import { RootState } from '../../lib/redux/rootReducer';
+import React, { useEffect, useState } from 'react';
+import { ActivityIndicator, Alert, Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { launchImageLibrary } from 'react-native-image-picker';
 import Icon from 'react-native-vector-icons/FontAwesome';
-import { AppDispatch } from '../../lib/redux/store';
+import { useDispatch, useSelector } from 'react-redux';
 import { TextComponent } from '../../components';
-import type {NavigationProp} from '../../navigators/index';
-import { getCartGuest } from '../../lib/redux/reducers/cart.reducer';
 import { logout } from '../../lib/redux/reducers/auth.reducer';
+import { getBio, updateBio } from '../../lib/redux/reducers/user.reducer';
+import { RootState } from '../../lib/redux/rootReducer';
+import { AppDispatch } from '../../lib/redux/store';
+import type { NavigationProp } from '../../navigators/index';
 
 const ProfileScreen = () => {
   const navigation = useNavigation<NavigationProp>();
@@ -26,11 +24,11 @@ const ProfileScreen = () => {
     dispatch(getBio());
   }, []);
 
-  const handleLogout = async () => {
-    dispatch(logout());
-    console.log('Đã đăng xuất');
-    navigation.navigate('BottomTab', {screen: 'Tài khoản'});
-  };
+  // const handleLogout = async () => {
+  //   dispatch(logout());
+  //   console.log('Đã đăng xuất');
+  //   navigation.navigate('BottomTab', {screen: 'Tài khoản'});
+  // };
 
   const handleEditAvatar = () => {
     launchImageLibrary({ mediaType: 'photo' }, (response) => {
@@ -85,7 +83,7 @@ const ProfileScreen = () => {
     <View style={styles.container}>
       <TouchableOpacity
         style={styles.closeButton}
-        onPress={() => navigation.navigate('BottomTab')}>
+        onPress={() => navigation.goBack()}>
         <TextComponent text="Quay lại" />
       </TouchableOpacity>
       <Text style={styles.title}>Trang cá nhân</Text>
@@ -161,9 +159,9 @@ const ProfileScreen = () => {
         </TouchableOpacity>
 
         {/* Nút đăng xuất */}
-        <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
+        {/* <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
           <Text style={styles.logoutButtonText}>Đăng xuất</Text>
-        </TouchableOpacity>
+        </TouchableOpacity> */}
       </View>
     </View>
   );

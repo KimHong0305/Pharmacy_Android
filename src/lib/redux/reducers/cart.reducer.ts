@@ -1,8 +1,7 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import api from "../../api/api";
 import api_cartGuest from "../../api/api_cartGuest";
 import { AddToCartRequest, AddToCartResponse, CartResponse, UpdateCartRequest, UpdateCartResponse } from "../../schemas/cart.schema";
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import api from "../../api/api";
 import { RootState } from "../rootReducer";
 
 interface CartState {
@@ -40,6 +39,7 @@ export const getCartGuest = createAsyncThunk<
   }
 });
 
+//For Guest
 export const addCartGuest = createAsyncThunk<
   AddToCartResponse,
   AddToCartRequest,
@@ -68,25 +68,7 @@ export const updateCartGuest = createAsyncThunk<
   }
 });
 
-export const transfer = createAsyncThunk(
-  'transfer',
-  async (_, {rejectWithValue, getState}) => {
-    try {
-      const state = getState() as RootState;
-      const token = state.auth.token;
-      const cartResponse = await api_cartGuest.post('/cart/transfer', null, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-      console.log('Chuyển thành công');
-      return cartResponse.data;
-    } catch (error : any) {
-      return rejectWithValue(error.response.data);
-    }
-  },
-);
-
+//For User
 export const getCartUser = createAsyncThunk<CartResponse, void, {rejectValue: string}>(
   'user/cart',
   async (_, {rejectWithValue, getState}) => {
@@ -143,6 +125,26 @@ export const updateCartUser = createAsyncThunk<
     return rejectWithValue(error.response.data);
   }
 });
+
+export const transfer = createAsyncThunk(
+  'transfer',
+  async (_, {rejectWithValue, getState}) => {
+    try {
+      const state = getState() as RootState;
+      const token = state.auth.token;
+      const cartResponse = await api_cartGuest.post('/cart/transfer', null, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      console.log('Chuyển thành công');
+      return cartResponse.data;
+    } catch (error: any) {
+      return rejectWithValue(error.response.data);
+    }
+  },
+);
+
 const cartSlice = createSlice({
   name: 'cart',
   initialState,
@@ -199,7 +201,6 @@ const cartSlice = createSlice({
       //TRANSFER
       .addCase(transfer.fulfilled, (state, action) => {
         state.loading = false;
-        console.log('chuyen thanh cong');
       })
       //GET CART USER
       .addCase(getCartUser.pending, state => {

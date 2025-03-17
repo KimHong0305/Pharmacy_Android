@@ -15,8 +15,9 @@ export interface Cart {
 }
 
 export interface CartResponse {
-    code: number,
-    result: Cart
+  code: number;
+  message?: string,
+  result?: Cart;
 }
 
 export interface AddToCartRequest {

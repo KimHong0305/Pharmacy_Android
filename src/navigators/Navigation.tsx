@@ -1,58 +1,45 @@
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import React, {useEffect, useState} from 'react';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import React from 'react';
 
+import { useSelector } from 'react-redux';
+import { RootState } from '../lib/redux/rootReducer';
 import {
   AccountScreen,
+  AccScreen,
+  AddressScreen,
   ForgotPasswordScreen,
+  HistoryOrderScreen,
   HomeScreen,
+  ListAddressScreen,
   LoginScreen,
-  ProfileScreen,
-  SignUpScreen,
   OnboardingScreen,
-  ResetPasswordScreen,
+  OrderHomeScreen,
   OtpScreen,
-  VerifyEmailSignup,
+  ProductDetailScreen,
+  ProfileScreen,
+  ResetPasswordScreen,
+  SearchListScreen,
+  SearchScreen,
+  SignUpScreen,
   UpdateEmailScreen,
   VerifyEmailScreen,
-  ProductDetailScreen,
-  OrderScreen,
-  SearchScreen,
-  SearchListScreen,
-  AddressScreen,
+  VerifyEmailSignup
 } from '../screens';
+import OrderCartScreen from '../screens/Order/OrderCartScreen';
 import BottomTabNavigation from './BottomTabNavigation';
 
 const Navigation = () => {
   const Stack = createNativeStackNavigator();
-  const [hasToken, setHasToken] = useState(false);
 
-  useEffect(() => {
-    const checkToken = async () => {
-      try {
-        const token = await AsyncStorage.getItem('token');
-        setHasToken(!!token);
-      } catch (error) {
-        console.error('Lỗi khi lấy token:', error);
-      }
-    };
-
-    checkToken();
-  }, []);
+  const {token} = useSelector((state: RootState) => state.auth);
 
   return (
     <Stack.Navigator
-      initialRouteName={hasToken ? 'BottomTab' : 'OnboardingScreen'}
+      initialRouteName={token ? 'BottomTab' : 'OnboardingScreen'}
       screenOptions={{headerShown: false}}>
       <Stack.Screen name="OnboardingScreen" component={OnboardingScreen} />
-      <Stack.Screen
-        name="HomeScreen"
-        children={() => <HomeScreen hasToken={hasToken} />}
-      />
-      <Stack.Screen
-        name="AccountScreen"
-        children={() => <AccountScreen hasToken={hasToken} />}
-      />
+      <Stack.Screen name="HomeScreen" children={() => <HomeScreen />} />
+      <Stack.Screen name="AccountScreen" component={AccountScreen} />
       <Stack.Screen name="LoginScreen" component={LoginScreen} />
       <Stack.Screen
         name="ForgotPasswordScreen"
@@ -73,10 +60,14 @@ const Navigation = () => {
         name="ProductDetailScreen"
         component={ProductDetailScreen}
       />
-      <Stack.Screen name="OrderScreen" component={OrderScreen} />
+      <Stack.Screen name="OrderCartScreen" component={OrderCartScreen} />
+      <Stack.Screen name="OrderHomeScreen" component={OrderHomeScreen} />
       <Stack.Screen name="AddressScreen" component={AddressScreen} />
+      <Stack.Screen name="ListAddressScreen" component={ListAddressScreen} />
       <Stack.Screen name="SearchScreen" component={SearchScreen} />
       <Stack.Screen name="SearchList" component={SearchListScreen} />
+      <Stack.Screen name="AccScreen" component={AccScreen} />
+      <Stack.Screen name="HistoryOrderScreen" component={HistoryOrderScreen} />
     </Stack.Navigator>
   );
 }
