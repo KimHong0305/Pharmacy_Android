@@ -1,8 +1,10 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { useNavigation } from '@react-navigation/native';
+import { RouteProp, useNavigation, useRoute } from '@react-navigation/native';
 import React, { useEffect, useState } from 'react';
 import { Alert, FlatList, Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
+import Icon2 from 'react-native-vector-icons/MaterialCommunityIcons';
+import Icon3 from 'react-native-vector-icons/AntDesign';
 import { useDispatch, useSelector } from 'react-redux';
 import TextComponent from '../../components/TextComponent';
 import { appColors } from '../../constants/appColors';
@@ -11,7 +13,9 @@ import { getCartGuest, getCartUser } from '../../lib/redux/reducers/cart.reducer
 import { createOrderCartGuest, createOrderCartUser } from '../../lib/redux/reducers/order.reducer';
 import { RootState } from '../../lib/redux/rootReducer';
 import { AppDispatch } from '../../lib/redux/store';
-import { NavigationProp } from '../../navigators';
+import { NavigationProp, RootStackParamList } from '../../navigators';
+import { fetchAddressWithLocationNames } from '../../lib/redux/reducers/address.reducer';
+import { AddOrderUser } from '../../lib/schemas/order.schema';
 
 const truncateText = (text: string, maxLength: number) => {
   if (text.length <= maxLength) return text;
@@ -21,38 +25,75 @@ const truncateText = (text: string, maxLength: number) => {
 const OrderCartScreen = () => {
   
   const navigation = useNavigation<NavigationProp>();
-  const [addressData, setAddressData] = useState({id: '', fullname: '', phone: '', province: '', district: '', village: '', address: '', addressCategory: ''});
+  const [addressData, setAddressData] = useState({
+    id: '',
+    fullname: '',
+    phone: '',
+    province: '',
+    district: '',
+    village: '',
+    address: '',
+    addressCategory: '',
+    provinceName: '',
+    districtName: '',
+    villageName: '',
+  });
+  
   const {cart} = useSelector((state: RootState) => state.cart);
   const {token} = useSelector((state: RootState) => state.auth);
   const [paymentMethod, setPaymentMethod] = useState('');
   const dispatch: AppDispatch = useDispatch<AppDispatch>();
   
+  const route = useRoute<RouteProp<RootStackParamList, 'OrderCartScreen'>>();
+
+  const [selectedCoupon, setSelectedCoupon] = useState<string | null>(
+    route.params?.selectedCoupon ?? null
+  );
+
+  // console.log(selectedCoupon)
+
   //Get Address
   useEffect(() => {
-    const getData = async () => { 
+    const getData = async () => {
       let data;
-      if(token) {
+      if (token) {
         data = await AsyncStorage.getItem('AddressUser');
-      }
-      else{
+      } else {
         data = await AsyncStorage.getItem('AddressGuest');
       }
+  
       if (data !== null) {
-        setAddressData(JSON.parse(data)); // Chuyển từ JSON về object
+        const parsedData = JSON.parse(data);
+        try {
+          const updatedAddress = await dispatch(fetchAddressWithLocationNames(parsedData)).unwrap();
+          setAddressData(updatedAddress);
+          // console.log(updatedAddress)
+        } catch (error) {
+          console.error("Error fetching address names:", error);
+          setAddressData(parsedData); // Giữ nguyên dữ liệu cũ nếu lỗi xảy ra
+        }
       }
     };
+  
     getData();
-  }, []);
+  }, [dispatch, token]);
+  
   
   const handleOrder = async () => {
     try {
-      if(token){
-        const orderUser = {
-          addressId: addressData.id,
-          paymentMethod: paymentMethod
+      if (token) {
+        const orderUser: AddOrderUser & { couponId?: string } = {
+            addressId: addressData.id,
+            paymentMethod: paymentMethod,
+        };
+    
+        if (selectedCoupon) {
+            orderUser.couponId = selectedCoupon;
         }
+    
         await dispatch(createOrderCartUser(orderUser))
-          .then(() => getCartUser())
+            .then(() => getCartUser());
+        // console.log(orderUser)
       } else {
         const orderGuest = {
           fullname: addressData.fullname,
@@ -104,21 +145,16 @@ const OrderCartScreen = () => {
           />
           <View style={{flexDirection: 'row'}}>
             <View style = {{flex: 1}}>
-              <TextComponent
+            <TextComponent
                 text={
-                  addressData.address +
-                  ', ' +
-                  addressData.village +
-                  ', ' +
-                  addressData.district +
-                  ', ' +
-                  addressData.province
+                  addressData.address + ', ' +
+                  addressData.villageName
                 }
                 size={13}
                 styles={{padding: 10}}
               />
             </View>
-            <TouchableOpacity onPress={handleClickAddress} style={{marginTop: 10}}>
+            <TouchableOpacity onPress={handleClickAddress} style={{marginTop: 10, marginRight: 10}}>
               <Icon name="edit" size={23} color={appColors.black} />
             </TouchableOpacity>
           </View>
@@ -160,6 +196,7 @@ const OrderCartScreen = () => {
             )}
           />
         </View>
+        
         <View style={styles.payment_method}>
           <TextComponent
             text="Phương Thức Thanh Toán"
@@ -247,6 +284,30 @@ const OrderCartScreen = () => {
             </TouchableOpacity>
           </View>
         </View>
+        
+        {/* Ưu đãi */}
+        <TouchableOpacity style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}}
+        onPress={() =>
+          navigation.navigate('ChooseCouponScreen', { totalPrice: cart?.result?.totalPrice ?? 0 })
+        }
+        >
+          <View style={{flexDirection: 'row', alignItems: 'center'}}>
+            <Icon2 name="ticket-percent-outline" size={22} color={appColors.blue}/>
+            <Text style={{marginLeft: 5, fontSize: 15, fontWeight: '500'}}>Mã ưu đãi</Text>
+          </View>
+          <View style={{flexDirection: 'row', alignItems: 'center'}}>
+            {selectedCoupon ? (
+              <Text style={{ marginLeft: 5, fontSize: 13, fontWeight: '500', color: 'red' }}>
+                Đã chọn 1 mã
+              </Text>
+            ) : (
+              <Text style={{ marginLeft: 5, fontSize: 13, color: 'gray' }}>Chọn mã</Text>
+            )}
+            <Icon3 name="right" size={18} color={appColors.gray}/>
+          </View>
+        </TouchableOpacity>
+
+
         <View style={styles.footer}>
           <View style={{flexDirection: 'row'}}>
             <TextComponent

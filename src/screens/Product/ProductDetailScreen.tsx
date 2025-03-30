@@ -27,26 +27,27 @@ import { AppDispatch } from '../../lib/redux/store';
 import { Price } from '../../lib/schemas/price.schema';
 import { ProductDetailItem } from '../../lib/schemas/product.schema';
 import type { NavigationProp } from '../../navigators/index';
+import { getRootFeedback } from '../../lib/redux/reducers/feedback.reducer';
 
 const Tab = createMaterialTopTabNavigator()
 
-const reviews = [
-  {
-    avatar: require('../../assets/images/logo.png'),
-    name: 'Nguyễn Văn A',
-    time: '2 giờ trước',
-    content: 'Sản phẩm rất tốt, đã mua nhiều lần.',
-    replies: [
-      {
-        avatar: require('../../assets/images/logo.png'),
-        name: 'Admin',
-        time: '1 giờ trước',
-        content: 'Cảm ơn bạn đã tin tưởng sản phẩm!',
-      }
-    ]
-  },
-  // Thêm các review khác...
-];
+// const reviews = [
+//   {
+//     avatar: require('../../assets/images/logo.png'),
+//     name: 'Nguyễn Văn A',
+//     time: '2 giờ trước',
+//     content: 'Sản phẩm rất tốt, đã mua nhiều lần.',
+//     replies: [
+//       {
+//         avatar: require('../../assets/images/logo.png'),
+//         name: 'Admin',
+//         time: '1 giờ trước',
+//         content: 'Cảm ơn bạn đã tin tưởng sản phẩm!',
+//       }
+//     ]
+//   },
+//   // Thêm các review khác...
+// ];
 
 
 const ProductDetailScreen = () => {
@@ -58,19 +59,28 @@ const ProductDetailScreen = () => {
   const [selectedUnit, setSelectedUnit] = useState<Price | null>(null);
   const [quantity, setQuantity] = useState(1);
   const { productDetail, loading, error } = useSelector((state: RootState) => state.product);
+  const { feedbacks } = useSelector((state: RootState) => state.feedback);
   const {token} = useSelector((state : RootState) => state.auth);
 
-
-  //Get Product Detail
+  //Get Product Detail && feedback
   useEffect(() => {
-    if (productId) {
-      dispatch(getProductDetail(productId));
-    }
+    const fetchData = async () => {
+        if (productId) {
+            await dispatch(getProductDetail(productId));
+            await dispatch(getRootFeedback(productId));
+        }
+    };
+
+    fetchData();
+
     return () => {
-      dispatch(clearProductDetail());
+        dispatch(clearProductDetail());
     };
   }, [dispatch, productId]);
 
+
+  //console.log(feedbacks)
+  
   //Get First Price
   useEffect(() => {
     if (productDetail?.result[0]) {
@@ -292,7 +302,7 @@ const ProductDetailScreen = () => {
             size={18}
             styles={styles.sectionTitle}
           />
-          {reviews.map((review, index) => (
+          {feedbacks.map((review, index) => (
             <ReviewItem key={index} {...review} />
           ))}
         </View>
@@ -318,7 +328,8 @@ const ProductDetailScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: appColors.white
+    backgroundColor: appColors.white,
+    paddingBottom: 20,
   },
   header:{
     height: 30,

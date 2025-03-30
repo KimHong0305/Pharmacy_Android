@@ -44,6 +44,7 @@ export interface AddOrderGuest {
 
 export interface AddOrderUser {
     priceId?: string,
+    couponId?: string,
     addressId: string,
     paymentMethod: string
 }

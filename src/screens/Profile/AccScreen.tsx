@@ -10,6 +10,7 @@ import { RootState } from '../../lib/redux/rootReducer';
 import { AppDispatch } from '../../lib/redux/store';
 import type { NavigationProp } from '../../navigators/index';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import Fontisto from 'react-native-vector-icons/Fontisto';
 
 const AccScreen = () => {
   const navigation = useNavigation<NavigationProp>();
@@ -79,9 +80,14 @@ const AccScreen = () => {
       <View style={styles.account}>
         <Text style={{fontWeight:'bold', fontSize: 16}}>Tài khoản</Text>
         <View style={styles.listFunc}>
-            <TouchableOpacity style={styles.func}  onPress={() => navigation.navigate('ProfileScreen')}>
+            <TouchableOpacity style={styles.func} onPress={() => navigation.navigate('ProfileScreen')}>
               <Icon name="user" size={20} color="#000000" />
               <Text style={styles.nameFunc}>Thông tin cá nhân</Text>
+            </TouchableOpacity>
+ 
+            <TouchableOpacity style={styles.func} onPress={() => navigation.navigate('ListCouponScreen')}>
+              <Fontisto name="shopping-sale" size={20} color="#000000" />
+              <Text style={styles.nameFunc}>Ưu đãi</Text>
             </TouchableOpacity>
 
             <TouchableOpacity style={styles.func}>

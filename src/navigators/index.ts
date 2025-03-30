@@ -16,7 +16,7 @@ export type RootStackParamList = {
   OnboardingScreen: undefined;
   AccountScreen: undefined;
   ProductScreen: undefined;
-  OrderCartScreen: undefined;
+  OrderCartScreen: { selectedCoupon?: string | null }; 
   OrderHomeScreen: {product: ProductDetailItem};
   AddressScreen: {home?: boolean; product?: ProductDetailItem};
   ListAddressScreen: {home?: boolean; product?: ProductDetailItem};
@@ -24,6 +24,8 @@ export type RootStackParamList = {
   SearchScreen: undefined;
   HistoryOrderScreen: {active: string};
   AccScreen: undefined;
+  ListCouponScreen: undefined;
+  ChooseCouponScreen: { totalPrice: number };
 };
 
 export type NavigationProp = NativeStackNavigationProp<RootStackParamList>; 

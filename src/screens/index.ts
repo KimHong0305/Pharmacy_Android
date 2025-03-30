@@ -23,6 +23,8 @@ import AccScreen from "./Profile/AccScreen";
 import HistoryOrderScreen from "./Profile/HistoryOrderScreen";
 import ListAddressScreen from "./Address/ListAddressScreen";
 import OrderHomeScreen from "./Order/OrderHomeScreen";
+import ListCouponScreen from "./Coupon/ListCouponScreen";
+import ChooseCouponScreen from "./Coupon/ChooseCouponScreen";
 
 export {
     AccountScreen,
@@ -49,5 +51,7 @@ export {
     AddressScreen,
     ListAddressScreen,
     AccScreen,
-    HistoryOrderScreen
+    HistoryOrderScreen,
+    ListCouponScreen,
+    ChooseCouponScreen,
 }

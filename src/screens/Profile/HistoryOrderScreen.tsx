@@ -7,6 +7,7 @@ import { getHistoryOrder } from '../../lib/redux/reducers/order.reducer';
 import { RootState } from '../../lib/redux/rootReducer';
 import { AppDispatch } from '../../lib/redux/store';
 import type { NavigationProp } from '../../navigators/index';
+import { getFeedbackByUser } from '../../lib/redux/reducers/feedback.reducer';
 
 const HistoryOrderScreen = () => {
     const navigation = useNavigation<NavigationProp>();
@@ -16,9 +17,11 @@ const HistoryOrderScreen = () => {
     const [activeTab, setActiveTab] = useState(active);
 
     const { orders } = useSelector((state: RootState) => state.order);
-
+    const { feedbacks } = useSelector((state: RootState) => state.feedback);
+    
     useEffect(() => {
         dispatch(getHistoryOrder());
+        dispatch(getFeedbackByUser());
     }, [dispatch]);
 
     const filteredHistory = orders.filter((order) => {
@@ -75,6 +78,7 @@ const HistoryOrderScreen = () => {
             </ScrollView>
 
             {/* Danh sách đơn hàng */}
+            {activeTab !== "reviewed" && (
             <ScrollView style={styles.content}>
                 {filteredHistory.length === 0 ? (
                     <Text style={styles.noOrderText}>Không có đơn hàng nào.</Text>
@@ -154,6 +158,53 @@ const HistoryOrderScreen = () => {
                     ))
                 )}
             </ScrollView>
+            )}
+
+            <View>
+            {activeTab === "reviewed" && (
+                <ScrollView style={reviewedStyles.container} showsVerticalScrollIndicator={false}>
+                    {feedbacks.length === 0 ? (
+                        <View style={reviewedStyles.emptyContainer}>
+                            <Text>Không có đánh giá nào.</Text>
+                        </View>
+                    ) : (
+                        feedbacks.map((item) => (
+                            <View key={item.id} style={reviewedStyles.reviewContainer}>
+                                <View style={reviewedStyles.productInfo}>
+                                    <Text style={reviewedStyles.productName}>
+                                        {item.productName}
+                                    </Text>
+                                </View>
+                                <View style={reviewedStyles.userContainer}>
+                                    <View style={reviewedStyles.userInfo}>
+                                        <Image
+                                            source={{ uri: item.avatar || "http://localhost:3000/images/avata_khach.jpg" }}
+                                            style={reviewedStyles.avatar}
+                                        />
+                                        <Text style={reviewedStyles.username}>{item.username}</Text>
+                                    </View>
+                                    <Text style={reviewedStyles.reviewDate}>{item.createDate}</Text>
+                                </View>
+                                <View style={reviewedStyles.userContainer}>
+                                    <Text style={reviewedStyles.feedbackText}>
+                                        {item.feedback}
+                                    </Text>
+                                    <View style={reviewedStyles.buttonContainer}>
+                                        <TouchableOpacity style={reviewedStyles.editButton}>
+                                            <Text>Sửa</Text>
+                                        </TouchableOpacity>
+                                        <TouchableOpacity style={reviewedStyles.deleteButton}>
+                                            <Text>Xóa</Text>
+                                        </TouchableOpacity>
+                                    </View>
+                                </View>
+                            </View>
+                        ))
+                    )}
+                </ScrollView>
+            )}
+        </View>
+
         </View>
     );
 };
@@ -329,6 +380,79 @@ const styles = StyleSheet.create({
         color: '#fff',
         fontWeight: 'bold',
     },
+});
+
+const reviewedStyles = StyleSheet.create({
+    container: {
+        width: "100%", 
+        padding: 15,
+        backgroundColor: '#f1f5f9'
+    },
+    emptyContainer: {
+        paddingVertical: 40, 
+        alignItems: "center"
+    },
+    reviewContainer: {
+        borderWidth: 1,
+        padding: 16,
+        borderRadius: 10,
+        marginBottom: 10,
+        borderColor: '#ddd',
+        backgroundColor:'#fff'
+    },
+    productInfo: {
+        marginBottom: 8, 
+        padding: 8, 
+        backgroundColor: "#e5e7eb", 
+        borderRadius: 8
+    },
+    productName: {
+        fontSize: 14, 
+        fontWeight: "500", 
+        color: "#374151"
+    },
+    userContainer: {
+        flexDirection: "row", 
+        justifyContent: "space-between", 
+        marginBottom: 8
+    },
+    userInfo: {
+        flexDirection: "row", 
+        alignItems: "center"
+    },
+    avatar: {
+        width: 40, 
+        height: 40, 
+        borderRadius: 20, 
+        marginRight: 8
+    },
+    username: {
+        fontWeight: "600"
+    },
+    reviewDate: {
+        fontSize: 12, 
+        color: "#6b7280"
+    },
+    feedbackText: {
+        marginTop: 4, 
+        fontSize: 14, 
+        color: "#6b7280"
+    },
+    buttonContainer: {
+        flexDirection: "row"
+    },
+    editButton: {
+        padding: 8, 
+        borderRadius: 8, 
+        backgroundColor: "#d1fae5", 
+        marginLeft: 8
+    },
+    deleteButton: {
+        padding: 8, 
+        borderRadius: 8, 
+        backgroundColor: "#fee2e2", 
+        marginLeft: 8
+    }
 });
 
 export default HistoryOrderScreen;

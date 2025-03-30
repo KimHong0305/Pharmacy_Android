@@ -1,49 +1,41 @@
 import React from 'react';
-import { StyleSheet, TouchableOpacity, View } from 'react-native';
-import TextComponent  from '../TextComponent';
+import { StyleSheet, TouchableOpacity, View, Image } from 'react-native';
+import TextComponent from '../TextComponent';
 import { appColors } from '../../constants/appColors';
-import { Image } from 'react-native';
 import { fontFamilies } from '../../constants/fontFamilies';
 
 interface ReviewProps {
-  avatar: any;
-  name: string;
-  time: string;
-  content: string;
-  replies?: ReviewProps[];
+  id: string;
+  userId: string;
+  username: string;
+  avatar: string;
+  productId: string;
+  productName: string;
+  feedback: string;
+  createDate: string;
   onReply?: () => void;
 }
 
-export const ReviewItem = ({ avatar, name, time, content, replies, onReply }: ReviewProps) => {
+export const ReviewItem = ({ avatar, username, createDate, feedback, onReply }: ReviewProps) => {
+  // console.log(avatar)
   return (
     <View style={styles.container}>
+      {/* Header */}
       <View style={styles.reviewHeader}>
-        <Image source={avatar} style={styles.avatar} />
+        <Image source={avatar ? { uri: avatar } : require('../../assets/images/avatar.jpg')} style={styles.avatar} />
         <View style={styles.userInfo}>
-          <TextComponent text={name} styles={styles.name} />
-          <TextComponent text={time} color={appColors.gray} size={12} />
+          <TextComponent text={username} styles={styles.name} />
+          <TextComponent text={createDate} color={appColors.gray} size={12} />
         </View>
       </View>
-      
-      <TextComponent text={content} styles={styles.content} />
-      
+
+      {/* Nội dung phản hồi */}
+      <TextComponent text={feedback} styles={styles.content} />
+
+      {/* Nút phản hồi */}
       <TouchableOpacity onPress={onReply} style={styles.replyButton}>
         <TextComponent text="Phản hồi" color={appColors.blue} size={12} />
       </TouchableOpacity>
-
-      {replies && replies.length > 0 && (
-        <View style={styles.repliesContainer}>
-          {replies.map((reply, index) => (
-            <ReviewItem
-              key={index}
-              avatar={reply.avatar}
-              name={reply.name}
-              time={reply.time}
-              content={reply.content}
-            />
-          ))}
-        </View>
-      )}
     </View>
   );
 };
@@ -78,8 +70,6 @@ const styles = StyleSheet.create({
   replyButton: {
     alignSelf: 'flex-start',
   },
-  repliesContainer: {
-    marginLeft: 20,
-    marginTop: 10,
-  },
-}); 
+});
+
+export default ReviewItem;
