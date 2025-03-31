@@ -44,13 +44,7 @@ export const getAllProduct = createAsyncThunk<ProductResponse, void, { rejectVal
 const productSlice = createSlice({
     name: 'product',
     initialState,
-    reducers: {
-        clearProductDetail: (state) => {
-            state.productDetail = null;
-            state.error = null;
-            state.loading = false;
-        }
-    },
+    reducers: {},
     extraReducers: builder => {
         builder
             //PRODUCT DETAIL
@@ -84,5 +78,4 @@ const productSlice = createSlice({
     },
 });
 
-export const { clearProductDetail } = productSlice.actions;
 export default productSlice.reducer; 

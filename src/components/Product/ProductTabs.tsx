@@ -2,8 +2,9 @@ import React from 'react';
 import { ScrollView, StyleSheet, View } from 'react-native';
 import TextComponent from '../TextComponent';
 import {appColors} from '../../constants/appColors';
-import { Company, Category } from '../../lib/schemas/home.schema';
-
+import { Company } from '../../lib/schemas/company.schema';
+import { Category } from '../../lib/schemas/category.schema';
+ 
 // Hàm format text
 const formatText = (text: string) => {
   // Bước 1: Loại bỏ tất cả \\n

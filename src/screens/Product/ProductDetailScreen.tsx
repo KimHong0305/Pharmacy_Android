@@ -21,12 +21,13 @@ import { ReviewItem } from '../../components/Product/ReviewItem';
 import { appColors } from '../../constants/appColors';
 import { fontFamilies } from '../../constants/fontFamilies';
 import { addCartGuest, addCartUser, getCartGuest, getCartUser } from '../../lib/redux/reducers/cart.reducer';
-import { clearProductDetail, getProductDetail } from '../../lib/redux/reducers/product.reducer';
+import { getProductDetail } from '../../lib/redux/reducers/product.reducer';
 import { RootState } from '../../lib/redux/rootReducer';
 import { AppDispatch } from '../../lib/redux/store';
 import { Price } from '../../lib/schemas/price.schema';
 import { ProductDetailItem } from '../../lib/schemas/product.schema';
 import type { NavigationProp } from '../../navigators/index';
+import { getReplayListFeedBackByProductId, getRootListFeedBackByProductId } from '../../lib/redux/reducers/feedback.reducer';
 
 const Tab = createMaterialTopTabNavigator()
 
@@ -59,16 +60,11 @@ const ProductDetailScreen = () => {
   const [quantity, setQuantity] = useState(1);
   const { productDetail, loading, error } = useSelector((state: RootState) => state.product);
   const {token} = useSelector((state : RootState) => state.auth);
-
+  const {listRootFeedBackByProductId, listReplayFeedBackByProductId} = useSelector((state : RootState) => state.feedback);
 
   //Get Product Detail
   useEffect(() => {
-    if (productId) {
-      dispatch(getProductDetail(productId));
-    }
-    return () => {
-      dispatch(clearProductDetail());
-    };
+    dispatch(getProductDetail(productId));
   }, [dispatch, productId]);
 
   //Get First Price
@@ -78,7 +74,21 @@ const ProductDetailScreen = () => {
     }
   }, [productDetail]);
 
-  
+  //Get Root Feedback 
+  useEffect(() => {
+    dispatch(getRootListFeedBackByProductId(productId))
+  }, [productId])
+
+  //Get Reply Feedback
+  useEffect(() => {
+    if ((listRootFeedBackByProductId?.result ?? []).length > 0) {
+      listRootFeedBackByProductId?.result.forEach(item => {
+        dispatch(getReplayListFeedBackByProductId(item.id))
+      });
+    }
+  }, [listRootFeedBackByProductId]);
+
+
   //Add to Cart
   const handleAddToCart = () => {
     if (!selectedUnit?.id) {
@@ -123,7 +133,7 @@ const ProductDetailScreen = () => {
 
   const renderHeader = () => (
     <View style={styles.header}>
-      <TouchableOpacity onPress={() => navigation.navigate('BottomTab')}>
+      <TouchableOpacity onPress={() => navigation.navigate('BottomTab', {screen: 'Trang chủ'})}>
         <Icon
           name="reply"
           size={23}
@@ -292,9 +302,25 @@ const ProductDetailScreen = () => {
             size={18}
             styles={styles.sectionTitle}
           />
-          {reviews.map((review, index) => (
-            <ReviewItem key={index} {...review} />
-          ))}
+          {(listRootFeedBackByProductId?.result ?? []).length > 0 ? (
+            <>
+              {listRootFeedBackByProductId?.result.map(item => {
+                const replies = listReplayFeedBackByProductId?.result?.filter(
+                    reply => reply.parent?.id === item.id,
+                  ) || [];
+                return <ReviewItem key={item.id} {...item} replies={replies} />;
+              })}
+            </>
+          ) : (
+            <>
+              <TextComponent
+                text="Chưa có đánh giá nào"
+                size={15}
+                color="red"
+                styles={{marginBottom: 30}}
+              />
+            </>
+          )}
         </View>
       </ScrollView>
 

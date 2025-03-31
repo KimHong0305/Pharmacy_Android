@@ -5,28 +5,47 @@ import { appColors } from '../../constants/appColors';
 import { Image } from 'react-native';
 import { fontFamilies } from '../../constants/fontFamilies';
 
-interface ReviewProps {
-  avatar: any;
-  name: string;
-  time: string;
-  content: string;
-  replies?: ReviewProps[];
+interface FeedBack {
+  id: string;
+  userId: string;
+  username: string;
+  avatar: string;
+  createDate: string;
+  feedback: string;
   onReply?: () => void;
 }
 
-export const ReviewItem = ({ avatar, name, time, content, replies, onReply }: ReviewProps) => {
+interface Replies {
+  replies? : FeedBack[]
+}
+
+export const ReviewItem = ({
+  id,
+  userId,
+  username,
+  avatar,
+  createDate,
+  feedback,
+  onReply,
+  replies = [],
+}: FeedBack & Replies) => {
   return (
     <View style={styles.container}>
       <View style={styles.reviewHeader}>
-        <Image source={avatar} style={styles.avatar} />
+        <Image
+          source={
+            avatar ? {uri: avatar} : require('../../assets/images/avatar.jpg')
+          }
+          style={styles.avatar}
+        />
         <View style={styles.userInfo}>
-          <TextComponent text={name} styles={styles.name} />
-          <TextComponent text={time} color={appColors.gray} size={12} />
+          <TextComponent text={username} styles={styles.name} />
+          <TextComponent text={createDate} color={appColors.gray} size={12} />
         </View>
       </View>
-      
-      <TextComponent text={content} styles={styles.content} />
-      
+
+      <TextComponent text={feedback} styles={styles.content} />
+
       <TouchableOpacity onPress={onReply} style={styles.replyButton}>
         <TextComponent text="Phản hồi" color={appColors.blue} size={12} />
       </TouchableOpacity>
@@ -36,10 +55,12 @@ export const ReviewItem = ({ avatar, name, time, content, replies, onReply }: Re
           {replies.map((reply, index) => (
             <ReviewItem
               key={index}
+              id={reply.id}
+              userId={reply.userId}
               avatar={reply.avatar}
-              name={reply.name}
-              time={reply.time}
-              content={reply.content}
+              username={reply.username}
+              createDate={reply.createDate}
+              feedback={reply.feedback}
             />
           ))}
         </View>
