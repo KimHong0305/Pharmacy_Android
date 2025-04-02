@@ -7,6 +7,8 @@ import cartReducer from './reducers/cart.reducer';
 import orderReducer from './reducers/order.reducer';
 import categoryReducer from './reducers/category.reducer';
 import addressReducer from './reducers/address.reducer';
+import couponReducer from './reducers/coupon.reducer';
+import locationReducer from './reducers/location.reducer';
 import feedbackReducer from './reducers/feedback.reducer';
 
 const rootReducer = combineReducers({
@@ -18,7 +20,9 @@ const rootReducer = combineReducers({
   order: orderReducer,
   category: categoryReducer,
   address: addressReducer,
-  feedback: feedbackReducer
+  coupon: couponReducer,
+  location: locationReducer,
+  feedback: feedbackReducer,
 });
 
 export type RootState = ReturnType<typeof rootReducer>;

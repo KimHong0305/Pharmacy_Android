@@ -1,8 +1,7 @@
 import React from 'react';
-import { StyleSheet, TouchableOpacity, View } from 'react-native';
-import TextComponent  from '../TextComponent';
+import { StyleSheet, TouchableOpacity, View, Image } from 'react-native';
+import TextComponent from '../TextComponent';
 import { appColors } from '../../constants/appColors';
-import { Image } from 'react-native';
 import { fontFamilies } from '../../constants/fontFamilies';
 
 interface FeedBack {
@@ -31,6 +30,7 @@ export const ReviewItem = ({
 }: FeedBack & Replies) => {
   return (
     <View style={styles.container}>
+      {/* Header */}
       <View style={styles.reviewHeader}>
         <Image
           source={
@@ -51,7 +51,7 @@ export const ReviewItem = ({
       </TouchableOpacity>
 
       {replies && replies.length > 0 && (
-        <View style={styles.repliesContainer}>
+        <View style={styles.reviewHeader}>
           {replies.map((reply, index) => (
             <ReviewItem
               key={index}
@@ -99,8 +99,6 @@ const styles = StyleSheet.create({
   replyButton: {
     alignSelf: 'flex-start',
   },
-  repliesContainer: {
-    marginLeft: 20,
-    marginTop: 10,
-  },
-}); 
+});
+
+export default ReviewItem;

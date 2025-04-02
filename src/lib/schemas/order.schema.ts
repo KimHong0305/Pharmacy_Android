@@ -1,4 +1,6 @@
 export interface OrderItem {
+    id: string,
+    productId: string,
     priceId: string,
     productName: string,
     unitName: string,
@@ -44,6 +46,7 @@ export interface AddOrderGuest {
 
 export interface AddOrderUser {
     priceId?: string,
+    couponId?: string,
     addressId: string,
     paymentMethod: string
 }

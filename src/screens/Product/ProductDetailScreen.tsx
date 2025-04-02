@@ -31,25 +31,6 @@ import { getReplayListFeedBackByProductId, getRootListFeedBackByProductId } from
 
 const Tab = createMaterialTopTabNavigator()
 
-const reviews = [
-  {
-    avatar: require('../../assets/images/logo.png'),
-    name: 'Nguyễn Văn A',
-    time: '2 giờ trước',
-    content: 'Sản phẩm rất tốt, đã mua nhiều lần.',
-    replies: [
-      {
-        avatar: require('../../assets/images/logo.png'),
-        name: 'Admin',
-        time: '1 giờ trước',
-        content: 'Cảm ơn bạn đã tin tưởng sản phẩm!',
-      }
-    ]
-  },
-  // Thêm các review khác...
-];
-
-
 const ProductDetailScreen = () => {
   
   const navigation = useNavigation<NavigationProp>();
@@ -67,6 +48,9 @@ const ProductDetailScreen = () => {
     dispatch(getProductDetail(productId));
   }, [dispatch, productId]);
 
+
+  //console.log(feedbacks)
+  
   //Get First Price
   useEffect(() => {
     if (productDetail?.result[0]) {
@@ -344,7 +328,8 @@ const ProductDetailScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: appColors.white
+    backgroundColor: appColors.white,
+    paddingBottom: 20,
   },
   header:{
     height: 30,

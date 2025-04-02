@@ -120,6 +120,7 @@ export const getOrder = createAsyncThunk<
     return rejectWithValue(error.response.data);
   }
 });
+
 const orderSlice = createSlice({
   name: 'orderGuest',
   initialState,

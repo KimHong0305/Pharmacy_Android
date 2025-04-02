@@ -147,7 +147,7 @@ const CartScreen = () => {
               </View>
               <TouchableOpacity
                 style={styles.button}
-                onPress={() => navigation.navigate('OrderCartScreen')}>
+                onPress={() => navigation.navigate('OrderCartScreen', { selectedCoupon: null })}>
                 <TextComponent text="Thanh Toán" size={16} />
               </TouchableOpacity>
             </View>

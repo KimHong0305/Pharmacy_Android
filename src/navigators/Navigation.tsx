@@ -23,7 +23,9 @@ import {
   SignUpScreen,
   UpdateEmailScreen,
   VerifyEmailScreen,
-  VerifyEmailSignup
+  VerifyEmailSignup,
+  ListCouponScreen,
+  ChooseCouponScreen,
 } from '../screens';
 import OrderCartScreen from '../screens/Order/OrderCartScreen';
 import BottomTabNavigation from './BottomTabNavigation';
@@ -68,6 +70,8 @@ const Navigation = () => {
       <Stack.Screen name="SearchList" component={SearchListScreen} />
       <Stack.Screen name="AccScreen" component={AccScreen} />
       <Stack.Screen name="HistoryOrderScreen" component={HistoryOrderScreen} />
+      <Stack.Screen name="ListCouponScreen" component={ListCouponScreen} />
+      <Stack.Screen name="ChooseCouponScreen" component={ChooseCouponScreen} />
     </Stack.Navigator>
   );
 }
