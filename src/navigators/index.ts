@@ -1,5 +1,6 @@
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { ProductDetailItem } from '../lib/schemas/product.schema';
+import { Coupon } from '../lib/schemas/coupon.schema';
 
 export type RootStackParamList = {
   HomeScreen: undefined;
@@ -16,7 +17,7 @@ export type RootStackParamList = {
   OnboardingScreen: undefined;
   AccountScreen: undefined;
   ProductScreen: undefined;
-  OrderCartScreen: { selectedCoupon?: string | null }; 
+  OrderCartScreen: { selectedCoupon?: Coupon | null }; 
   OrderHomeScreen: {product: ProductDetailItem};
   AddressScreen: {home?: boolean; product?: ProductDetailItem};
   ListAddressScreen: {home?: boolean; product?: ProductDetailItem};
@@ -26,6 +27,8 @@ export type RootStackParamList = {
   AccScreen: undefined;
   ListCouponScreen: undefined;
   ChooseCouponScreen: { totalPrice: number };
+  CartScreen: { selectedCoupon: Coupon | null } | undefined; 
+  CouponCartScreen: { totalPrice: number };
 };
 
 export type NavigationProp = NativeStackNavigationProp<RootStackParamList>; 

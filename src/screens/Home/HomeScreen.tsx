@@ -28,11 +28,22 @@ const HomeScreen = () => {
   const {token} = useSelector((state: RootState) => state.auth);
   
   useEffect(() => {
-    dispatch(getCategories());
-    dispatch(getBestSellers());
-    dispatch(getNewProducts());
-    dispatch(getTopCompanies());
-  }, []);
+    const fetchData = async () => {
+      try {
+        await Promise.all([
+          dispatch(getCategories()),
+          dispatch(getBestSellers()),
+          dispatch(getNewProducts()),
+          dispatch(getTopCompanies())
+        ]);
+      } catch (error) {
+        console.log("Error fetching data:", error);
+      }
+    };
+  
+    fetchData();
+  }, [dispatch]);
+  
     
   return (
     <View style={styles.container}>

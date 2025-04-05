@@ -25,7 +25,6 @@ const AccScreen = () => {
 
   const handleLogout = async () => {
     dispatch(logout())
-      .then(async () => await AsyncStorage.removeItem('token'));
     console.log('Đã đăng xuất');
     navigation.navigate('BottomTab', {screen: 'Tài khoản'});
   };

@@ -10,7 +10,7 @@ import { RootState } from '../../lib/redux/rootReducer';
 import { getCouponUser } from '../../lib/redux/reducers/coupon.reducer';
 import { Coupon } from '../../lib/schemas/coupon.schema';
 
-const ChooseCouponScreen = () => {
+const CouponCartScreen = () => {
   const navigation = useNavigation<NavigationProp>();
   const dispatch: AppDispatch = useDispatch();
   const { coupons } = useSelector((state: RootState) => state.coupon);
@@ -70,7 +70,10 @@ const ChooseCouponScreen = () => {
         <Button
           title="Áp dụng"
           onPress={() => {
-            navigation.navigate('OrderCartScreen', {selectedCoupon: selectedCoupon })        
+            navigation.navigate('BottomTab', { 
+              screen: 'Giỏ hàng', 
+              params: { selectedCoupon: selectedCoupon } 
+            });            
           }}                
           disabled={!selectedCoupon}
           buttonStyle={styles.applyButton}
@@ -155,4 +158,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default ChooseCouponScreen;
+export default CouponCartScreen;

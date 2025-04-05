@@ -7,15 +7,21 @@ import {
   getCartUser,
   transfer,
 } from './src/lib/redux/reducers/cart.reducer';
-import {RootState} from './src/lib/redux/rootReducer';
 import store, {AppDispatch} from './src/lib/redux/store';
 import Navigation from './src/navigators/Navigation';
 import {IntroduceScreen} from './src/screens';
+import { loadToken } from './src/lib/redux/reducers/auth.reducer';
+import { RootState } from './src/lib/redux/rootReducer';
 
 const AppContent = () => {
   const [isShowIntroduce, setIsShowIntroduce] = useState(true);
   const dispatch: AppDispatch = useDispatch();
-  const {token} = useSelector((state: RootState) => state.auth);
+  
+  const token = useSelector((state: RootState) => state.auth.token);
+
+  useEffect(() => {
+    dispatch(loadToken());
+  }, [dispatch]);
 
   useEffect(() => {
     const timeout = setTimeout(() => {

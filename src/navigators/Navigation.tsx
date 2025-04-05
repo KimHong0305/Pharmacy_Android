@@ -26,6 +26,8 @@ import {
   VerifyEmailSignup,
   ListCouponScreen,
   ChooseCouponScreen,
+  CouponCartScreen,
+  CartScreen,
 } from '../screens';
 import OrderCartScreen from '../screens/Order/OrderCartScreen';
 import BottomTabNavigation from './BottomTabNavigation';
@@ -40,7 +42,7 @@ const Navigation = () => {
       initialRouteName={token ? 'BottomTab' : 'OnboardingScreen'}
       screenOptions={{headerShown: false}}>
       <Stack.Screen name="OnboardingScreen" component={OnboardingScreen} />
-      <Stack.Screen name="HomeScreen" children={() => <HomeScreen />} />
+      <Stack.Screen name="HomeScreen" component={HomeScreen} />
       <Stack.Screen name="AccountScreen" component={AccountScreen} />
       <Stack.Screen name="LoginScreen" component={LoginScreen} />
       <Stack.Screen
@@ -72,6 +74,8 @@ const Navigation = () => {
       <Stack.Screen name="HistoryOrderScreen" component={HistoryOrderScreen} />
       <Stack.Screen name="ListCouponScreen" component={ListCouponScreen} />
       <Stack.Screen name="ChooseCouponScreen" component={ChooseCouponScreen} />
+      <Stack.Screen name="CouponCartScreen" component={CouponCartScreen} />
+      <Stack.Screen name="CartScreen" component={CartScreen} />
     </Stack.Navigator>
   );
 }

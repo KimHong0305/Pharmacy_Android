@@ -90,7 +90,7 @@ const BottomTabNavigation = () => {
         name="Giỏ hàng"
         component={CartScreen}
         options={{
-          tabBarBadge: cartItemsCount > 0 ? cartItemsCount : undefined, // Hiển thị số lượng sản phẩm
+          tabBarBadge: cartItemsCount > 0 ? cartItemsCount : undefined,
           tabBarBadgeStyle: {
             backgroundColor: 'red',
             color: 'white',
