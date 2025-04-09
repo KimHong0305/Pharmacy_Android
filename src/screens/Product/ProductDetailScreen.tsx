@@ -4,6 +4,7 @@ import React, { useEffect, useState } from 'react';
 import { Alert, Image, ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native';
 import Swiper from 'react-native-swiper';
 import Icon from 'react-native-vector-icons/FontAwesome';
+import Icon2 from 'react-native-vector-icons/Feather';
 import { useDispatch, useSelector } from 'react-redux';
 import { TextComponent } from '../../components';
 import {
@@ -28,6 +29,7 @@ import { Price } from '../../lib/schemas/price.schema';
 import { ProductDetailItem } from '../../lib/schemas/product.schema';
 import type { NavigationProp } from '../../navigators/index';
 import { getReplayListFeedBackByProductId, getRootListFeedBackByProductId } from '../../lib/redux/reducers/feedback.reducer';
+import { addWhistlist } from '../../lib/redux/reducers/whistlist.reducer';
 
 const Tab = createMaterialTopTabNavigator()
 
@@ -42,6 +44,7 @@ const ProductDetailScreen = () => {
   const { productDetail, loading, error } = useSelector((state: RootState) => state.product);
   const {token} = useSelector((state : RootState) => state.auth);
   const {listRootFeedBackByProductId, listReplayFeedBackByProductId} = useSelector((state : RootState) => state.feedback);
+  const [whistlist, setWhistlist] = useState<string | null>(null);
 
   //Get Product Detail
   useEffect(() => {
@@ -114,25 +117,19 @@ const ProductDetailScreen = () => {
     navigation.navigate('OrderHomeScreen', {product});
   };
 
-
-  const renderHeader = () => (
-    <View style={styles.header}>
-      <TouchableOpacity onPress={() => navigation.navigate('BottomTab', {screen: 'Trang chủ'})}>
-        <Icon
-          name="reply"
-          size={23}
-          color={appColors.blue}
-          style={{marginLeft: 10}}
-        />
-      </TouchableOpacity>
-      <TextComponent text={productDetail?.result[0].name || 'Chi tiết sản phẩm'} size={20} />
-    </View>
-  );
+  const handleAddWhistlist = async () => {
+    if(token){
+      dispatch(addWhistlist(productId))
+        .then(() => Alert.alert('Thông báo', 'Thêm vào yêu thích thành công'))
+        .then(() => setWhistlist('have'))
+    } else {
+        Alert.alert('Thông báo', 'Vui lòng đăng nhập để thêm sản phẩm yêu thích')
+    }
+  }
 
   if (loading || !productDetail) {
     return (
       <View style={styles.container}>
-        {renderHeader()}
         <View style={[styles.container, styles.centerContent]}>
           <TextComponent text="Đang tải..." />
         </View>
@@ -143,7 +140,6 @@ const ProductDetailScreen = () => {
   if (error) {
     return (
       <View style={styles.container}>
-        {renderHeader()}
         <View style={[styles.container, styles.centerContent]}>
           <TextComponent text={`Lỗi: ${error}`} />
         </View>
@@ -153,7 +149,12 @@ const ProductDetailScreen = () => {
 
   return (
     <View style={styles.container}>
-      {renderHeader()}
+      <View style={styles.header}>
+        <TouchableOpacity onPress={() => navigation.navigate('BottomTab', {screen: 'Trang chủ'})}>
+          <Icon2 name="arrow-left" size={25} style={{marginLeft: 20}}/>
+        </TouchableOpacity>
+        {/* <TextComponent text={productDetail?.result[0].name || 'Chi tiết sản phẩm'} size={20} /> */}
+      </View>
       <ScrollView style={styles.scrollView}>
         <View style={styles.slider}>
           <Swiper activeDotColor={appColors.blue}>
@@ -309,14 +310,24 @@ const ProductDetailScreen = () => {
       </ScrollView>
 
       <View style={styles.footer}>
+        <TouchableOpacity style={[styles.button, styles.addToWhistList]}
+        onPress={handleAddWhistlist}>
+          {whistlist? (
+          <>
+            <Icon name="heart" size={25} color={'#FF4C4C'}/>
+          </>
+          ):(
+          <Icon name="heart-o" size={25} color={'#FF4C4C'}/>
+          )}
+        </TouchableOpacity>
         <TouchableOpacity
-          style={[styles.button, styles.addToCartButton]}
+          style={[styles.button2, styles.addToCartButton]}
           onPress={handleAddToCart}>
           <TextComponent text="Thêm vào giỏ" color={appColors.blue} />
         </TouchableOpacity>
 
         <TouchableOpacity
-          style={[styles.button, styles.buyNowButton]}
+          style={[styles.button2, styles.buyNowButton]}
           onPress={handleOrder}>
           <TextComponent text="Mua ngay" color={appColors.white} />
         </TouchableOpacity>
@@ -339,9 +350,8 @@ const styles = StyleSheet.create({
     //backgroundColor: appColors.black
   },
   slider:{
-    height: 200,
-    marginHorizontal: 20,
-    borderWidth: 1
+    height: 400,
+    marginHorizontal: 20
   },
   image:{
     height: '100%',
@@ -402,6 +412,7 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     flexDirection: 'row',
+    justifyContent: 'center',
     padding: 15,
     backgroundColor: appColors.white,
     borderTopWidth: 1,
@@ -409,11 +420,17 @@ const styles = StyleSheet.create({
     gap: 10,
   },
   button: {
-    flex: 1,
     height: 45,
     borderRadius: 8,
     justifyContent: 'center',
     alignItems: 'center',
+    padding: 10,
+    width: 'auto',
+  },
+  addToWhistList: {
+    backgroundColor: appColors.white,
+    borderWidth: 1,
+    borderColor: appColors.blue,
   },
   addToCartButton: {
     backgroundColor: appColors.white,
@@ -426,6 +443,14 @@ const styles = StyleSheet.create({
   centerContent: {
     justifyContent: 'center',
     alignItems: 'center',
+  },
+  button2: {
+    height: 45,
+    borderRadius: 8,
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 10,
+    flex: 1,
   },
 })
 

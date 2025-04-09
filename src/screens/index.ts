@@ -26,7 +26,9 @@ import OrderHomeScreen from "./Order/OrderHomeScreen";
 import ListCouponScreen from "./Coupon/ListCouponScreen";
 import ChooseCouponScreen from "./Coupon/ChooseCouponScreen";
 import CouponCartScreen from "./Coupon/CouponCartScreen";
-
+import UpdatePasswordScreen from "./Profile/UpdatePasswordScreen";
+import WhistlistScreen from "./Whistlist/WhistlistScreen";
+import StatisticScreen from "./Statistic/StatisticScreen";
 export {
     AccountScreen,
     LoginScreen,
@@ -56,4 +58,7 @@ export {
     ListCouponScreen,
     ChooseCouponScreen,
     CouponCartScreen,
+    UpdatePasswordScreen,
+    WhistlistScreen,
+    StatisticScreen,
 }

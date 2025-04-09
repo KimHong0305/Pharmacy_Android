@@ -2,10 +2,9 @@ import { useNavigation } from '@react-navigation/native';
 import React, { useEffect, useState } from 'react';
 import { ActivityIndicator, Alert, Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { launchImageLibrary } from 'react-native-image-picker';
-import Icon from 'react-native-vector-icons/FontAwesome';
+import Icon from 'react-native-vector-icons/Feather';
+import Icon2 from 'react-native-vector-icons/FontAwesome';
 import { useDispatch, useSelector } from 'react-redux';
-import { TextComponent } from '../../components';
-import { logout } from '../../lib/redux/reducers/auth.reducer';
 import { getBio, updateBio } from '../../lib/redux/reducers/user.reducer';
 import { RootState } from '../../lib/redux/rootReducer';
 import { AppDispatch } from '../../lib/redux/store';
@@ -81,12 +80,12 @@ const ProfileScreen = () => {
   
   return (
     <View style={styles.container}>
-      <TouchableOpacity
-        style={styles.closeButton}
-        onPress={() => navigation.goBack()}>
-        <TextComponent text="Quay lại" />
-      </TouchableOpacity>
-      <Text style={styles.title}>Trang cá nhân</Text>
+      <View style={styles.header}>
+        <TouchableOpacity onPress={() => navigation.navigate('BottomTab', { screen: 'Tài khoản'})}>
+          <Icon name="arrow-left" size={25} />
+        </TouchableOpacity>
+        <Text style={styles.title}>Thông tin cá nhân</Text>
+      </View>
 
       {/* Hiển thị loading */}
       {loading && <ActivityIndicator size="large" color="#6200EE" />}
@@ -101,8 +100,8 @@ const ProfileScreen = () => {
             <Image
               source={
                 selectedImage
-                  ? {uri: bio.image}
-                  : require('../../assets/images/avatar.jpg')
+                  ? require('../../assets/images/avatar.jpg')
+                  : {uri: bio.image}
               }
               style={styles.avatar}
             />
@@ -110,7 +109,7 @@ const ProfileScreen = () => {
             <TouchableOpacity
               style={styles.editIcon}
               onPress={handleEditAvatar}>
-              <Icon name="pencil" size={18} color="#ffffff" />
+              <Icon2 name="pencil" size={18} color="#ffffff" />
             </TouchableOpacity>
           </View>
 
@@ -147,22 +146,13 @@ const ProfileScreen = () => {
             <Text style={styles.label}>Cấp bậc:</Text>
             <Text style={styles.value}>{bio.level}</Text>
           </View>
+          <TouchableOpacity
+            style={styles.updateButton}
+            onPress={handleUpdateProfile}>
+            <Text style={styles.updateButtonText}>Cập nhật</Text>
+          </TouchableOpacity>
         </View>
       )}
-
-      <View style={{flexDirection: 'column', gap: 10, width: '90%'}}>
-        {/* Nút cập nhật thông tin */}
-        <TouchableOpacity
-          style={styles.updateButton}
-          onPress={handleUpdateProfile}>
-          <Text style={styles.updateButtonText}>Cập nhật</Text>
-        </TouchableOpacity>
-
-        {/* Nút đăng xuất */}
-        {/* <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
-          <Text style={styles.logoutButtonText}>Đăng xuất</Text>
-        </TouchableOpacity> */}
-      </View>
     </View>
   );
 };
@@ -170,27 +160,27 @@ const ProfileScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'flex-start',
-    alignItems: 'center',
-    padding: 20,
+    // justifyContent: 'flex-start',
+    // alignItems: 'center',
+    // padding: 20,
     paddingTop: 50,
     backgroundColor: '#fff',
   },
-  closeButton: {
-    position: 'absolute',
-    top: 25,
-    right: 20,
-    zIndex: 10,
-    padding: 10,
+  header: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingLeft: 20,
+    marginBottom: 20,
   },
   title: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    marginBottom: 20,
+    fontSize: 20,
+    fontWeight: '500',
+    marginLeft: 20,
   },
   profileContainer: {
-    width: '100%',
+    // width: '100%',
     marginBottom: 20,
+    padding: 20
   },
   avatarContainer: {
     position: 'relative',
@@ -250,7 +240,7 @@ const styles = StyleSheet.create({
     padding: 15,
     borderRadius: 10,
     marginTop: 10,
-    alignItems: 'center'
+    alignItems: 'center',
   },
   updateButtonText: {
     color: '#fff',

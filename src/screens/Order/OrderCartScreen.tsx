@@ -282,8 +282,8 @@ const OrderCartScreen = () => {
             <TextComponent text="ZaloPay" size={15} />
           </View>
         </View>
-
-        <View style={styles.footer}>
+      </ScrollView>
+      <View style={styles.footer}>
           {/* Ưu đãi */}
           <TouchableOpacity style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}}
           onPress={() =>
@@ -342,7 +342,6 @@ const OrderCartScreen = () => {
             </TouchableOpacity>
           </View>
         </View>
-      </ScrollView>
     </View>
   );
 }
@@ -403,12 +402,16 @@ const styles = StyleSheet.create({
   },
   payment_method: {
     marginTop: 20,
-    marginBottom: 15,
+    marginBottom: 100,
     borderRadius: 20,
     backgroundColor: appColors.white,
     marginHorizontal: 10,
   },
   footer: {
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
     flexDirection: 'column',
     backgroundColor: appColors.white,
     marginHorizontal: 10,

@@ -9,8 +9,9 @@ import { getBio } from '../../lib/redux/reducers/user.reducer';
 import { RootState } from '../../lib/redux/rootReducer';
 import { AppDispatch } from '../../lib/redux/store';
 import type { NavigationProp } from '../../navigators/index';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import Fontisto from 'react-native-vector-icons/Fontisto';
+import Icon2 from 'react-native-vector-icons/Entypo';
+import Icon3 from 'react-native-vector-icons/MaterialIcons';
 
 const AccScreen = () => {
   const navigation = useNavigation<NavigationProp>();
@@ -94,10 +95,35 @@ const AccScreen = () => {
               <Text style={styles.nameFunc}>Địa chỉ</Text>
             </TouchableOpacity>
 
-            <TouchableOpacity style={styles.func}>
+            <TouchableOpacity style={styles.func} onPress={() => navigation.navigate('UpdatePasswordScreen')}>
               <Icon name="unlock-alt" size={20} color="#000000" />
               <Text style={styles.nameFunc}>Đổi mật khẩu</Text>
             </TouchableOpacity>
+
+            <TouchableOpacity style={styles.func} onPress={() => navigation.navigate('StatisticScreen')}>
+              <Icon2 name="bar-graph" size={20} color="#000000" />
+              <Text style={styles.nameFunc}>Chi tiêu sức khỏe</Text>
+            </TouchableOpacity>
+        </View>
+      </View>
+
+      <View style={styles.account}>
+        <Text style={{fontWeight:'bold', fontSize: 16}}>Khác</Text>
+        <View style={styles.listFunc}>
+          <TouchableOpacity style={styles.func}>
+            <Icon name="eye" size={20} color="#000000" />
+            <Text style={styles.nameFunc}>Sản phẩm đã xem</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity style={styles.func} onPress={() => navigation.navigate('WhistlistScreen')} >
+            <Icon name="heart" size={20} color="#000000"/>
+            <Text style={styles.nameFunc}>Sản phẩm yêu thích</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity style={styles.func}>
+            <Icon3 name="support-agent" size={20} color="#000000" />
+            <Text style={styles.nameFunc}>Hỗ trợ</Text>
+          </TouchableOpacity>
         </View>
       </View>
     </View>

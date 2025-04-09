@@ -28,6 +28,9 @@ import {
   ChooseCouponScreen,
   CouponCartScreen,
   CartScreen,
+  UpdatePasswordScreen,
+  WhistlistScreen,
+  StatisticScreen,
 } from '../screens';
 import OrderCartScreen from '../screens/Order/OrderCartScreen';
 import BottomTabNavigation from './BottomTabNavigation';
@@ -76,6 +79,9 @@ const Navigation = () => {
       <Stack.Screen name="ChooseCouponScreen" component={ChooseCouponScreen} />
       <Stack.Screen name="CouponCartScreen" component={CouponCartScreen} />
       <Stack.Screen name="CartScreen" component={CartScreen} />
+      <Stack.Screen name="UpdatePasswordScreen" component={UpdatePasswordScreen} />
+      <Stack.Screen name="WhistlistScreen" component={WhistlistScreen} />
+      <Stack.Screen name="StatisticScreen" component={StatisticScreen} />
     </Stack.Navigator>
   );
 }
