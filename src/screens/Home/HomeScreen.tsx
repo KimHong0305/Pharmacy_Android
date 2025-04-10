@@ -26,7 +26,7 @@ const HomeScreen = () => {
     (state: RootState) => state.home,
   );
   const {token} = useSelector((state: RootState) => state.auth);
-  
+  const notificationCount = 4;
   useEffect(() => {
     dispatch(getCategories());
     dispatch(getBestSellers());
@@ -43,17 +43,16 @@ const HomeScreen = () => {
         {/* Thanh search */}
         <View style={styles.searchContainer}>
           <TouchableOpacity onPress={() => navigation.navigate('SearchScreen')}>
-          <TextInput
-            placeholder="Search"
-            style={styles.input}
-            placeholderTextColor="#999"
+            <TextInput
+              placeholder="Search"
+              style={styles.input}
+              placeholderTextColor="#999"
               editable={false}
             />
           </TouchableOpacity>
-          <TouchableOpacity 
-            style={styles.icon} 
-            onPress={() => navigation.navigate('SearchScreen')}
-          >
+          <TouchableOpacity
+            style={styles.icon}
+            onPress={() => navigation.navigate('SearchScreen')}>
             <Icon name="search" size={23} color={appColors.black} />
           </TouchableOpacity>
         </View>
@@ -61,16 +60,36 @@ const HomeScreen = () => {
         <TouchableOpacity
           onPress={() => {
             if (token) {
-              navigation.navigate('ProfileScreen');
+              navigation.navigate('NotificationScreen');
             } else {
               navigation.navigate('BottomTab', {screen: 'Tài khoản'});
             }
-          }}>
-          <Image
-            source={require('../../assets/images/logo.png')}
-            style={styles.avatar}
-            resizeMode="contain"
-          />
+          }}
+          style={{marginTop: 5, marginLeft: 5, position: 'relative'}}>
+          <View style={{position: 'relative'}}>
+            <Icon name="bell" size={25} color={appColors.blue} />
+
+            {notificationCount > 0 && (
+              <View
+                style={{
+                  position: 'absolute',
+                  top: -5,
+                  right: -5,
+                  backgroundColor: 'red',
+                  borderRadius: 10,
+                  paddingHorizontal: 5,
+                  minWidth: 18,
+                  height: 18,
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                }}>
+                <Text
+                  style={{color: 'white', fontSize: 10, fontWeight: 'bold'}}>
+                  {notificationCount > 99 ? '99+' : notificationCount}
+                </Text>
+              </View>
+            )}
+          </View>
         </TouchableOpacity>
       </View>
       {/* Body */}
@@ -101,17 +120,15 @@ const HomeScreen = () => {
           {/* List Category */}
           <Text style={styles.categoryTitle}>Danh mục sản phẩm</Text>
           <View style={styles.categoryContainer}>
-            {(
-              categories.map(item => (
+            {categories.map(item => (
               <TouchableOpacity key={item.id} style={styles.categoryItem}>
-                  <Image
-                    source={{uri: item.image}}
-                    style={styles.categoryImage}
-                  />
+                <Image
+                  source={{uri: item.image}}
+                  style={styles.categoryImage}
+                />
                 <Text style={styles.categoryText}>{item.name}</Text>
               </TouchableOpacity>
-              ))
-            )}
+            ))}
           </View>
           {/* Top 10 Product */}
           <Text style={styles.topProductTitle}>Sản phẩm nổi bật</Text>
@@ -123,16 +140,18 @@ const HomeScreen = () => {
             renderItem={({item}) => (
               <TouchableOpacity
                 style={styles.productItem}
-                onPress={() => navigation.navigate('ProductDetailScreen', {productId: item.id})}>
-                <Image 
-                  source={{uri: item.image}} 
-                  style={styles.productImage} 
-                />
+                onPress={() =>
+                  navigation.navigate('ProductDetailScreen', {
+                    productId: item.id,
+                  })
+                }>
+                <Image source={{uri: item.image}} style={styles.productImage} />
                 <Text style={styles.productText}>
                   {truncateText(item.name, 20)}
                 </Text>
                 <Text style={styles.priceText}>
-                  {item.prices[0]?.price.toLocaleString('vi-VN')}đ/{item.prices[0]?.unit.name}
+                  {item.prices[0]?.price.toLocaleString('vi-VN')}đ/
+                  {item.prices[0]?.unit.name}
                 </Text>
               </TouchableOpacity>
             )}
@@ -147,16 +166,18 @@ const HomeScreen = () => {
             renderItem={({item}) => (
               <TouchableOpacity
                 style={styles.productItem}
-                onPress={() => navigation.navigate('ProductDetailScreen', {productId: item.id})}>
-                <Image 
-                  source={{uri: item.image}} 
-                  style={styles.productImage} 
-                />
+                onPress={() =>
+                  navigation.navigate('ProductDetailScreen', {
+                    productId: item.id,
+                  })
+                }>
+                <Image source={{uri: item.image}} style={styles.productImage} />
                 <Text style={styles.productText}>
                   {truncateText(item.name, 20)}
                 </Text>
                 <Text style={styles.priceText}>
-                  {item.prices[0]?.price.toLocaleString('vi-VN')}đ/{item.prices[0]?.unit.name}
+                  {item.prices[0]?.price.toLocaleString('vi-VN')}đ/
+                  {item.prices[0]?.unit.name}
                 </Text>
               </TouchableOpacity>
             )}
@@ -170,10 +191,7 @@ const HomeScreen = () => {
             keyExtractor={item => item.id}
             renderItem={({item}) => (
               <View style={styles.companyItem}>
-                <Image 
-                  source={{uri: item.image}} 
-                  style={styles.companyImage} 
-                />
+                <Image source={{uri: item.image}} style={styles.companyImage} />
                 <Text style={styles.companyText}>{item.name}</Text>
               </View>
             )}

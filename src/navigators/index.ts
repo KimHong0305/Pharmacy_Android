@@ -26,6 +26,7 @@ export type RootStackParamList = {
   AccScreen: undefined;
   ListCouponScreen: undefined;
   ChooseCouponScreen: { totalPrice: number };
+  NotificationScreen: undefined;
 };
 
 export type NavigationProp = NativeStackNavigationProp<RootStackParamList>; 

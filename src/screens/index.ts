@@ -25,6 +25,7 @@ import ListAddressScreen from "./Address/ListAddressScreen";
 import OrderHomeScreen from "./Order/OrderHomeScreen";
 import ListCouponScreen from "./Coupon/ListCouponScreen";
 import ChooseCouponScreen from "./Coupon/ChooseCouponScreen";
+import NotificationScreen from "./Notification/NotificationScreen";
 
 export {
     AccountScreen,
@@ -54,4 +55,5 @@ export {
     HistoryOrderScreen,
     ListCouponScreen,
     ChooseCouponScreen,
+    NotificationScreen
 }

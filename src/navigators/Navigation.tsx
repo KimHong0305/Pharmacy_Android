@@ -26,6 +26,7 @@ import {
   VerifyEmailSignup,
   ListCouponScreen,
   ChooseCouponScreen,
+  NotificationScreen,
 } from '../screens';
 import OrderCartScreen from '../screens/Order/OrderCartScreen';
 import BottomTabNavigation from './BottomTabNavigation';
@@ -72,6 +73,7 @@ const Navigation = () => {
       <Stack.Screen name="HistoryOrderScreen" component={HistoryOrderScreen} />
       <Stack.Screen name="ListCouponScreen" component={ListCouponScreen} />
       <Stack.Screen name="ChooseCouponScreen" component={ChooseCouponScreen} />
+      <Stack.Screen name="NotificationScreen" component={NotificationScreen} />
     </Stack.Navigator>
   );
 }
