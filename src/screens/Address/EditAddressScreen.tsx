@@ -1,48 +1,45 @@
 import React, { useEffect, useState } from 'react';
-import { StyleSheet, Text, TouchableOpacity, View, TextInput, Button, Alert } from 'react-native';
+import { StyleSheet, Text, TouchableOpacity, View, TextInput, Button, Alert, ScrollView } from 'react-native';
 import Icon from 'react-native-vector-icons/Feather';
 import { useDispatch, useSelector } from 'react-redux';
+import { useNavigation, useRoute, RouteProp } from '@react-navigation/native';
+import { NavigationProp, RootStackParamList } from '../../navigators';
 import { AppDispatch } from '../../lib/redux/store';
 import { RootState } from '../../lib/redux/rootReducer';
-import { useNavigation, useRoute } from '@react-navigation/native';
 import { getProvinces, getDistricts, getVillages } from '../../lib/redux/reducers/location.reducer';
 import { Picker } from '@react-native-picker/picker';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import { ProductDetailItem } from '../../lib/schemas/product.schema';
-import { NavigationProp } from '../../navigators';
+import { deleteAddress, updateAddress } from '../../lib/redux/reducers/address.reducer';
 
-interface LocationData {
-  id: string;
-  full_name: string;
-}
-
-const AddressScreen = () => {
+const EditAddressScreen = () => {
     const navigation = useNavigation<NavigationProp>();
     const dispatch: AppDispatch = useDispatch();
+    const route = useRoute<RouteProp<RootStackParamList, 'EditAddressScreen'>>();
     const { provinces, districts, villages, loading } = useSelector((state: RootState) => state.location);
 
-    const [selectedProvince, setSelectedProvince] = useState<string | undefined>(undefined);
-    const [selectedDistrict, setSelectedDistrict] = useState<string | undefined>(undefined);
-    const [selectedVillage, setSelectedVillage] = useState<string | undefined>(undefined);
-    const [addressType, setAddressType] = useState('Nhà riêng');
-    const [fullname, setFullname] = useState('');
-    const [phone, setPhone] = useState('');
-    const [address, setAddress] = useState('');
-    const provinceName = provinces.find(p => p.id === selectedProvince)?.full_name || '';
-    const districtName = districts.find(d => d.id === selectedDistrict)?.full_name || '';
-    const villageName = villages.find(v => v.id === selectedVillage)?.full_name || '';
+    const { address: addressData } = route.params;
 
-
-    const route = useRoute();
-
-    const { home, product } = route.params as { 
-      home: boolean;
-      product: ProductDetailItem;
-    };
+    const [selectedProvince, setSelectedProvince] = useState<string | undefined>(addressData.province);
+    const [selectedDistrict, setSelectedDistrict] = useState<string | undefined>(addressData.district);
+    const [selectedVillage, setSelectedVillage] = useState<string | undefined>(addressData.village);
+    const [addressType, setAddressType] = useState(addressData.addressCategory === 'HOUSE' ? 'Nhà riêng' : 'Văn phòng');
+    const [isDefault, setIsDefault] = useState(addressData.addressDefault);
+    const [fullname, setFullname] = useState(addressData.fullname);
+    const [phone, setPhone] = useState(addressData.phone.toString());
+    const [address, setAddress] = useState(addressData.address);
 
     useEffect(() => {
-        dispatch(getProvinces());
-    }, [dispatch]);
+        dispatch(getProvinces()).then(() => {
+            if (addressData.province) {
+                dispatch(getDistricts(addressData.province));
+            }
+        });
+    }, [dispatch, addressData.province]);
+
+    useEffect(() => {
+        if (addressData.district) {
+            dispatch(getVillages(addressData.district));
+        }
+    }, [dispatch, addressData.district]);
 
     const handleProvinceChange = async (provinceId: string) => {
         setSelectedProvince(provinceId);
@@ -74,35 +71,56 @@ const AddressScreen = () => {
     
         const phoneRegex = /^(?:\+84|0)[3-9]\d{8}$/;
         if (!phoneRegex.test(phone)) {
-           Alert. alert("Số điện thoại không hợp lệ. Vui lòng nhập lại.");
+            Alert.alert("Số điện thoại không hợp lệ. Vui lòng nhập lại.");
             return;
         }
 
-        const newAddress = {
+        const updated = {
+            id: addressData.id,
             fullname,
             phone,
             address,
             province: selectedProvince,
             district: selectedDistrict,
             village: selectedVillage,
-            provinceName: provinceName,
-            districtName: districtName,
-            villageName: villageName + ", " +  districtName + ", " +  provinceName,
             addressCategory: addressType === "Nhà riêng" ? "HOUSE" : "COMPANY",
+            addressDefault: isDefault,
         };
 
-        await AsyncStorage.setItem('AddressGuest', JSON.stringify(newAddress));
-        handleNavigate();
-        // console.log('new', newAddress);
+        console.log('updatedAddress', updated);
+
+        try {
+            await dispatch(updateAddress(updated)).unwrap();
+            Alert.alert("Cập nhật địa chỉ thành công!");
+            navigation.goBack();
+        } catch (error) {
+            Alert.alert("Cập nhật địa chỉ thất bại!");
+        }
     };
 
-    const handleNavigate = () => {
-      if(home === true) {
-        navigation.navigate('OrderHomeScreen', {product: product});
-      } else {
-        navigation.navigate('OrderCartScreen');
-      }
-    }
+    const handleDelete = async (id: string) => {
+        Alert.alert(
+            "Xác nhận",
+            "Bạn có chắc chắn muốn xóa địa chỉ này không?",
+            [
+                { text: "Hủy", style: "cancel" },
+                { 
+                    text: "Xóa", 
+                    style: "destructive",
+                    onPress: async () => {
+                        try {
+                            await dispatch(deleteAddress(id)).unwrap();
+                            Alert.alert("Xóa địa chỉ thành công!");
+                            navigation.goBack();
+                        } catch (error) {
+                            Alert.alert("Lỗi khi xóa địa chỉ");
+                        }
+                    }
+                }
+            ]
+        );
+    };
+    
 
     return (
         <View style={styles.container}>
@@ -110,9 +128,10 @@ const AddressScreen = () => {
                 <TouchableOpacity onPress={() => navigation.goBack()}>
                     <Icon name="arrow-left" size={25} />
                 </TouchableOpacity>
-                <Text style={styles.title}>Nhập địa chỉ</Text>
+                <Text style={styles.title}>Sửa địa chỉ</Text>
             </View>
 
+            <ScrollView>
             <View style={styles.formContainer}>
                 <Text style={styles.label}>Họ và tên</Text>
                 <TextInput
@@ -128,6 +147,7 @@ const AddressScreen = () => {
                     value={phone}
                     onChangeText={setPhone}
                     style={styles.input}
+                    keyboardType="phone-pad"
                 />
 
                 <Text style={styles.label}>Tỉnh/Thành phố</Text>
@@ -136,9 +156,9 @@ const AddressScreen = () => {
                     onValueChange={handleProvinceChange}
                     style={styles.picker}
                 >
-                    <Picker.Item style={{fontSize: 14}} label="Chọn Tỉnh/Thành phố" value={undefined} />
+                    <Picker.Item label="Chọn Tỉnh/Thành phố" value={undefined} />
                     {provinces.map((province) => (
-                        <Picker.Item style={{fontSize: 14}} key={province.id} label={province.full_name} value={province.id} />
+                        <Picker.Item key={province.id} label={province.full_name} value={province.id} />
                     ))}
                 </Picker>
 
@@ -149,9 +169,9 @@ const AddressScreen = () => {
                     style={styles.picker}
                     enabled={!!selectedProvince}
                 >
-                    <Picker.Item style={{fontSize: 14}} label="Chọn Quận/Huyện" value={undefined} />
+                    <Picker.Item label="Chọn Quận/Huyện" value={undefined} />
                     {districts.map((district) => (
-                        <Picker.Item style={{fontSize: 14}} key={district.id} label={district.full_name} value={district.id} />
+                        <Picker.Item key={district.id} label={district.full_name} value={district.id} />
                     ))}
                 </Picker>
 
@@ -162,9 +182,9 @@ const AddressScreen = () => {
                     style={styles.picker}
                     enabled={!!selectedDistrict}
                 >
-                    <Picker.Item style={{fontSize: 14}} label="Chọn Phường/Xã" value={undefined} />
+                    <Picker.Item label="Chọn Phường/Xã" value={undefined} />
                     {villages.map((village) => (
-                        <Picker.Item style={{fontSize: 14}} key={village.id} label={village.full_name} value={village.id} />
+                        <Picker.Item key={village.id} label={village.full_name} value={village.id} />
                     ))}
                 </Picker>
 
@@ -177,7 +197,7 @@ const AddressScreen = () => {
                 />
 
                 <View style={styles.addressTypeContainer}>
-                    <Text style={[styles.label, {marginRight: 60}]}>Loại địa chỉ </Text>
+                    <Text style={[styles.label, {marginRight: 60}]}>Loại địa chỉ</Text>
                     <TouchableOpacity
                         style={[
                             styles.addressTypeButton,
@@ -185,11 +205,7 @@ const AddressScreen = () => {
                         ]}
                         onPress={() => setAddressType('Nhà riêng')}
                     >
-                        <Text
-                            style={[
-                                addressType === 'Nhà riêng' ? styles.selectedText : {},
-                            ]}
-                        >
+                        <Text style={addressType === 'Nhà riêng' ? styles.selectedText : {}}>
                             Nhà riêng
                         </Text>
                     </TouchableOpacity>
@@ -200,23 +216,55 @@ const AddressScreen = () => {
                         ]}
                         onPress={() => setAddressType('Văn phòng')}
                     >
-                        <Text
-                            style={[
-                                addressType === 'Văn phòng' ? styles.selectedText : {},
-                            ]}
-                        >
+                        <Text style={addressType === 'Văn phòng' ? styles.selectedText : {}}>
                             Văn phòng
                         </Text>
                     </TouchableOpacity>
                 </View>
 
-                <Button title="Cập nhật" onPress={handleSubmit} color="#4CAF50" />
+                <View style={styles.defaultContainer}>
+                    <View style={styles.switchContainer}>
+                        <Text style={styles.label}>Đặt làm địa chỉ mặc định</Text>
+                        <TouchableOpacity
+                            style={[
+                                styles.switchWrapper,
+                                isDefault ? styles.switchOn : styles.switchOff,
+                            ]}
+                            onPress={() => setIsDefault(!isDefault)}
+                        >
+                            <View
+                                style={[
+                                    styles.switchCircle,
+                                    isDefault ? styles.circleOn : styles.circleOff,
+                                ]}
+                            />
+                        </TouchableOpacity>
+                    </View>
+                </View>
+
+                <View style={styles.buttonContainer}>
+                    <TouchableOpacity
+                        style={[styles.button, { backgroundColor: '#4CAF50' }]}
+                        onPress={handleSubmit}
+                    >
+                        <Text style={styles.buttonText}>Cập nhật</Text>
+                    </TouchableOpacity>
+
+                    <TouchableOpacity
+                        style={[styles.button, { backgroundColor: '#FF5252' }]}
+                        onPress={() => handleDelete(addressData.id)}
+                    >
+                        <Text style={styles.buttonText}>Xóa địa chỉ</Text>
+                    </TouchableOpacity>
+                </View>
             </View>
+            </ScrollView>
         </View>
     );
 };
 
 const styles = StyleSheet.create({
+    // copy toàn bộ styles giống AddAddressScreen bạn gửi nhé, khỏi cần sửa
     container: {
         flex: 1,
         backgroundColor: '#fff',
@@ -319,7 +367,25 @@ const styles = StyleSheet.create({
     circleOff: {
         transform: [{ translateX: 5 }],
     },
+    buttonContainer: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        marginTop: 20,
+    },
+    button: {
+        flex: 1,
+        height: 45,
+        borderRadius: 5,
+        justifyContent: 'center',
+        alignItems: 'center',
+        marginHorizontal: 5,
+    },
+    buttonText: {
+        color: '#fff',
+        fontSize: 16,
+        fontWeight: '600',
+    },
+      
 });
 
-
-export default AddressScreen;
+export default EditAddressScreen;

@@ -90,7 +90,7 @@ const AccScreen = () => {
               <Text style={styles.nameFunc}>Ưu đãi</Text>
             </TouchableOpacity>
 
-            <TouchableOpacity style={styles.func}>
+            <TouchableOpacity style={styles.func} onPress={() => navigation.navigate('AddressUserScreen')}>
               <Icon name="location-arrow" size={20} color="#000000" />
               <Text style={styles.nameFunc}>Địa chỉ</Text>
             </TouchableOpacity>

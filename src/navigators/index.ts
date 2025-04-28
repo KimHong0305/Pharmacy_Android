@@ -1,6 +1,7 @@
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { ProductDetailItem } from '../lib/schemas/product.schema';
 import { Coupon } from '../lib/schemas/coupon.schema';
+import { Address } from '../lib/schemas/address.schema';
 
 export type RootStackParamList = {
   HomeScreen: undefined;
@@ -17,21 +18,24 @@ export type RootStackParamList = {
   OnboardingScreen: undefined;
   AccountScreen: undefined;
   ProductScreen: undefined;
-  OrderCartScreen: { selectedCoupon?: Coupon | null } | undefined; 
-  OrderHomeScreen: {product: ProductDetailItem};
+  OrderCartScreen: { selectedCoupon?: Coupon | null; selectedAddress?: Address | null } | undefined; 
+  OrderHomeScreen: { product: ProductDetailItem, selectedCoupon?: Coupon | null; selectedAddress?: Address | null };
   AddressScreen: {home?: boolean; product?: ProductDetailItem};
-  ListAddressScreen: {home?: boolean; product?: ProductDetailItem};
+  ChooseAddressScreen: { home?: boolean; product?: ProductDetailItem; selectedCoupon?: Coupon | null};
   SearchList: {query: string};
   SearchScreen: undefined;
   HistoryOrderScreen: {active: string};
   AccScreen: undefined;
   ListCouponScreen: undefined;
-  ChooseCouponScreen: { totalPrice: number };
+  ChooseCouponScreen: { home?: boolean; product?: ProductDetailItem; totalPrice: number; selectedAddress?: Address | null };
   CartScreen: { selectedCoupon: Coupon | null } | undefined; 
   CouponCartScreen: { totalPrice: number };
   UpdatePasswordScreen: undefined;
   WhistlistScreen: undefined;
   StatisticScreen: undefined;
+  AddressUserScreen: undefined;
+  AddAddressScreen: undefined;
+  EditAddressScreen: { address: Address};
 };
 
 export type NavigationProp = NativeStackNavigationProp<RootStackParamList>; 

@@ -35,7 +35,7 @@ export interface OrderResponse {
 export interface AddOrderGuest {
     priceId?: string,
     fullname: string,
-    phone: string,
+    phone: number,
     province: string,
     district: string,
     village: string,

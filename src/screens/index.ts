@@ -21,7 +21,7 @@ import SearchListScreen from "./Search/SearchListScreen";
 import AddressScreen from "./Address/AddressScreen";
 import AccScreen from "./Profile/AccScreen";
 import HistoryOrderScreen from "./Profile/HistoryOrderScreen";
-import ListAddressScreen from "./Address/ListAddressScreen";
+import ChooseAddressScreen from "./Address/ChooseAddressScreen";
 import OrderHomeScreen from "./Order/OrderHomeScreen";
 import ListCouponScreen from "./Coupon/ListCouponScreen";
 import ChooseCouponScreen from "./Coupon/ChooseCouponScreen";
@@ -29,6 +29,11 @@ import CouponCartScreen from "./Coupon/CouponCartScreen";
 import UpdatePasswordScreen from "./Profile/UpdatePasswordScreen";
 import WhistlistScreen from "./Whistlist/WhistlistScreen";
 import StatisticScreen from "./Statistic/StatisticScreen";
+import AddressUserScreen from "./Address/AddressUserScreen";
+import AddAddressScreen from "./Address/AddAddressScreen";
+import EditAddressScreen from "./Address/EditAddressScreen";
+
+
 export {
     AccountScreen,
     LoginScreen,
@@ -52,7 +57,7 @@ export {
     SearchScreen,
     SearchListScreen,
     AddressScreen,
-    ListAddressScreen,
+    ChooseAddressScreen,
     AccScreen,
     HistoryOrderScreen,
     ListCouponScreen,
@@ -61,4 +66,7 @@ export {
     UpdatePasswordScreen,
     WhistlistScreen,
     StatisticScreen,
+    AddressUserScreen,
+    AddAddressScreen,
+    EditAddressScreen,
 }

@@ -4,20 +4,13 @@ import Icon from 'react-native-vector-icons/Feather';
 import { useDispatch, useSelector } from 'react-redux';
 import { AppDispatch } from '../../lib/redux/store';
 import { RootState } from '../../lib/redux/rootReducer';
-import { useNavigation, useRoute } from '@react-navigation/native';
+import { useNavigation } from '@react-navigation/native';
 import { getProvinces, getDistricts, getVillages } from '../../lib/redux/reducers/location.reducer';
 import { Picker } from '@react-native-picker/picker';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import { ProductDetailItem } from '../../lib/schemas/product.schema';
-import { NavigationProp } from '../../navigators';
+import { addAddress } from '../../lib/redux/reducers/address.reducer';
 
-interface LocationData {
-  id: string;
-  full_name: string;
-}
-
-const AddressScreen = () => {
-    const navigation = useNavigation<NavigationProp>();
+const AddAddressScreen = () => {
+    const navigation = useNavigation();
     const dispatch: AppDispatch = useDispatch();
     const { provinces, districts, villages, loading } = useSelector((state: RootState) => state.location);
 
@@ -25,20 +18,10 @@ const AddressScreen = () => {
     const [selectedDistrict, setSelectedDistrict] = useState<string | undefined>(undefined);
     const [selectedVillage, setSelectedVillage] = useState<string | undefined>(undefined);
     const [addressType, setAddressType] = useState('Nhà riêng');
+    const [isDefault, setIsDefault] = useState(false);
     const [fullname, setFullname] = useState('');
     const [phone, setPhone] = useState('');
     const [address, setAddress] = useState('');
-    const provinceName = provinces.find(p => p.id === selectedProvince)?.full_name || '';
-    const districtName = districts.find(d => d.id === selectedDistrict)?.full_name || '';
-    const villageName = villages.find(v => v.id === selectedVillage)?.full_name || '';
-
-
-    const route = useRoute();
-
-    const { home, product } = route.params as { 
-      home: boolean;
-      product: ProductDetailItem;
-    };
 
     useEffect(() => {
         dispatch(getProvinces());
@@ -85,24 +68,20 @@ const AddressScreen = () => {
             province: selectedProvince,
             district: selectedDistrict,
             village: selectedVillage,
-            provinceName: provinceName,
-            districtName: districtName,
-            villageName: villageName + ", " +  districtName + ", " +  provinceName,
             addressCategory: addressType === "Nhà riêng" ? "HOUSE" : "COMPANY",
+            addressDefault: isDefault,
         };
 
-        await AsyncStorage.setItem('AddressGuest', JSON.stringify(newAddress));
-        handleNavigate();
-        // console.log('new', newAddress);
-    };
+        console.log('new', newAddress);
 
-    const handleNavigate = () => {
-      if(home === true) {
-        navigation.navigate('OrderHomeScreen', {product: product});
-      } else {
-        navigation.navigate('OrderCartScreen');
-      }
-    }
+        try {
+            await dispatch(addAddress(newAddress)).unwrap();
+            Alert. alert("Địa chỉ đã được thêm thành công!");
+            navigation.goBack();
+        } catch (error) {
+            Alert. alert("Lỗi")
+        }
+    };
 
     return (
         <View style={styles.container}>
@@ -110,7 +89,7 @@ const AddressScreen = () => {
                 <TouchableOpacity onPress={() => navigation.goBack()}>
                     <Icon name="arrow-left" size={25} />
                 </TouchableOpacity>
-                <Text style={styles.title}>Nhập địa chỉ</Text>
+                <Text style={styles.title}>Thêm địa chỉ</Text>
             </View>
 
             <View style={styles.formContainer}>
@@ -210,7 +189,30 @@ const AddressScreen = () => {
                     </TouchableOpacity>
                 </View>
 
-                <Button title="Cập nhật" onPress={handleSubmit} color="#4CAF50" />
+
+                <View style={styles.defaultContainer}>
+                    <View style={styles.switchContainer}>
+                        <Text style={styles.label}>
+                            Đặt làm địa chỉ mặc định
+                        </Text>
+                        <TouchableOpacity
+                            style={[
+                                styles.switchWrapper,
+                                isDefault ? styles.switchOn : styles.switchOff,
+                            ]}
+                            onPress={() => setIsDefault(!isDefault)}
+                        >
+                            <View
+                                style={[
+                                    styles.switchCircle,
+                                    isDefault ? styles.circleOn : styles.circleOff,
+                                ]}
+                            />
+                        </TouchableOpacity>
+                    </View>
+                </View>
+
+                <Button title="Thêm" onPress={handleSubmit} color="#4CAF50" />
             </View>
         </View>
     );
@@ -322,4 +324,4 @@ const styles = StyleSheet.create({
 });
 
 
-export default AddressScreen;
+export default AddAddressScreen;
