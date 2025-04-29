@@ -1,13 +1,13 @@
-import React, { useEffect, useState } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, FlatList, Image, ActivityIndicator } from 'react-native';
-import { appColors } from '../../constants/appColors';
 import { useNavigation } from '@react-navigation/native';
-import { NavigationProp } from '../../navigators';
-import { getCategories } from '../../lib/redux/reducers/home.reducer';
-import { AppDispatch } from '../../lib/redux/store';
+import React, { useEffect, useState } from 'react';
+import { ActivityIndicator, FlatList, Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
-import { RootState } from '../../lib/redux/rootReducer';
+import { appColors } from '../../constants/appColors';
 import { getCategoryDetail } from '../../lib/redux/reducers/category.reducer';
+import { getCategories } from '../../lib/redux/reducers/category.reducer';
+import { RootState } from '../../lib/redux/rootReducer';
+import { AppDispatch } from '../../lib/redux/store';
+import { NavigationProp } from '../../navigators';
 
 export default function CategoryScreen() {
   const [activeCategory, setActiveCategory] = useState<string | null>(null);
@@ -15,8 +15,7 @@ export default function CategoryScreen() {
   const dispatch: AppDispatch = useDispatch();
   const navigation = useNavigation<NavigationProp>();
 
-  const { categories, loading } = useSelector((state: RootState) => state.home);
-  const { subCategories, loading: detailLoading } = useSelector((state: RootState) => state.category);
+  const {rootCategories ,subCategories, loading: detailLoading } = useSelector((state: RootState) => state.category);
 
   useEffect(() => {
     dispatch(getCategories());
@@ -31,7 +30,7 @@ export default function CategoryScreen() {
     <View style={styles.container}>
       {/* Sidebar danh mục lớn */}
       <View style={styles.sidebar}>
-        {categories.map((category) => (
+        {rootCategories.map((category) => (
           <TouchableOpacity
             key={category.id}
             style={[styles.categoryItem, activeCategory === category.id && styles.activeCategory]}

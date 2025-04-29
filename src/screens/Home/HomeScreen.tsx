@@ -1,6 +1,6 @@
 import { useNavigation } from '@react-navigation/native';
 import React, { useEffect, useState } from 'react';
-import { Alert, FlatList, Modal, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { FlatList, Modal, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { Image } from 'react-native-elements';
 import Swiper from 'react-native-swiper';
 import Icon from 'react-native-vector-icons/FontAwesome';
@@ -8,11 +8,11 @@ import { useDispatch, useSelector } from 'react-redux';
 import { TextComponent } from '../../components';
 import { appColors } from '../../constants/appColors';
 import { fontFamilies } from '../../constants/fontFamilies';
-import { getBestSellers, getCategories, getNewProducts, getTopCompanies } from '../../lib/redux/reducers/home.reducer';
+import { getHome } from '../../lib/redux/reducers/home.reducer';
 import { RootState } from '../../lib/redux/rootReducer';
 import { AppDispatch } from '../../lib/redux/store';
-import type { NavigationProp } from '../../navigators/index';
 import { Notification } from '../../lib/schemas/notification.schema';
+import type { NavigationProp } from '../../navigators/index';
 
 const truncateText = (text: string, maxLength: number) => {
   if (text.length <= maxLength) return text;
@@ -20,7 +20,6 @@ const truncateText = (text: string, maxLength: number) => {
 };
 
 const HomeScreen = () => {
-
   const navigation = useNavigation<NavigationProp>();
   const dispatch: AppDispatch = useDispatch<AppDispatch>();
   const {categories, bestSellers, newProducts, topCompanies} = useSelector(
@@ -36,10 +35,7 @@ const HomeScreen = () => {
     const fetchData = async () => {
       try {
         await Promise.all([
-          dispatch(getCategories()),
-          dispatch(getBestSellers()),
-          dispatch(getNewProducts()),
-          dispatch(getTopCompanies())
+          dispatch(getHome())
         ]);
       } catch (error) {
         console.log("Error fetching data:", error);

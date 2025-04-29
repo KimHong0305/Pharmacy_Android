@@ -2,18 +2,27 @@ import api from "../../api/api";
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { Category, CategoryResponse } from "../../schemas/category.schema";
 
-
 interface CategoryState {
     loading: boolean;
+    rootCategories: Category[];
     subCategories: Category[];
     error: string | null;
 }
 
 const initialState: CategoryState = {
     loading: false,
+    rootCategories: [],
     subCategories: [],
     error: null
 };
+
+export const getCategories = createAsyncThunk(
+  'category/root',
+  async () => {
+    const response = await api.get<CategoryResponse>('/category/null');
+    return response.data.result;
+  },
+);
 
 export const getCategoryDetail = createAsyncThunk<
     CategoryResponse,
@@ -37,6 +46,20 @@ const categorySlice = createSlice({
     reducers: {},
     extraReducers: builder => {
         builder
+        //ROOT CATEGORY
+            .addCase(getCategories.pending, state => {
+            state.loading = true;
+            })
+            .addCase(getCategories.fulfilled, (state, action) => {
+            state.loading = false;
+            state.rootCategories = action.payload;
+            state.error = null;
+            })
+            .addCase(getCategories.rejected, (state, action) => {
+            state.loading = false;
+            state.error = action.error.message || 'Failed to fetch categories';
+            })
+        //SUB CATEGORIES
             .addCase(getCategoryDetail.pending, state => {
                 state.loading = true;
                 state.error = null;
