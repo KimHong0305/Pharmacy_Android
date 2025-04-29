@@ -16,10 +16,11 @@ import { createOrderCartGuest, createOrderCartUser } from '../../lib/redux/reduc
 import { RootState } from '../../lib/redux/rootReducer';
 import { AppDispatch } from '../../lib/redux/store';
 import { NavigationProp, RootStackParamList } from '../../navigators';
-import { fetchAddressWithLocationNames } from '../../lib/redux/reducers/address.reducer';
+import { fetchAddressWithLocationNames, getListAddress } from '../../lib/redux/reducers/address.reducer';
 import { AddOrderUser } from '../../lib/schemas/order.schema';
 import { Coupon } from '../../lib/schemas/coupon.schema';
 import { CheckBox } from 'react-native-elements';
+import { Address } from '../../lib/schemas/address.schema';
 
 const truncateText = (text: string, maxLength: number) => {
   if (text.length <= maxLength) return text;
@@ -32,12 +33,13 @@ const OrderCartScreen = () => {
   const [addressData, setAddressData] = useState({
     id: '',
     fullname: '',
-    phone: '',
+    phone: 0,
     province: '',
     district: '',
     village: '',
     address: '',
     addressCategory: '',
+    addressDefault: false,
     provinceName: '',
     districtName: '',
     villageName: '',
@@ -45,7 +47,8 @@ const OrderCartScreen = () => {
   
   const {cart} = useSelector((state: RootState) => state.cart);
   const {token} = useSelector((state: RootState) => state.auth);
-  const [paymentMethod, setPaymentMethod] = useState('');
+  const {listAddress} = useSelector((state: RootState) => state.address);
+  const [paymentMethod, setPaymentMethod] = useState('CASH');
   const dispatch: AppDispatch = useDispatch<AppDispatch>();
   
   const route = useRoute<RouteProp<RootStackParamList, 'OrderCartScreen'>>();
@@ -53,6 +56,12 @@ const OrderCartScreen = () => {
   const [selectedCoupon, setSelectedCoupon] = useState<Coupon | null>(
     route.params?.selectedCoupon ?? null
   );
+
+  const [selectedAddress, setSelectedAddress] = useState<Address | null>(
+    route.params?.selectedAddress ?? null
+  );
+
+  // console.log('dia chi duoc chon', selectedAddress)
 
   const handleCheckboxChange = (method: 'CASH' | 'MOMO' | 'VNPAY' | 'ZALOPAY') => {
     if (paymentMethod === method) {
@@ -69,20 +78,42 @@ const OrderCartScreen = () => {
     const getData = async () => {
       let data;
       if (token) {
-        data = await AsyncStorage.getItem('AddressUser');
+        dispatch(getListAddress());
       } else {
         data = await AsyncStorage.getItem('AddressGuest');
       }
-  
-      if (data !== null) {
+
+      if (data) {
         const parsedData = JSON.parse(data);
+        setAddressData(parsedData);
+      }
+  
+      if (selectedAddress) {
+        setAddressData({
+          id: selectedAddress.id,
+          fullname: selectedAddress.fullname,
+          phone: selectedAddress.phone,
+          province: selectedAddress.province,
+          district: selectedAddress.district,
+          village: selectedAddress.village,
+          address: selectedAddress.address,
+          addressCategory: selectedAddress.addressCategory,
+          addressDefault: selectedAddress.addressDefault,
+          provinceName: selectedAddress.provinceName ?? '',
+          districtName: selectedAddress.districtName ?? '',
+          villageName: selectedAddress.villageName ?? '',
+        });
+      } else if (listAddress && listAddress.length > 0) {
+        // const parsedData = JSON.parse(data);
+        const defaultAddress = listAddress.find(
+          item => item.addressDefault === true,
+        );
         try {
-          const updatedAddress = await dispatch(fetchAddressWithLocationNames(parsedData)).unwrap();
+          const updatedAddress = await dispatch(fetchAddressWithLocationNames(defaultAddress)).unwrap();
           setAddressData(updatedAddress);
-          // console.log(updatedAddress)
         } catch (error) {
           console.error("Error fetching address names:", error);
-          setAddressData(parsedData); // Giữ nguyên dữ liệu cũ nếu lỗi xảy ra
+          // setAddressData(parsedData);
         }
       }
     };
@@ -105,7 +136,7 @@ const OrderCartScreen = () => {
     
         await dispatch(createOrderCartUser(orderUser))
             .then(() => getCartUser());
-        // console.log(orderUser)
+        console.log(orderUser)
       } else {
         const orderGuest = {
           fullname: addressData.fullname,
@@ -130,7 +161,7 @@ const OrderCartScreen = () => {
   //Handle Click Update Address
   const handleClickAddress = () => {
     if(token) {
-      navigation.navigate('ListAddressScreen', {home: false})
+      navigation.navigate('ChooseAddressScreen', {home: false, selectedCoupon: selectedCoupon})
     } else {
       navigation.navigate('AddressScreen', {home: false});
     }
@@ -156,42 +187,40 @@ const OrderCartScreen = () => {
       <ScrollView showsVerticalScrollIndicator={false}
       style={styles.body}>
         <View style={styles.address}>
-          <Icon5 name='location-dot' size={20} color={'#ed7532'}/>
-          <View style={{flexDirection:'column', marginLeft: 10, gap: 5}}>
-            <View style={{flexDirection:'row'}}>
-              <TextComponent
-                text={addressData.fullname}
-                size={15}
-                styles={{fontWeight:'700'}}
-              />
-              <TextComponent
-                text={`(+84) ${addressData.phone}`}
-                color="gray"
-                styles={{ marginLeft: 10 }}
-              />
-
-            </View>
-            <View style={{flexDirection: 'row'}}>
-              <View>
-              <TextComponent
-                  text={
-                    addressData.address
-                  }
-                  size={13}
-              />
-              <TextComponent
-                  text={
-                    addressData.villageName
-                  }
-                  size={13}
-              />
+          <Icon5 name='location-dot' size={20} color={'#ed7532'} />
+          <View style={{ flex: 1, flexDirection: 'row', marginLeft: 10 }}>
+            <View style={{ flex: 1, gap: 5 }}>
+              <View style={{ flexDirection: 'row' }}>
+                <TextComponent
+                  text={selectedAddress ? selectedAddress.fullname : addressData.fullname}
+                  size={15}
+                  styles={{ fontWeight: '700' }}
+                />
+                <TextComponent
+                  text={`(+84) ${selectedAddress ? selectedAddress.phone : addressData.phone}`}
+                  color="gray"
+                  styles={{ marginLeft: 10 }}
+                />
+              </View>
+              <View style={{ flexDirection: 'row' }}>
+                <View>
+                  <TextComponent
+                    text={selectedAddress ? selectedAddress.address : addressData.address}
+                    size={13}
+                  />
+                  <TextComponent
+                    text={selectedAddress ? selectedAddress.villageName ?? '' : addressData.villageName}
+                    size={13}
+                  />
+                </View>
               </View>
             </View>
-          </View>
-          <TouchableOpacity onPress={handleClickAddress} style={{marginTop: 10, marginRight: 10}}>
+            <TouchableOpacity onPress={handleClickAddress} style={{ justifyContent: 'center', paddingLeft: 10 }}>
               <Icon name="arrow-forward-ios" size={20} color={appColors.black} />
             </TouchableOpacity>
+          </View>
         </View>
+
         <View style={styles.content}>
           <FlatList
             data={cart?.result?.cartItemResponses}
@@ -287,7 +316,7 @@ const OrderCartScreen = () => {
           {/* Ưu đãi */}
           <TouchableOpacity style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}}
           onPress={() =>
-            navigation.navigate('ChooseCouponScreen', { totalPrice: cart?.result?.totalPrice ?? 0 })
+            navigation.navigate('ChooseCouponScreen', { home: false, totalPrice: cart?.result?.totalPrice ?? 0, selectedAddress: addressData })
           }
           >
             <View style={{flexDirection: 'row', alignItems: 'center'}}>
@@ -397,7 +426,7 @@ const styles = StyleSheet.create({
   priceText: {
     marginTop: 5,
     fontSize: 13,
-    color: appColors.primary,
+    color: appColors.black,
     fontFamily: fontFamilies.Medium,
   },
   payment_method: {

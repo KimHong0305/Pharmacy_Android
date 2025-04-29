@@ -6,7 +6,7 @@ const API_BASE_URL = "https://esgoo.net";
 // Định nghĩa kiểu dữ liệu cho tỉnh, quận, xã
 interface LocationData {
   id: string;
-  name: string;
+  full_name: string;
 }
 
 interface LocationState {

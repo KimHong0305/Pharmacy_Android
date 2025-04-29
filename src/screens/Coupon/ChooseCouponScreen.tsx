@@ -9,6 +9,8 @@ import { AppDispatch } from '../../lib/redux/store';
 import { RootState } from '../../lib/redux/rootReducer';
 import { getCouponUser } from '../../lib/redux/reducers/coupon.reducer';
 import { Coupon } from '../../lib/schemas/coupon.schema';
+import { Address } from '../../lib/schemas/address.schema';
+import { ProductDetailItem } from '../../lib/schemas/product.schema';
 
 const ChooseCouponScreen = () => {
   const navigation = useNavigation<NavigationProp>();
@@ -17,7 +19,12 @@ const ChooseCouponScreen = () => {
   const [selectedCoupon, setSelectedCoupon] = useState<Coupon | null>(null);
 
   const route = useRoute();
-  const { totalPrice } = route.params as { totalPrice: number };
+  const { home, product, totalPrice, selectedAddress } = route.params as { 
+    home: boolean;
+    product: ProductDetailItem;
+    totalPrice: number;
+    selectedAddress: Address;
+  };
   
   useEffect(() => {
     dispatch(getCouponUser());
@@ -26,6 +33,18 @@ const ChooseCouponScreen = () => {
   const handleSelectCoupon = (coupon: Coupon) => {
     if (totalPrice >= coupon.orderRequire) {
       setSelectedCoupon(coupon.id === selectedCoupon?.id ? null : coupon);
+    }
+  };
+
+  const handleConfirmSelection = () => {
+    if (selectedCoupon) {
+        if(home === false){
+            navigation.navigate('OrderCartScreen', { selectedCoupon: selectedCoupon, selectedAddress: selectedAddress });
+        }else{
+            navigation.navigate('OrderHomeScreen', { product: product, selectedCoupon: selectedCoupon, selectedAddress: selectedAddress });
+        }
+      }else{
+        console.warn("Required parameters are missing!");
     }
   };
 
@@ -69,9 +88,7 @@ const ChooseCouponScreen = () => {
       <View style={styles.footer}>
         <Button
           title="Áp dụng"
-          onPress={() => {
-            navigation.navigate('OrderCartScreen', {selectedCoupon: selectedCoupon })        
-          }}                
+          onPress={handleConfirmSelection}               
           disabled={!selectedCoupon}
           buttonStyle={styles.applyButton}
         />
