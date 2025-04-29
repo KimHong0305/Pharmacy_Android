@@ -1,6 +1,6 @@
 import { useNavigation } from '@react-navigation/native';
-import React, { useEffect } from 'react';
-import { FlatList, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { Alert, FlatList, Modal, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { Image } from 'react-native-elements';
 import Swiper from 'react-native-swiper';
 import Icon from 'react-native-vector-icons/FontAwesome';
@@ -12,6 +12,7 @@ import { getBestSellers, getCategories, getNewProducts, getTopCompanies } from '
 import { RootState } from '../../lib/redux/rootReducer';
 import { AppDispatch } from '../../lib/redux/store';
 import type { NavigationProp } from '../../navigators/index';
+import { Notification } from '../../lib/schemas/notification.schema';
 
 const truncateText = (text: string, maxLength: number) => {
   if (text.length <= maxLength) return text;
@@ -26,14 +27,69 @@ const HomeScreen = () => {
     (state: RootState) => state.home,
   );
   const {token} = useSelector((state: RootState) => state.auth);
-  const notificationCount = 4;
+  const [notificationCount, setNotificationCount] = useState(0);
+  const [modalVisible, setModalVisible] = useState(false);
+  const [latestNotification, setLatestNotification] = useState<Notification | null>(null);
+
+  //Lay du lieu cho cac slider
   useEffect(() => {
-    dispatch(getCategories());
-    dispatch(getBestSellers());
-    dispatch(getNewProducts());
-    dispatch(getTopCompanies());
+    const fetchData = async () => {
+      try {
+        await Promise.all([
+          dispatch(getCategories()),
+          dispatch(getBestSellers()),
+          dispatch(getNewProducts()),
+          dispatch(getTopCompanies())
+        ]);
+      } catch (error) {
+        console.log("Error fetching data:", error);
+      }
+    };
+  
+    fetchData();
+  }, [dispatch]);
+  
+  //Ket noi websocket
+  useEffect(() => {
+    if (!token) return;
+
+    const socket = new WebSocket('ws://10.0.2.2:8080/api/v1/pharmacy/ws-notifications');
+
+    socket.onopen = () => {
+      console.log('✅ WebSocket connected');
+    };
+
+    socket.onmessage = event => {
+      console.log('📨 Raw message:', event); // 👈 Log toàn bộ event
+      console.log('📨 Data:', event.data); // 👈 Log dữ liệu nhận được
+      try {
+        const notification : Notification = JSON.parse(event.data);
+        setNotificationCount(prev => prev + 1);
+        setLatestNotification(notification);
+        setModalVisible(true);
+
+         // Tự động tắt modal sau 3 giây
+        setTimeout(() => {
+          setModalVisible(false);
+        }, 3000);
+      } catch (error) {
+        console.error('❌ Error parsing message', error);
+      }
+    };
+
+    socket.onerror = error => {
+      console.error('❌ WebSocket error', error);
+    };
+
+    socket.onclose = () => {
+      console.log('🔌 WebSocket disconnected');
+    };
+
+    return () => {
+      socket.close();
+    };
   }, []);
-    
+      
   return (
     <View style={styles.container}>
       {/* Header */}
@@ -61,8 +117,12 @@ const HomeScreen = () => {
           onPress={() => {
             if (token) {
               navigation.navigate('NotificationScreen');
+              setNotificationCount(0);
             } else {
-              navigation.navigate('BottomTab', {screen: 'Tài khoản'});
+              navigation.navigate('BottomTab', {
+                screen: 'Tài khoản',
+                params: {},
+              });
             }
           }}
           style={{marginTop: 5, marginLeft: 5, position: 'relative'}}>
@@ -198,6 +258,32 @@ const HomeScreen = () => {
           />
         </View>
       </ScrollView>
+      {latestNotification && (
+        <Modal transparent visible={modalVisible} animationType="fade">
+          <View style={styles.modalWrapper}>
+            <View style={styles.modalContent}>
+              <View style={styles.modalHeader}>
+                {latestNotification.image && (
+                  <Image
+                    source={{uri: latestNotification.image}}
+                    style={styles.modalImage}
+                    resizeMode="cover"
+                  />
+                )}
+                <View style={{flex: 1, marginLeft: 10}}>
+                  <Text style={styles.modalTitle}>
+                    {latestNotification.title}
+                  </Text>
+                  <Text style={styles.modalDate}>
+                    {latestNotification.createDate}
+                  </Text>
+                </View>
+              </View>
+              <Text style={styles.modalText}>{latestNotification.content}</Text>
+            </View>
+          </View>
+        </Modal>
+      )}
     </View>
   );
 };
@@ -354,6 +440,48 @@ const styles = StyleSheet.create({
     marginTop: 5,
     fontSize: 14,
     textAlign: 'center',
+  },
+  //Modal
+  modalWrapper: {
+    flex: 1,
+    justifyContent: 'flex-start',
+    alignItems: 'center',
+    marginTop: 40,
+    backgroundColor: 'transparent',
+  },
+  modalContent: {
+    backgroundColor: appColors.white,
+    padding: 15,
+    borderRadius: 12,
+    width: '90%',
+    elevation: 5,
+    shadowColor: '#000',
+    shadowOpacity: 0.3,
+    shadowOffset: {width: 0, height: 2},
+    shadowRadius: 4,
+  },
+  modalHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 10,
+  },
+  modalImage: {
+    width: 50,
+    height: 50,
+    borderRadius: 8,
+  },
+  modalTitle: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: appColors.black,
+  },
+  modalDate: {
+    fontSize: 12,
+    color: appColors.black,
+  },
+  modalText: {
+    fontSize: 14,
+    color: appColors.black,
   },
 });
 

@@ -1,6 +1,6 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import api from "../../api/api";
-import { BioResponse, UserBio, UpdateBioResponse } from '../../schemas/user.schema';
+import { BioResponse, UserBio, UpdateBioResponse, UpdatePassword, UpdatePasswordResponse } from '../../schemas/user.schema';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 interface UserState {
@@ -119,11 +119,30 @@ export const verifyEmail = createAsyncThunk<
     }
 );
 
+export const updatePassword = createAsyncThunk<UpdatePasswordResponse, UpdatePassword, { rejectValue: string }>(
+    "user/updatePassword",
+    async (formData, { rejectWithValue }) => {
+        try {
+            const token = await AsyncStorage.getItem('token');
+            const response = await api.put<UpdatePasswordResponse>("/user/update-password", formData,
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                }
+            );
+            return response.data;
+        } catch (error: any) {
+            return rejectWithValue(error.response.data);
+        }
+    }
+);
+
 const initialState: UserState = {
     bio: null,
     loading: false,
     error: null,
-};
+}
   
 const userSlice = createSlice({
     name: 'user',
@@ -182,6 +201,19 @@ const userSlice = createSlice({
             .addCase(verifyEmail.rejected, (state, action) => {
                 state.loading = false;
                 state.error = action.payload || 'Failed to update user email';
+            })
+
+        // UPDATE PASSWORD
+            .addCase(updatePassword.pending, (state) => {
+                state.loading = true;
+                state.error = null;
+            })
+            .addCase(updatePassword.fulfilled, (state, action) => {
+                state.loading = false;
+            }) 
+            .addCase(updatePassword.rejected, (state, action) => {
+                state.loading = false;
+                state.error = action.error.message || 'Cập nhật mật khẩu thất bại';
             })
     },
   });

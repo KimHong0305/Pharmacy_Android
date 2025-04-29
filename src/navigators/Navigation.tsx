@@ -27,6 +27,11 @@ import {
   ListCouponScreen,
   ChooseCouponScreen,
   NotificationScreen,
+  CouponCartScreen,
+  CartScreen,
+  UpdatePasswordScreen,
+  WhistlistScreen,
+  StatisticScreen,
 } from '../screens';
 import OrderCartScreen from '../screens/Order/OrderCartScreen';
 import BottomTabNavigation from './BottomTabNavigation';
@@ -41,7 +46,7 @@ const Navigation = () => {
       initialRouteName={token ? 'BottomTab' : 'OnboardingScreen'}
       screenOptions={{headerShown: false}}>
       <Stack.Screen name="OnboardingScreen" component={OnboardingScreen} />
-      <Stack.Screen name="HomeScreen" children={() => <HomeScreen />} />
+      <Stack.Screen name="HomeScreen" component={HomeScreen} />
       <Stack.Screen name="AccountScreen" component={AccountScreen} />
       <Stack.Screen name="LoginScreen" component={LoginScreen} />
       <Stack.Screen
@@ -74,6 +79,11 @@ const Navigation = () => {
       <Stack.Screen name="ListCouponScreen" component={ListCouponScreen} />
       <Stack.Screen name="ChooseCouponScreen" component={ChooseCouponScreen} />
       <Stack.Screen name="NotificationScreen" component={NotificationScreen} />
+      <Stack.Screen name="CouponCartScreen" component={CouponCartScreen} />
+      <Stack.Screen name="CartScreen" component={CartScreen} />
+      <Stack.Screen name="UpdatePasswordScreen" component={UpdatePasswordScreen} />
+      <Stack.Screen name="WhistlistScreen" component={WhistlistScreen} />
+      <Stack.Screen name="StatisticScreen" component={StatisticScreen} />
     </Stack.Navigator>
   );
 }

@@ -98,7 +98,7 @@ export const logout = createAsyncThunk(
     try {
       const token = await AsyncStorage.getItem('token');
       const response = await api.post('/auth/logout', {token});
-
+      await removeToken();
       return {message: response.data.message};
     } catch (error:any) {
       return rejectWithValue(error.response.data.message);
@@ -284,6 +284,9 @@ const authSlice = createSlice({
           .addCase(resetPassword.rejected, (state, action) => {
             state.loading = false;
             state.error = action.payload || 'reset password failed';
+          })
+          .addCase(loadToken.fulfilled, (state, action) => {
+            state.token = action.payload;
           });
     }
 });

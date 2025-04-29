@@ -45,4 +45,14 @@ export interface UpdateBioResponse {
     message: string;
     result: UpdateBioResult;
 }
-  
+
+export interface UpdatePassword {
+    oldPassword: string;
+    newPassword: string;
+    checkNewPassword: string;
+}
+
+export interface UpdatePasswordResponse {
+    code: number;
+    result: string;
+}

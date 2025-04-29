@@ -10,6 +10,8 @@ import addressReducer from './reducers/address.reducer';
 import couponReducer from './reducers/coupon.reducer';
 import locationReducer from './reducers/location.reducer';
 import feedbackReducer from './reducers/feedback.reducer';
+import whistlistReducer from './reducers/whistlist.reducer';
+import statisticReducer from './reducers/statistic.reducer';
 
 const rootReducer = combineReducers({
   auth: authReducer,
@@ -23,6 +25,8 @@ const rootReducer = combineReducers({
   coupon: couponReducer,
   location: locationReducer,
   feedback: feedbackReducer,
+  whistlist: whistlistReducer,
+  statistic: statisticReducer,
 });
 
 export type RootState = ReturnType<typeof rootReducer>;

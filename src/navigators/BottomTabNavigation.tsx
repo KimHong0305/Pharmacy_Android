@@ -5,7 +5,7 @@ import { Linking, View } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { useSelector } from 'react-redux';
 import { RootState } from '../lib/redux/rootReducer';
-import { AccountScreen, AccScreen, CartScreen, CategoryScreen, ConsultantScreen, HomeScreen } from '../screens';
+import { AccountScreen, AccScreen, CartScreen, CategoryScreen, ConsultantScreen, HomeScreen, NotificationScreen } from '../screens';
 
 const BottomTabNavigation = () => {
   const BottomTab = createBottomTabNavigator();
@@ -71,14 +71,11 @@ const BottomTabNavigation = () => {
           return <Icon name={iconName} size={size} color={color} />;
         },
       })}>
-      <BottomTab.Screen
-        name="Trang chủ"
-        children={() => <HomeScreen/>}
-      />
+      <BottomTab.Screen name="Trang chủ" children={() => <HomeScreen />} />
       <BottomTab.Screen name="Danh mục" component={CategoryScreen} />
       <BottomTab.Screen
         name="Tư vấn"
-        component={ConsultantScreen} 
+        component={ConsultantScreen}
         listeners={{
           tabPress: e => {
             e.preventDefault();
@@ -90,17 +87,17 @@ const BottomTabNavigation = () => {
         name="Giỏ hàng"
         component={CartScreen}
         options={{
-          tabBarBadge: cartItemsCount > 0 ? cartItemsCount : undefined, // Hiển thị số lượng sản phẩm
+          tabBarBadge: cartItemsCount > 0 ? cartItemsCount : undefined,
           tabBarBadgeStyle: {
             backgroundColor: 'red',
             color: 'white',
             fontSize: 12,
           },
         }}
-      /> 
+      />
       <BottomTab.Screen
         name="Tài khoản"
-        children={() => token ? <AccScreen/> : <AccountScreen/>}
+        children={() => (token ? <AccScreen /> : <AccountScreen />)}
       />
     </BottomTab.Navigator>
   );

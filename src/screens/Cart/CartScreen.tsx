@@ -1,5 +1,5 @@
-import { useNavigation } from '@react-navigation/native'
-import React, { useEffect } from 'react'
+import { RouteProp, useNavigation, useRoute } from '@react-navigation/native'
+import React, { useEffect, useState } from 'react'
 import { FlatList, Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import { useDispatch, useSelector } from 'react-redux'
 import { TextComponent } from '../../components'
@@ -8,8 +8,10 @@ import { fontFamilies } from '../../constants/fontFamilies'
 import { getCartGuest, getCartUser, updateCartGuest, updateCartUser } from '../../lib/redux/reducers/cart.reducer'
 import { RootState } from '../../lib/redux/rootReducer'
 import { AppDispatch } from '../../lib/redux/store'
-import { NavigationProp } from '../../navigators'
-
+import { NavigationProp, RootStackParamList } from '../../navigators'
+import Icon2 from 'react-native-vector-icons/MaterialCommunityIcons';
+import Icon3 from 'react-native-vector-icons/AntDesign';
+import { Coupon } from '../../lib/schemas/coupon.schema'
 //... Text
 const truncateText = (text: string, maxLength: number) => {
   if (text.length <= maxLength) return text;
@@ -18,9 +20,22 @@ const truncateText = (text: string, maxLength: number) => {
 
 const CartScreen = () => {
   const navigation = useNavigation<NavigationProp>();
+  const route = useRoute<RouteProp<RootStackParamList, 'CartScreen'>>();
+  const [selectedCoupon, setSelectedCoupon] = useState<Coupon | null>(
+    route.params?.selectedCoupon ?? null
+  );
   const dispatch: AppDispatch = useDispatch<AppDispatch>();
   const {cart, loading} = useSelector((state: RootState) => state.cart);
   const {token} = useSelector((state: RootState) => state.auth);
+
+  const totalPrice = cart?.result?.totalPrice ?? 0;
+  let finalPrice = totalPrice;
+
+  if (selectedCoupon) {
+    const discount = (totalPrice * selectedCoupon.percent) / 100;
+    const finalDiscount = discount < selectedCoupon.max ? discount : selectedCoupon.max;
+    finalPrice = totalPrice - finalDiscount;
+  }
 
   //Get Cart
   useEffect(() => {
@@ -30,6 +45,8 @@ const CartScreen = () => {
       dispatch(getCartGuest());
     }
   }, [dispatch, token]);
+
+  // console.log(selectedCoupon);
   
   //Increase Quantity
   const handleIncreaseQuantity = (id: string) => {
@@ -70,7 +87,7 @@ const CartScreen = () => {
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <TextComponent text="Cart" size={30} styles={styles.title} />
+        <TextComponent text="Giỏ hàng" size={30} styles={styles.title} />
       </View>
       {loading ? (
         <TextComponent text="Đang tải giỏ hàng" />
@@ -88,68 +105,123 @@ const CartScreen = () => {
                       <Image source={{uri: item.image}} style={styles.image} />
                       <View>
                         <TextComponent
-                          text={truncateText(item.productName, 20)}
+                          text={truncateText(item.productName, 25)}
                           size={16}
                         />
-                        <Text style={styles.priceText}>
-                          {item.price.toLocaleString('vi-VN')}đ/{item.unitName}
-                        </Text>
-                      </View>
-                      <View
-                        style={{
-                          position: 'absolute',
-                          right: 10,
-                          bottom: 5,
-                          flexDirection: 'row',
-                          gap: 10,
+                        <View style={{
+                          height: 30,
+                          width: 40,
+                          borderRadius: 10,
+                          backgroundColor: appColors.gray2,
+                          alignItems: 'center',
+                          justifyContent: 'center',
                         }}>
-                        <TouchableOpacity
-                          style={styles.add_sub}
-                          onPress={() => handleIncreaseQuantity(item.id)}>
+                          <Text>
+                            {item.unitName}
+                          </Text>
+                        </View>
+                        <View style={{flexDirection: 'row', justifyContent:'space-between', marginTop: 10,}}>
+                          <Text style={styles.priceText}>
+                            {item.price.toLocaleString('vi-VN')}đ
+                          </Text>
+                          <View
+                          style={{
+                            flexDirection: 'row',
+                            justifyContent: 'flex-end',
+                            gap: 10,
+                          }}>
+                          <TouchableOpacity
+                            style={styles.add_sub}
+                            onPress={() => handleIncreaseQuantity(item.id)}>
+                            <TextComponent
+                              text="+"
+                              size={15}
+                              color={appColors.black}
+                            />
+                          </TouchableOpacity>
                           <TextComponent
-                            text="+"
-                            size={20}
+                            text={item.quantity.toString()}
+                            size={15}
                             color={appColors.black}
                           />
-                        </TouchableOpacity>
-                        <TextComponent
-                          text={item.quantity.toString()}
-                          size={20}
-                          color={appColors.black}
-                        />
-                        <TouchableOpacity
-                          style={styles.add_sub}
-                          onPress={() => handleDecreaseQuantity(item.id)}>
-                          <TextComponent
-                            text="-"
-                            size={20}
-                            color={appColors.black}
-                          />
-                        </TouchableOpacity>
+                          <TouchableOpacity
+                            style={styles.add_sub}
+                            onPress={() => handleDecreaseQuantity(item.id)}>
+                            <TextComponent
+                              text="-"
+                              size={15}
+                              color={appColors.black}
+                            />
+                          </TouchableOpacity>
+                        </View>
                       </View>
+                    </View>
+                      
                     </View>
                   </TouchableOpacity>
                 )}
               />
             </View>
             <View style={styles.footer}>
-              <View style={{flexDirection: 'row'}}>
-                <TextComponent
-                  text="Tổng tiền: "
-                  size={16}
-                  styles={{marginTop: 16, marginLeft: 10}}
-                />
-                <TextComponent
-                  text={cart?.result?.totalPrice.toLocaleString('vi-VN') + 'đ' || '0'}
-                  size={16}
-                  styles={{marginTop: 16}}
-                />
-              </View>
-              <TouchableOpacity
-                style={styles.button}
-                onPress={() => navigation.navigate('OrderCartScreen', { selectedCoupon: null })}>
-                <TextComponent text="Thanh Toán" size={16} />
+              <TouchableOpacity style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'
+              }}
+              onPress={() =>
+                navigation.navigate('CouponCartScreen', { totalPrice: cart?.result?.totalPrice ?? 0 })
+              }
+              >
+                <View style={{flexDirection: 'row', alignItems: 'center'}}>
+                  <Icon2 name="ticket-percent-outline" size={22} color={appColors.blue}/>
+                  <Text style={{marginLeft: 5, fontSize: 15, fontWeight: '500'}}>Mã ưu đãi</Text>
+                </View>
+                <View style={{flexDirection: 'row', alignItems: 'center'}}>
+                  {selectedCoupon ? (
+                    <Text style={{ marginLeft: 5, fontSize: 13, fontWeight: '500', color: 'red' }}>
+                      Đã chọn 1 mã
+                    </Text>
+                  ) : (
+                    <Text style={{ marginLeft: 5, fontSize: 13, color: 'gray' }}>Chọn mã</Text>
+                  )}
+                  <Icon3 name="right" size={18} color={appColors.gray}/>
+                </View>
               </TouchableOpacity>
+              <View style={{justifyContent: 'space-between', flexDirection: 'row'}}>
+                <View style={{flexDirection: 'row'}}>
+                  <TextComponent
+                    text="Tổng tiền: "
+                    size={14}
+                    styles={{marginTop: 19}}
+                  />
+                  {selectedCoupon? (
+                    <>
+                    <TextComponent
+                      text={`${finalPrice.toLocaleString('vi-VN')}đ`}
+                      size={20}
+                      color='red'
+                      styles={{marginTop: 12, fontWeight:'700'}}
+                    />
+                    <TextComponent
+                      text={`${totalPrice.toLocaleString('vi-VN')}đ`}
+                      size={14}
+                      color='gray'
+                      styles={{marginLeft: 8, marginTop: 19, fontWeight:'500', textDecorationLine:'line-through'}}
+                    />
+                    </>
+                  ):(
+                  <TextComponent
+                      text={`${totalPrice.toLocaleString('vi-VN')}đ`}
+                      size={20}
+                      color='red'
+                      styles={{marginTop: 12, fontWeight:'700'}}
+                    />
+                  )
+                }
+                </View>
+                <TouchableOpacity
+                  style={styles.button}
+                  onPress={() => navigation.navigate('OrderCartScreen', { selectedCoupon: selectedCoupon ?? null })}>
+                  <TextComponent text="Thanh Toán" size={16} color='white' styles={{fontWeight:'700'}} />
+                </TouchableOpacity>
+              </View>
             </View>
           </View>
         </>
@@ -167,63 +239,63 @@ const CartScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: appColors.white
+    backgroundColor: '#f1f5f9'
   },
   header: {
-    alignItems: 'flex-start',
+    alignItems: 'center',
+    backgroundColor: '#fff',
   },
   title: {
     marginTop: 30,
-    marginLeft: 20,
+    marginBottom: 10,
   },
   body: {
-    alignSelf: 'center',
-    height: '100%',
-    width: '90%',
-    marginTop: 10
+    padding: 10,
+    flex: 1,
   },
   content: {
-    height: '75%',
-    borderRadius: 20
   },
   item: {
     flexDirection: 'row',
     gap: 10,
     marginBottom: 10,
     borderRadius: 20,
-    borderWidth: 1,
-    borderColor: appColors.gray
+    backgroundColor: '#fff',
+    padding: 10,
   },
   image: {
-    width: 100,
-    height: 100,
+    width: 90,
+    height: 90,
     borderRadius: 20,
-    borderWidth: 2,
-    borderColor: appColors.white,
-    shadowColor: appColors.gray,
+    borderWidth: 1,
+    borderColor: appColors.gray2,
   },
   text: {
     fontSize: 13
   },
   priceText: {
-    marginTop: 5,
-    fontSize: 13,
+    fontSize: 15,
+    fontWeight: '700',
     color: appColors.primary,
     fontFamily: fontFamilies.Medium,
   },
   add_sub:{
-    height: 30,
-    width: 30,
+    height: 25,
+    width: 25,
     borderRadius: 15,
-    backgroundColor: appColors.gray,
+    backgroundColor: appColors.gray2,
     alignItems: 'center',
-    justifyContent: 'center'
   },
-  footer:{
-    marginTop: 10,
-    flexDirection: 'row',
-    gap: 100
-  },
+  footer: {
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
+    padding: 10,
+    paddingBottom: 20,
+    flexDirection: 'column',
+    backgroundColor: '#fff',
+  },  
   button: {
     height: 35,
     width: 120,
@@ -232,7 +304,6 @@ const styles = StyleSheet.create({
     marginTop: 10,
     alignItems: 'center',
     justifyContent: 'center',
-    marginLeft: -10
   },
   cart_null: {
     flex: 1,
