@@ -9,7 +9,7 @@ import { RootState } from '../../lib/redux/rootReducer';
 import { useNavigation } from '@react-navigation/native';
 import { NavigationProp } from '../../navigators';
 
-const SearchScreen = () => {
+const SearchScreen = () => {  
     const [query, setQuery] = useState('');
     const dispatch: AppDispatch = useDispatch<AppDispatch>();
     const navigation = useNavigation<NavigationProp>();
@@ -56,6 +56,13 @@ const SearchScreen = () => {
           </TouchableOpacity>
         </View>
 
+        <TouchableOpacity
+          style={styles.orderLookupButton}
+          onPress={() => navigation.navigate('OrderLookupScreen')}
+        >
+          <Text style={styles.orderLookupText}>Tra cứu đơn hàng</Text> 
+        </TouchableOpacity>
+
         <ScrollView>
           {filteredProducts.length > 0 ? (
             filteredProducts.map(item => (
@@ -81,51 +88,65 @@ const SearchScreen = () => {
 
 const styles = StyleSheet.create({
     container: {
-        flex: 1,
-        backgroundColor: '#fff',
-        padding: 10,
+      flex: 1,
+      backgroundColor: '#fff',
+      padding: 10,
     },
     searchContainer: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        borderColor: '#ccc',
-        borderWidth: 1,
-        borderRadius: 25,
-        paddingHorizontal: 10,
-        marginBottom: 15,
-        backgroundColor: '#fff',
-        marginTop: 40,
+      flexDirection: 'row',
+      alignItems: 'center',
+      borderColor: '#ccc',
+      borderWidth: 1,
+      borderRadius: 25,
+      paddingHorizontal: 10,
+      marginBottom: 15,
+      backgroundColor: '#fff',
+      marginTop: 40,
     },
     input: {
-        flex: 1,
-        height: 40,
-        fontSize: 16,
+      flex: 1,
+      height: 40,
+      fontSize: 16,
     },
     icon: {
-        marginLeft: 10,
+      marginLeft: 10,
     },
     productItem: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        padding: 10,
-        borderBottomWidth: 1,
-        borderBottomColor: '#eee',
+      flexDirection: 'row',
+      alignItems: 'center',
+      padding: 10,
+      borderBottomWidth: 1,
+      borderBottomColor: '#eee',
     },
     productImage: {
-        width: 50,
-        height: 50,
-        borderRadius: 10,
-        marginRight: 10,
+      width: 50,
+      height: 50,
+      borderRadius: 10,
+      marginRight: 10,
     },
     productText: {
-        fontSize: 16,
+      fontSize: 16,
     },
     emptyText: {
-        textAlign: 'center',
-        marginTop: 20,
-        fontSize: 16,
-        color: '#999',
+      textAlign: 'center',
+      marginTop: 20,
+      fontSize: 16,
+      color: '#999',
     },
+    orderLookupButton: {
+      backgroundColor: '#C0C0C0',
+      paddingVertical: 10,
+      paddingHorizontal: 15,
+      borderRadius: 10,
+      alignItems: 'center',
+      marginBottom: 15,
+      width: 200,
+    },
+    orderLookupText: {
+      color: '#fff',
+      fontSize: 16,
+      fontWeight: 'bold',
+    },    
 });
 
 export default SearchScreen;

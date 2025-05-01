@@ -35,6 +35,8 @@ import {
   AddressUserScreen,
   AddAddressScreen,
   EditAddressScreen,
+  OrderLookupScreen,
+  ProductCategoryScreen,
 } from '../screens';
 import OrderCartScreen from '../screens/Order/OrderCartScreen';
 import BottomTabNavigation from './BottomTabNavigation';
@@ -90,6 +92,8 @@ const Navigation = () => {
       <Stack.Screen name="AddressUserScreen" component={AddressUserScreen} />
       <Stack.Screen name="AddAddressScreen" component={AddAddressScreen} />
       <Stack.Screen name="EditAddressScreen" component={EditAddressScreen} />
+      <Stack.Screen name="OrderLookupScreen" component={OrderLookupScreen} />
+      <Stack.Screen name="ProductCategoryScreen" component={ProductCategoryScreen} />
     </Stack.Navigator>
   );
 }

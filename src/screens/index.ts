@@ -33,6 +33,8 @@ import StatisticScreen from "./Statistic/StatisticScreen";
 import AddressUserScreen from "./Address/AddressUserScreen";
 import AddAddressScreen from "./Address/AddAddressScreen";
 import EditAddressScreen from "./Address/EditAddressScreen";
+import OrderLookupScreen from "./Search/OrderLookupScreen";
+import ProductCategoryScreen from "./Product/ProductCategoryScreen";
 
 
 export {
@@ -71,4 +73,6 @@ export {
     AddressUserScreen,
     AddAddressScreen,
     EditAddressScreen,
+    OrderLookupScreen,
+    ProductCategoryScreen,
 }

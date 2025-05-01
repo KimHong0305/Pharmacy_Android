@@ -8,6 +8,7 @@ import { getCategories } from '../../lib/redux/reducers/category.reducer';
 import { RootState } from '../../lib/redux/rootReducer';
 import { AppDispatch } from '../../lib/redux/store';
 import { NavigationProp } from '../../navigators';
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons'
 
 export default function CategoryScreen() {
   const [activeCategory, setActiveCategory] = useState<string | null>(null);
@@ -25,6 +26,10 @@ export default function CategoryScreen() {
     setActiveCategory(categoryId);
     dispatch(getCategoryDetail(categoryId));
   };
+
+  const handleProductCategory = (categoryId: string) => {
+    navigation.navigate('ProductCategoryScreen', {categoryId: categoryId})
+  }
 
   return (
     <View style={styles.container}>
@@ -49,18 +54,41 @@ export default function CategoryScreen() {
         {detailLoading ? (
           <ActivityIndicator size="large" color="#007AFF" />
         ) : subCategories.length > 0 ? (
+          <>
           <FlatList
             data={subCategories}
             keyExtractor={(item) => item.id}
             renderItem={({ item }) => (
-              <TouchableOpacity style={styles.subCategoryItem}>
+              <TouchableOpacity
+                style={styles.subCategoryItem}
+                onPress={() => handleProductCategory(item.id)}
+              >
                 <Image source={{ uri: item.image }} style={styles.image} />
                 <Text style={styles.categoryText}>{item.name}</Text>
               </TouchableOpacity>
             )}
+            ListFooterComponent={
+              <TouchableOpacity
+                style={styles.seeAllButton}
+                onPress={() => handleProductCategory(activeCategory!)}
+              >
+                <Icon name="dots-horizontal" size={22} color={'#007AFF'} />
+                <Text style={styles.seeAllText}>Xem tất cả</Text>
+              </TouchableOpacity>
+            }
           />
+    </>
         ) : (
-          <Text style={styles.noCategoryText}>Chọn danh mục để xem chi tiết</Text>
+          <>
+            <Text style={styles.noCategoryText}>Chọn danh mục để xem chi tiết</Text>
+            <TouchableOpacity
+              style={styles.seeAllButton}
+              onPress={() => handleProductCategory(activeCategory!)}
+            >
+              <Icon name="dots-horizontal" size={22} color={'#007AFF'}/>
+              <Text style={styles.seeAllText}>Xem tất cả</Text>
+            </TouchableOpacity>
+          </>
         )}
       </View>
     </View>
@@ -104,12 +132,25 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   image: {
-    width: 40,
-    height: 45,
+    width: 50,
+    height: 50,
   },
   noCategoryText: {
     fontSize: 16,
     color: '#888',
     textAlign: 'center',
   },
+  seeAllButton: {
+    padding: 8,
+    flexDirection: 'row',
+    gap: 10,
+    alignItems: 'center',
+    width: '100%',
+    justifyContent:'center',
+  },
+  seeAllText: {
+    color: '#007AFF',
+    fontWeight: 'bold',
+    fontSize: 16,
+  },  
 });

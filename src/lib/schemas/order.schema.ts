@@ -54,3 +54,31 @@ export interface AddOrderUser {
 export interface HistoryOrderResponse {
     result: Order[];
 }
+
+interface AddressGuest {
+    id: string;
+    fullname: string;
+    phone: number;
+    province: string;
+    district: string;
+    village: string;
+    address: string;
+    addressCategory: string;
+}
+
+export interface OrderGuest {
+    id: string;
+    address: AddressGuest;
+    addressCategory: string;
+    orderItemResponses: OrderItem[];
+    orderDate: string;
+    paymentMethod: string;
+    status: string;
+    isConfirm: boolean;
+    totalPrice: number;
+}
+
+export interface OrderGuestResponse {
+    code: number,
+    result: OrderGuest,
+}

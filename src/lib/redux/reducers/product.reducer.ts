@@ -3,7 +3,8 @@ import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import {
     ProductResponse,
     Product,
-    ProductDetailResponse
+    ProductDetailResponse,
+    GetProductByCategoryParams
 } from "../../schemas/product.schema"
 
 interface ProductState {
@@ -41,6 +42,33 @@ export const getAllProduct = createAsyncThunk<ProductResponse, void, { rejectVal
     }
 );
 
+export const getProductByCategory = createAsyncThunk<
+    ProductResponse,
+    GetProductByCategoryParams,
+    { rejectValue: string }
+>(
+    'product/getProductByCategory',
+    async (params, { rejectWithValue }) => {
+        const {
+            page = 0,
+            size = 1000,
+            categoryId,
+            sortOrder = 'asc',
+        } = params;
+
+        try {
+            const { data } = await api.get(`/product/category/${categoryId}`, {
+                params: { page, size, sortOrder },
+        });
+        return data;
+        } catch (error) {
+            console.error("Error fetching products:", error);
+            return rejectWithValue("Failed to fetch products");
+        }
+    }
+);
+  
+
 const productSlice = createSlice({
     name: 'product',
     initialState,
@@ -72,6 +100,19 @@ const productSlice = createSlice({
                 state.products = action.payload.result.content;
             })
             .addCase(getAllProduct.rejected, (state, action) => {
+                state.loading = false;
+                state.error = action.payload || "Failed to fetch products";
+            })
+            //PRODUCT BY CATEGORY
+            .addCase(getProductByCategory.pending, (state) => {
+                state.loading = true;
+                state.error = null;
+            })
+            .addCase(getProductByCategory.fulfilled, (state, action: PayloadAction<ProductResponse>) => {
+                state.loading = false;
+                state.products = action.payload.result.content;
+            })
+            .addCase(getProductByCategory.rejected, (state, action) => {
                 state.loading = false;
                 state.error = action.payload || "Failed to fetch products";
             });

@@ -44,7 +44,7 @@ const LoginScreen = () => {
     <View style={styles.container}>
       <TouchableOpacity
         style={styles.closeButton}
-        onPress={() => navigation.navigate('BottomTab', {screen: 'Tài khoản'})}>
+        onPress={() => navigation.navigate('BottomTab', {screen: 'Tài khoản', params: {}})}>
         <Text style={{fontFamily: fontFamilies.Medium}}>Quay lại</Text>
       </TouchableOpacity>
 

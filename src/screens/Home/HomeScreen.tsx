@@ -5,7 +5,6 @@ import { Image } from 'react-native-elements';
 import Swiper from 'react-native-swiper';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { useDispatch, useSelector } from 'react-redux';
-import { TextComponent } from '../../components';
 import { appColors } from '../../constants/appColors';
 import { fontFamilies } from '../../constants/fontFamilies';
 import { getHome } from '../../lib/redux/reducers/home.reducer';
@@ -90,13 +89,14 @@ const HomeScreen = () => {
     <View style={styles.container}>
       {/* Header */}
       <View style={styles.header}>
-        <TextComponent text="Pharmacy" size={25} />
+        <Image source={require('../../assets/images/avata_1.png')} 
+        style={styles.avatar}/>
 
         {/* Thanh search */}
         <View style={styles.searchContainer}>
           <TouchableOpacity onPress={() => navigation.navigate('SearchScreen')}>
             <TextInput
-              placeholder="Search"
+              placeholder="Tìm kiếm / Tra cứu"
               style={styles.input}
               placeholderTextColor="#999"
               editable={false}
@@ -121,9 +121,9 @@ const HomeScreen = () => {
               });
             }
           }}
-          style={{marginTop: 5, marginLeft: 5, position: 'relative'}}>
+          style={{marginTop: 8, marginLeft: 8, position: 'relative'}}>
           <View style={{position: 'relative'}}>
-            <Icon name="bell" size={25} color={appColors.blue} />
+            <Icon name="bell" size={22} color={appColors.black} />
 
             {notificationCount > 0 && (
               <View
@@ -134,8 +134,8 @@ const HomeScreen = () => {
                   backgroundColor: 'red',
                   borderRadius: 10,
                   paddingHorizontal: 5,
-                  minWidth: 18,
-                  height: 18,
+                  minWidth: 15,
+                  height: 15,
                   justifyContent: 'center',
                   alignItems: 'center',
                 }}>
@@ -178,10 +178,23 @@ const HomeScreen = () => {
           <View style={styles.categoryContainer}>
             {categories.map(item => (
               <TouchableOpacity key={item.id} style={styles.categoryItem}>
-                <Image
-                  source={{uri: item.image}}
-                  style={styles.categoryImage}
-                />
+                <View style={{
+                  width: 80,
+                  height: 80,
+                  borderRadius: 40,
+                  overflow: 'hidden',
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                }}>
+                  <Image
+                    source={{uri: item.image}}
+                    style={{
+                      width: 60,
+                      height: 60,
+                    }}
+                  />
+                </View>
+
                 <Text style={styles.categoryText}>{item.name}</Text>
               </TouchableOpacity>
             ))}
@@ -299,17 +312,17 @@ const styles = StyleSheet.create({
     backgroundColor: '#FFF',
     marginTop: 40,
     justifyContent: 'center',
+    alignContent: 'center',
   },
   searchContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    width: 180,
+    width: 280,
     height: 40,
     borderColor: '#ccc',
     borderWidth: 1,
     borderRadius: 25,
     paddingHorizontal: 10,
-    marginBottom: 15,
     fontFamily: fontFamilies.Medium,
     backgroundColor: '#fff',
   },
@@ -324,10 +337,10 @@ const styles = StyleSheet.create({
     right: 10,
   },
   avatar: {
-    width: 40,
-    height: 40,
+    width: 45,
+    height: 45,
     borderRadius: 25,
-    borderColor: '#ccc',
+    borderColor: '#00BFFF',
     borderWidth: 1,
     justifyContent: 'center',
     alignItems: 'center',
@@ -405,8 +418,9 @@ const styles = StyleSheet.create({
   priceText: {
     marginTop: 5,
     fontSize: 13,
-    color: appColors.primary,
+    color: appColors.black,
     fontFamily: fontFamilies.Medium,
+    fontWeight: 'bold',
   },
   //New Product
   newProductTitle: {
