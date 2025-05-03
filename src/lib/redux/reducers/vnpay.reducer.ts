@@ -20,7 +20,7 @@ export const createPaymentVNPay = createAsyncThunk<
 >('user/createVNPay', async (item, {rejectWithValue}) => {
   try {
     const response = await api.post(
-      `/vnpay/create-payment?orderId=` + item.orderId
+      `/vnpay/create-payment/android?orderId=` + item.orderId
     );
     return response.data;
   } catch (error: any) {
