@@ -3,6 +3,13 @@ export interface Login {
     password: string;
 }
 
+export interface LoginWithGoogle{
+    email: string | undefined,
+    givenName: string | undefined | null,
+    familyName: string | undefined | null,
+    photo: string | undefined | null
+}
+
 export interface DecodedToken {
     exp: number;
     scope: string;

@@ -73,7 +73,7 @@ const VerifyEmailSignup = () => {
       <ImageBackground source={require('../../assets/images/OTPBackground.png')} style = {styles.container}>
         <TouchableOpacity
           style={styles.closeButton}
-          onPress={() => navigation.navigate('BottomTab', {screen: 'Tài khoản'})}>
+          onPress={() => navigation.navigate('BottomTab', {screen: 'Tài khoản', params: {}})}>
           <Text>Quay lại</Text>
         </TouchableOpacity>
         <Text style={styles.title}>Xác thực Email</Text>

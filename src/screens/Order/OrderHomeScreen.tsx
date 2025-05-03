@@ -21,6 +21,8 @@ import { CheckBox } from 'react-native-elements';
 import { Address } from '../../lib/schemas/address.schema';
 import { ProductDetailItem } from '../../lib/schemas/product.schema';
 import { AddOrderUser } from '../../lib/schemas/order.schema';
+import { createPaymentVNPay } from '../../lib/redux/reducers/vnpay.reducer';
+import {WebView} from 'react-native-webview';
 
 const truncateText = (text: string, maxLength: number) => {
   if (text.length <= maxLength) return text;
@@ -50,6 +52,8 @@ const OrderScreen = () => {
   const [selectedAddress, setSelectedAddress] = useState<Address | null>(
     route.params?.selectedAddress ?? null
   );
+
+  const [vnpayUrl, setVnpayUrl] = useState('');
 
   // console.log('dia chi duoc chon', selectedAddress)
 
@@ -141,11 +145,28 @@ const OrderScreen = () => {
             paymentMethod: paymentMethod,
           };
           // console.log(orderGuest)
-          await dispatch(createOrderHomeGuest(orderGuest));
+          const result = await dispatch(createOrderHomeGuest(orderGuest)).unwrap();
+          if (result.result.paymentMethod === 'VNPAY') {
+            try {
+              const orderId = result.result.id;
+              console.log(orderId);
+              const data = await dispatch(
+                createPaymentVNPay({orderId}),
+              ).unwrap();
+              if (data.result) {
+                setVnpayUrl(data.result);
+                navigation.navigate('VNPAYScreen', {paymentUrl: vnpayUrl});
+              } else {
+                Alert.alert('Không tạo được thanh toán VNPay.');
+              }
+            } catch (error) {
+              console.error('Error creating VNPay payment:', error);
+              Alert.alert('Đã xảy ra lỗi khi tạo thanh toán VNPay.');
+            }
+          }
         }
       }
       Alert.alert('Thông báo', 'Đặt hàng thành công')
-      navigation.navigate('ProductDetailScreen', {productId: product.id})
     } catch (error) {
       
     }

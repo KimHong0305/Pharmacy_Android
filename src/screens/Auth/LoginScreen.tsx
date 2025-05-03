@@ -2,18 +2,25 @@ import { View, Text, TouchableOpacity, TextInput, Image, StyleSheet, ActivityInd
 import React, { useState, useEffect } from 'react';
 import { useNavigation } from '@react-navigation/native';
 import { useDispatch, useSelector } from 'react-redux';
-import { login, clearMessages } from '../../lib/redux/reducers/auth.reducer';
+import { login, clearMessages, loginWithGoogle } from '../../lib/redux/reducers/auth.reducer';
 import { RootState } from '../../lib/redux/rootReducer';
 import { fontFamilies } from '../../constants/fontFamilies';
 import type {NavigationProp} from '../../navigators/index';
+import {
+  GoogleSignin
+} from '@react-native-google-signin/google-signin';
+import { LoginWithGoogle } from '../../lib/schemas/auth.schema';
 
+GoogleSignin.configure({
+  webClientId:
+    '1061151903576-tnsr7rdaldk70ngn458ovc8448qgoikl.apps.googleusercontent.com',
+});
 const LoginScreen = () => {
   const navigation = useNavigation<NavigationProp>();
   const dispatch = useDispatch();
 
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
-
   const { loading, error, message, token } = useSelector((state: RootState) => state.auth);
 
   const handleLogin = () => {
@@ -23,11 +30,9 @@ const LoginScreen = () => {
     }
 
     dispatch(login({ username, password }) as any)
-      .unwrap()
       .then(() => {
         if (message) {
           Alert.alert('Thông báo', message);
-          dispatch(clearMessages());
           navigation.navigate('BottomTab');
           setUsername('');
           setPassword('');
@@ -40,11 +45,36 @@ const LoginScreen = () => {
       });
   };
 
+  const handleLoginWithGoogle = async () => {
+    await GoogleSignin.hasPlayServices({
+      showPlayServicesUpdateDialog: true
+    });
+    try {
+      await GoogleSignin.hasPlayServices();
+      const userInfo = await GoogleSignin.signIn();
+      const loginWithGoogleRequest : LoginWithGoogle = {
+        email: userInfo.data?.user.email,
+        givenName: userInfo.data?.user.givenName,
+        familyName: userInfo.data?.user.familyName,
+        photo: userInfo.data?.user.photo
+      }
+      dispatch(loginWithGoogle(loginWithGoogleRequest) as any)
+        .then(() => {
+          Alert.alert('Thông báo', 'Đăng nhập thành công')
+          navigation.navigate('BottomTab');
+        });
+      console.log(userInfo.data?.user)
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+
   return (
     <View style={styles.container}>
       <TouchableOpacity
         style={styles.closeButton}
-        onPress={() => navigation.navigate('BottomTab', {screen: 'Tài khoản'})}>
+        onPress={() => navigation.navigate('BottomTab', {screen: 'Tài khoản', params: {}})}>
         <Text style={{fontFamily: fontFamilies.Medium}}>Quay lại</Text>
       </TouchableOpacity>
 
@@ -84,7 +114,7 @@ const LoginScreen = () => {
       <Text style={styles.orText}>- OR Continue with -</Text>
 
       <View style={styles.socialButtons}>
-        <TouchableOpacity style={styles.socialButton}>
+        <TouchableOpacity style={styles.socialButton} onPress={handleLoginWithGoogle}>
           <Image
             source={require('../../assets/images/google.png')}
             style={styles.socialIcon}

@@ -33,6 +33,7 @@ import StatisticScreen from "./Statistic/StatisticScreen";
 import AddressUserScreen from "./Address/AddressUserScreen";
 import AddAddressScreen from "./Address/AddAddressScreen";
 import EditAddressScreen from "./Address/EditAddressScreen";
+import VNPAYScreen from "./Payment/VNPAYScreen";
 
 
 export {
@@ -71,4 +72,5 @@ export {
     AddressUserScreen,
     AddAddressScreen,
     EditAddressScreen,
+    VNPAYScreen
 }

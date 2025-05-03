@@ -52,6 +52,7 @@ export type RootStackParamList = {
   AddressUserScreen: undefined;
   AddAddressScreen: undefined;
   EditAddressScreen: {address: Address};
+  VNPAYScreen: {paymentUrl: string};
 };
 
 export type NavigationProp = NativeStackNavigationProp<RootStackParamList>; 

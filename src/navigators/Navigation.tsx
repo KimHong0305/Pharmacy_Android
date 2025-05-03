@@ -35,6 +35,7 @@ import {
   AddressUserScreen,
   AddAddressScreen,
   EditAddressScreen,
+  VNPAYScreen,
 } from '../screens';
 import OrderCartScreen from '../screens/Order/OrderCartScreen';
 import BottomTabNavigation from './BottomTabNavigation';
@@ -74,7 +75,10 @@ const Navigation = () => {
       <Stack.Screen name="OrderCartScreen" component={OrderCartScreen} />
       <Stack.Screen name="OrderHomeScreen" component={OrderHomeScreen} />
       <Stack.Screen name="AddressScreen" component={AddressScreen} />
-      <Stack.Screen name="ChooseAddressScreen" component={ChooseAddressScreen} />
+      <Stack.Screen
+        name="ChooseAddressScreen"
+        component={ChooseAddressScreen}
+      />
       <Stack.Screen name="SearchScreen" component={SearchScreen} />
       <Stack.Screen name="SearchList" component={SearchListScreen} />
       <Stack.Screen name="AccScreen" component={AccScreen} />
@@ -84,12 +88,16 @@ const Navigation = () => {
       <Stack.Screen name="NotificationScreen" component={NotificationScreen} />
       <Stack.Screen name="CouponCartScreen" component={CouponCartScreen} />
       <Stack.Screen name="CartScreen" component={CartScreen} />
-      <Stack.Screen name="UpdatePasswordScreen" component={UpdatePasswordScreen} />
+      <Stack.Screen
+        name="UpdatePasswordScreen"
+        component={UpdatePasswordScreen}
+      />
       <Stack.Screen name="WhistlistScreen" component={WhistlistScreen} />
       <Stack.Screen name="StatisticScreen" component={StatisticScreen} />
       <Stack.Screen name="AddressUserScreen" component={AddressUserScreen} />
       <Stack.Screen name="AddAddressScreen" component={AddAddressScreen} />
       <Stack.Screen name="EditAddressScreen" component={EditAddressScreen} />
+      <Stack.Screen name="VNPAYScreen" component={VNPAYScreen} />
     </Stack.Navigator>
   );
 }

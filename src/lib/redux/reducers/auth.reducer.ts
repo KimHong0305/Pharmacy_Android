@@ -4,6 +4,7 @@ import api from "../../api/api";
 import {
     Login,
     LoginResponse,
+    LoginWithGoogle,
     Register,
     RegisterResponse,
     ResetPassword,
@@ -91,6 +92,24 @@ export const login = createAsyncThunk<LoginResponse, Login, { rejectValue: strin
         }
     }
 );
+
+export const loginWithGoogle = createAsyncThunk<
+  LoginResponse,
+  LoginWithGoogle,
+  {rejectValue: string}
+>('auth/loginWithGoogle', async (formData, {rejectWithValue}) => {
+  try {
+    const response = await api.post<LoginResponse>('/auth/outbound/authentication/android', formData);
+    const token = response.data.result?.token;
+    if (token) {
+      await saveToken(token);
+    }
+    return response.data;
+  } catch (error) {
+    console.error('Error during login with google:', error);
+    return rejectWithValue('Login failed due to server error');
+  }
+});
 
 export const logout = createAsyncThunk(
   'auth/logout',
@@ -209,6 +228,22 @@ const authSlice = createSlice({
             }
           })
           .addCase(login.rejected, (state, action) => {
+            state.loading = false;
+            state.error = action.payload || 'Login failed';
+          })
+          //LOGIN WITH GOOGLE
+          .addCase(loginWithGoogle.pending, state => {
+            state.loading = true;
+            state.error = null;
+          })
+          .addCase(loginWithGoogle.fulfilled, (state, action) => {
+            state.loading = false;
+            state.message = action.payload.message;
+            if (action.payload.result) {
+              state.token = action.payload.result.token;
+            }
+          })
+          .addCase(loginWithGoogle.rejected, (state, action) => {
             state.loading = false;
             state.error = action.payload || 'Login failed';
           })
