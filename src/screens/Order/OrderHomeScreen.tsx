@@ -22,7 +22,6 @@ import { Address } from '../../lib/schemas/address.schema';
 import { ProductDetailItem } from '../../lib/schemas/product.schema';
 import { AddOrderUser } from '../../lib/schemas/order.schema';
 import { createPaymentVNPay } from '../../lib/redux/reducers/vnpay.reducer';
-import {WebView} from 'react-native-webview';
 
 const truncateText = (text: string, maxLength: number) => {
   if (text.length <= maxLength) return text;
@@ -52,8 +51,6 @@ const OrderScreen = () => {
   const [selectedAddress, setSelectedAddress] = useState<Address | null>(
     route.params?.selectedAddress ?? null
   );
-
-  const [vnpayUrl, setVnpayUrl] = useState('');
 
   // console.log('dia chi duoc chon', selectedAddress)
 
@@ -154,8 +151,7 @@ const OrderScreen = () => {
                 createPaymentVNPay({orderId}),
               ).unwrap();
               if (data.result) {
-                setVnpayUrl(data.result);
-                navigation.navigate('VNPAYScreen', {paymentUrl: vnpayUrl});
+                navigation.navigate('VNPAYScreen', {paymentUrl: data.result});
               } else {
                 Alert.alert('Không tạo được thanh toán VNPay.');
               }
@@ -164,9 +160,12 @@ const OrderScreen = () => {
               Alert.alert('Đã xảy ra lỗi khi tạo thanh toán VNPay.');
             }
           }
+          else if (result.result.paymentMethod === 'CASH') {
+            Alert.alert('Thông báo', 'Đặt hàng thành công');
+            navigation.navigate('ProductDetailScreen', {productId: product.id})
+          } 
         }
       }
-      Alert.alert('Thông báo', 'Đặt hàng thành công')
     } catch (error) {
       
     }
