@@ -48,3 +48,10 @@ export interface ProductResponse {
     content: Product[]
   }
 }
+
+export interface GetProductByCategoryParams {
+  page?: number;
+  size?: number;
+  categoryId: string;
+  sortOrder?: 'asc' | 'desc';
+}

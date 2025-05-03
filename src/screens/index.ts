@@ -34,6 +34,8 @@ import AddressUserScreen from "./Address/AddressUserScreen";
 import AddAddressScreen from "./Address/AddAddressScreen";
 import EditAddressScreen from "./Address/EditAddressScreen";
 import VNPAYScreen from "./Payment/VNPAYScreen";
+import OrderLookupScreen from "./Search/OrderLookupScreen";
+import ProductCategoryScreen from "./Product/ProductCategoryScreen";
 
 
 export {
@@ -72,5 +74,7 @@ export {
     AddressUserScreen,
     AddAddressScreen,
     EditAddressScreen,
-    VNPAYScreen
+    VNPAYScreen,
+    OrderLookupScreen,
+    ProductCategoryScreen,
 }

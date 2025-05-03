@@ -8,7 +8,6 @@ import { useNavigation } from '@react-navigation/native';
 import { getProvinces, getDistricts, getVillages } from '../../lib/redux/reducers/location.reducer';
 import { Picker } from '@react-native-picker/picker';
 import { addAddress } from '../../lib/redux/reducers/address.reducer';
-import { TextComponent } from '../../components';
 
 const AddAddressScreen = () => {
     const navigation = useNavigation();
@@ -213,9 +212,7 @@ const AddAddressScreen = () => {
                     </View>
                 </View>
                 
-                <TouchableOpacity onPress={handleSubmit}>
-                    <TextComponent text='Thêm' color="#4CAF50"/>
-                </TouchableOpacity>
+                <Button title="Thêm" onPress={handleSubmit} color="#4CAF50" />
             
             </ScrollView>
         </View>

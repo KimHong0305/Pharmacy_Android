@@ -1,6 +1,6 @@
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import api from "../../api/api";
-import { AddOrderGuest, AddOrderUser, HistoryOrderResponse, Order, OrderResponse } from "../../schemas/order.schema";
+import { AddOrderGuest, AddOrderUser, HistoryOrderResponse, Order, OrderGuest, OrderGuestResponse, OrderResponse } from "../../schemas/order.schema";
 import api_cartGuest from "../../api/api_cartGuest";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
@@ -10,6 +10,7 @@ interface OrderState {
   loading: boolean;
   error: string | null;
   message: string | null;
+  orderGuest: OrderGuest | null;
 }
 
 const initialState: OrderState = {
@@ -18,6 +19,7 @@ const initialState: OrderState = {
   loading: false,
   error: null,
   message: null,
+  orderGuest: null,
 };
 
 //For Guest
@@ -109,7 +111,7 @@ export const getHistoryOrder = createAsyncThunk<HistoryOrderResponse, void, { re
 );
 
 export const getOrder = createAsyncThunk<
-  OrderResponse,
+  OrderGuestResponse,
   string,
   {rejectValue: string}
 >('guest/getOrder', async (orderId, {rejectWithValue}) => {
@@ -122,9 +124,13 @@ export const getOrder = createAsyncThunk<
 });
 
 const orderSlice = createSlice({
-  name: 'orderGuest',
+  name: 'order',
   initialState,
-  reducers: {},
+  reducers: {
+    resetOrder: (state) => {
+      state.orderGuest = null;
+    },
+  },
   extraReducers: builder => {
     builder
       // Home Guest
@@ -203,6 +209,7 @@ const orderSlice = createSlice({
       })
       .addCase(getOrder.fulfilled, (state, action) => {
         state.loading = false;
+        state.orderGuest = action.payload.result;
       })
       .addCase(getOrder.rejected, (state, action) => {
         state.loading = false;
@@ -212,3 +219,4 @@ const orderSlice = createSlice({
 });
 
 export default orderSlice.reducer;
+export const { resetOrder } = orderSlice.actions;
