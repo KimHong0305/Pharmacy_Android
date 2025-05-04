@@ -69,12 +69,21 @@ const LoginScreen = () => {
     }
   };
 
+  const signOut = async () => {
+    try {
+      await GoogleSignin.signOut();
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
   return (
     <View style={styles.container}>
       <TouchableOpacity
         style={styles.closeButton}
-        onPress={() => navigation.navigate('BottomTab', {screen: 'Tài khoản', params: {}})}>
+        onPress={() =>
+          navigation.navigate('BottomTab', {screen: 'Tài khoản', params: {}})
+        }>
         <Text style={{fontFamily: fontFamilies.Medium}}>Quay lại</Text>
       </TouchableOpacity>
 
@@ -98,12 +107,17 @@ const LoginScreen = () => {
       />
 
       <TouchableOpacity>
-        <Text style={styles.forgotPasswordText} onPress={() => navigation.navigate('ForgotPasswordScreen')}>
+        <Text
+          style={styles.forgotPasswordText}
+          onPress={() => navigation.navigate('ForgotPasswordScreen')}>
           Forgot Password?
         </Text>
       </TouchableOpacity>
 
-      <TouchableOpacity style={styles.loginButton} onPress={handleLogin} disabled={loading}>
+      <TouchableOpacity
+        style={styles.loginButton}
+        onPress={handleLogin}
+        disabled={loading}>
         {loading ? (
           <ActivityIndicator color="#fff" />
         ) : (
@@ -131,11 +145,10 @@ const LoginScreen = () => {
       </View>
 
       <Text style={styles.createAccountText}>
-        Create An Account ? {' '}
+        Create An Account ?{' '}
         <Text
           style={styles.signUpText}
-          onPress={() => navigation.navigate('SignUpScreen')}
-        >
+          onPress={() => navigation.navigate('SignUpScreen')}>
           Sign Up
         </Text>
       </Text>

@@ -12,6 +12,7 @@ import type { NavigationProp } from '../../navigators/index';
 import Fontisto from 'react-native-vector-icons/Fontisto';
 import Icon2 from 'react-native-vector-icons/Entypo';
 import Icon3 from 'react-native-vector-icons/MaterialIcons';
+import {GoogleSignin} from '@react-native-google-signin/google-signin';
 
 const AccScreen = () => {
   const navigation = useNavigation<NavigationProp>();
@@ -26,6 +27,11 @@ const AccScreen = () => {
 
   const handleLogout = async () => {
     dispatch(logout())
+    try {
+      await GoogleSignin.signOut();
+    } catch (error) {
+        console.error(error);
+    }
     console.log('Đã đăng xuất');
     navigation.navigate('BottomTab', {screen: 'Tài khoản', params: {}});
   };

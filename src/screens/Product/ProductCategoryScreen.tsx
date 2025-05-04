@@ -52,7 +52,7 @@ const ProductCategoryScreen = () => {
             }>
             <Icon name="arrow-left" size={25} />
             </TouchableOpacity>
-            <Text style={styles.title}>Thuốc</Text>
+            <Text style={styles.title}>Danh sách sản phẩm</Text>
         </View>
 
         <FlatList
