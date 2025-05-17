@@ -2,7 +2,6 @@ import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { AddAddress, Address, AddressResponse, EditAddress, ListAddressResponse } from "../../schemas/address.schema";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import api from "../../api/api";
-import { getProvinceName, getDistrictName, getVillageName } from "./location.reducer";
 
 interface AddressState {
     AddAddress: AddressResponse | null,
@@ -18,23 +17,43 @@ const initialState: AddressState = {
     error: null
 };
 
-export const getListAddress = createAsyncThunk<
-    ListAddressResponse,
-    void,
-    { rejectValue: string }
->('user/address', async (_, { rejectWithValue }) => {
-    try {
+export const getListAddress = createAsyncThunk<ListAddressResponse, void, { rejectValue: string }>(
+    "user/getListAddress",
+    async (_, { rejectWithValue }) => {
+      try {
         const token = await AsyncStorage.getItem('token');
         const response = await api.get('/address', {
-            headers: {
-                Authorization: `Bearer ${token}`,
-            },
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
         });
-        return response.data;
-    } catch (error: any) {
-        return rejectWithValue(error.response?.data?.message);
+  
+        const updatedAddresses = await Promise.all(
+          response.data.result.map(async (addr: any) => {
+            const { province, district, village } = addr;
+            const detailResponse = await api.get(
+              `/address/detail?provinceId=${province}&districtId=${district}&wardCode=${village}`
+            );
+            return {
+              ...addr,
+              ProvinceName: detailResponse.data.result.province.ProvinceName,
+              DistrictName: detailResponse.data.result.district.DistrictName,
+              WardName: detailResponse.data.result.ward.WardName,
+            };
+          })
+        );
+  
+        return {
+            code: response.data.code,
+            message: response.data.message,
+            result: updatedAddresses,
+          };
+      } catch (error: any) {
+        return rejectWithValue(error.response?.data || "Unknown error");
+      }
     }
-});
+  );
+  
 
 export const addAddress = createAsyncThunk<
     AddressResponse,
@@ -53,63 +72,6 @@ export const addAddress = createAsyncThunk<
         return rejectWithValue(error.response?.data?.message);
     }
 });
-
-export const fetchAddressWithLocationNames = createAsyncThunk<
-    any,
-    any,
-    { rejectValue: string }
->(
-    "address/fetchAddressWithLocationNames",
-    async (address, { dispatch, rejectWithValue }) => {
-        try {
-            // console.log("Received address in fetchAddressWithLocationNames:", address);
-            if (Array.isArray(address)) {
-                const updatedAddresses = await Promise.all(
-                    address.map(async (addr) => {
-                        const [provinceName, districtName, villageName] = await Promise.all([
-                            dispatch(getProvinceName(addr.province)).unwrap(),
-                            dispatch(getDistrictName(addr.district)).unwrap(),
-                            dispatch(getVillageName(addr.village)).unwrap(),
-                        ]);
-                        return {
-                            ...addr,
-                            provinceName,
-                            districtName,
-                            villageName,
-                        };
-                    })
-                );
-                return updatedAddresses;
-            } else {
-                const [provinceName, districtName, villageName] = await Promise.all([
-                    dispatch(getProvinceName(address.province)).unwrap(),
-                    dispatch(getDistrictName(address.district)).unwrap(),
-                    dispatch(getVillageName(address.village)).unwrap(),
-                ]);
-                // console.log("✅ Updated single address:", {
-                //     ...address,
-                //     provinceName,
-                //     districtName,
-                //     villageName,
-                // });
-                return {
-                    ...address,
-                    provinceName,
-                    districtName,
-                    villageName,
-                };
-            }
-        } catch (error: unknown) {
-            if (error instanceof Error) {
-                console.error("Error in fetchAddressWithLocationNames:", error.message);
-                return rejectWithValue(error.message);
-            } else {
-                console.error("Unexpected error:", error);
-                return rejectWithValue("An unknown error occurred");
-            }
-        }
-    }
-);
 
 export const deleteAddress = createAsyncThunk<string, string, { rejectValue: string }>(
     'address/deleteAddress',

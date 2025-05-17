@@ -1,18 +1,32 @@
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
-import axios from "axios";
+import api from "../../api/api";
 
-const API_BASE_URL = "https://esgoo.net";
+interface AddressDetailParams {
+  provinceId: string;
+  districtId: string;
+  wardCode: string;
+}
 
-// Định nghĩa kiểu dữ liệu cho tỉnh, quận, xã
+interface LocationResponse {
+  province: LocationData;
+  district: LocationData;
+  ward: LocationData;
+}
+
 interface LocationData {
-  id: string;
-  full_name: string;
+  ProvinceID?: string;
+  ProvinceName?: string;
+  DistrictID?: string;
+  DistrictName?: string;
+  WardCode?: string;
+  WardName?: string;
 }
 
 interface LocationState {
   provinces: LocationData[];
   districts: LocationData[];
   villages: LocationData[];
+  location: LocationResponse | null;
   provinceName: string;
   districtName: string;
   villageName: string;
@@ -24,6 +38,7 @@ const initialState: LocationState = {
   provinces: [],
   districts: [],
   villages: [],
+  location: null,
   provinceName: "",
   districtName: "",
   villageName: "",
@@ -31,120 +46,57 @@ const initialState: LocationState = {
   error: null,
 };
 
-// Lấy danh sách tỉnh thành
 export const getProvinces = createAsyncThunk<LocationData[]>(
   "location/getProvinces",
   async () => {
-    const response = await axios.get(`${API_BASE_URL}/api-tinhthanh/1/0.htm`);
-    if (response.data.error === 0) {
-      return response.data.data;
-    } else {
-      throw new Error("Failed to fetch provinces");
-    }
+    const response = await api.get('/delivery/province');
+    return response.data.data;
   }
 );
 
-// Lấy danh sách quận huyện theo ID tỉnh
 export const getDistricts = createAsyncThunk<LocationData[], string>(
   "location/getDistricts",
   async (provinceId) => {
-    const response = await axios.get(`${API_BASE_URL}/api-tinhthanh/2/${provinceId}.htm`);
-    if (response.data.error === 0) {
-      return response.data.data;
-    } else {
-      throw new Error("Failed to fetch districts");
-    }
+    const response = await api.get(`/delivery/district?provinceId=${provinceId}`);
+    return response.data.data;
   }
 );
-
-// Lấy danh sách phường xã theo ID quận
+ 
 export const getVillages = createAsyncThunk<LocationData[], string>(
   "location/getVillages",
   async (districtId) => {
-    const response = await axios.get(`${API_BASE_URL}/api-tinhthanh/3/${districtId}.htm`);
-    if (response.data.error === 0) {
-      return response.data.data;
-    } else {
-      throw new Error("Failed to fetch villages");
-    }
+    const response = await api.get(`/delivery/ward?districtId=${districtId}`);
+    return response.data.data;
   }
 );
 
-// Lấy Tên Tỉnh
-export const getProvinceName = createAsyncThunk<string, string>(
-  "location/getProvinceName",
-  async (provinceId) => {
-    const response = await axios.get(`${API_BASE_URL}/api-tinhthanh/5/${provinceId}.htm`);
-    if (response.data.error === 0) {
-      return response.data.data.full_name;
-    } else {
-      throw new Error("Failed to fetch province name");
-    }
+export const getAddressDetail = createAsyncThunk<LocationResponse, AddressDetailParams>(
+  "location/getAddressDetail",
+  async ({provinceId, districtId, wardCode}) => {
+    const response = await api.get(`/address/detail?provinceId=${provinceId}&districtId=${districtId}&wardCode=${wardCode}`);
+    return response.data.result;
   }
 );
 
-// Lấy Tên Quận
-export const getDistrictName = createAsyncThunk<string, string>(
-  "location/getDistrictName",
-  async (districtId) => {
-    const response = await axios.get(`${API_BASE_URL}/api-tinhthanh/5/${districtId}.htm`);
-    if (response.data.error === 0) {
-      return response.data.data.full_name;
-    } else {
-      throw new Error("Failed to fetch district name");
-    }
-  }
-);
-
-// Lấy Tên Phường
-export const getVillageName = createAsyncThunk<string, string>(
-  "location/getVillageName",
-  async (villageId) => {
-    const formattedId = villageId.padStart(5, "0");
-    const response = await axios.get(`${API_BASE_URL}/api-tinhthanh/5/${formattedId}.htm`);
-    if (response.data.error === 0) {
-      return response.data.data.full_name;
-    } else {
-      throw new Error("Failed to fetch village name");
-    }
-  }
-);
-
-// Slice xử lý trạng thái location
 const locationSlice = createSlice({
   name: "location",
   initialState,
   reducers: {},
   extraReducers: (builder) => {
     builder
-      .addCase(getProvinces.pending, (state) => {
-        state.loading = true;
-        state.error = null;
-      })
       .addCase(getProvinces.fulfilled, (state, action: PayloadAction<LocationData[]>) => {
         state.loading = false;
         state.provinces = action.payload;
       })
-      .addCase(getProvinces.rejected, (state, action) => {
-        state.loading = false;
-        state.error = action.error.message ?? "Unknown error";
-      })
-
       .addCase(getDistricts.fulfilled, (state, action: PayloadAction<LocationData[]>) => {
         state.districts = action.payload;
       })
       .addCase(getVillages.fulfilled, (state, action: PayloadAction<LocationData[]>) => {
         state.villages = action.payload;
       })
-      .addCase(getProvinceName.fulfilled, (state, action: PayloadAction<string>) => {
-        state.provinceName = action.payload;
+      .addCase(getAddressDetail.fulfilled, (state, action: PayloadAction<LocationResponse>) => {
+        state.location = action.payload;
       })
-      .addCase(getDistrictName.fulfilled, (state, action: PayloadAction<string>) => {
-        state.districtName = action.payload;
-      })
-      .addCase(getVillageName.fulfilled, (state, action: PayloadAction<string>) => {
-        state.villageName = action.payload;
-      });
   },
 });
 

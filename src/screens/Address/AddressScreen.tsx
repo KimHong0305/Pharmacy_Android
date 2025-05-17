@@ -28,9 +28,9 @@ const AddressScreen = () => {
     const [fullname, setFullname] = useState('');
     const [phone, setPhone] = useState('');
     const [address, setAddress] = useState('');
-    const provinceName = provinces.find(p => p.id === selectedProvince)?.full_name || '';
-    const districtName = districts.find(d => d.id === selectedDistrict)?.full_name || '';
-    const villageName = villages.find(v => v.id === selectedVillage)?.full_name || '';
+    const provinceName = provinces.find(p => p.ProvinceID === selectedProvince)?.ProvinceName || '';
+    const districtName = districts.find(d => d.DistrictID === selectedDistrict)?.DistrictName || '';
+    const villageName = villages.find(v => v.WardCode === selectedVillage)?.WardName || '';
 
 
     const route = useRoute();
@@ -85,9 +85,9 @@ const AddressScreen = () => {
             province: selectedProvince,
             district: selectedDistrict,
             village: selectedVillage,
-            provinceName: provinceName,
-            districtName: districtName,
-            villageName: villageName + ", " +  districtName + ", " +  provinceName,
+            ProvinceName: provinceName,
+            DistrictName: districtName,
+            WardName: villageName,
             addressCategory: addressType === "Nhà riêng" ? "HOUSE" : "COMPANY",
         };
 
@@ -138,7 +138,7 @@ const AddressScreen = () => {
                 >
                     <Picker.Item style={{fontSize: 14}} label="Chọn Tỉnh/Thành phố" value={undefined} />
                     {provinces.map((province) => (
-                        <Picker.Item style={{fontSize: 14}} key={province.id} label={province.full_name} value={province.id} />
+                        <Picker.Item style={{fontSize: 14}} key={province.ProvinceID} label={province.ProvinceName} value={province.ProvinceID} />
                     ))}
                 </Picker>
 
@@ -151,7 +151,7 @@ const AddressScreen = () => {
                 >
                     <Picker.Item style={{fontSize: 14}} label="Chọn Quận/Huyện" value={undefined} />
                     {districts.map((district) => (
-                        <Picker.Item style={{fontSize: 14}} key={district.id} label={district.full_name} value={district.id} />
+                        <Picker.Item style={{fontSize: 14}} key={district.DistrictID} label={district.DistrictName} value={district.DistrictID} />
                     ))}
                 </Picker>
 
@@ -164,7 +164,7 @@ const AddressScreen = () => {
                 >
                     <Picker.Item style={{fontSize: 14}} label="Chọn Phường/Xã" value={undefined} />
                     {villages.map((village) => (
-                        <Picker.Item style={{fontSize: 14}} key={village.id} label={village.full_name} value={village.id} />
+                        <Picker.Item style={{fontSize: 14}} key={village.WardCode} label={village.WardName} value={village.WardCode} />
                     ))}
                 </Picker>
 

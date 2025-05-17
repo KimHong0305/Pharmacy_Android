@@ -8,9 +8,9 @@ export interface Address {
     address: string;
     addressCategory: string;
     addressDefault: boolean;
-    provinceName?: string,
-    districtName?: string,
-    villageName?: string,
+    ProvinceName?: string,
+    DistrictName?: string,
+    WardName?: string,
 }
 
 export interface AddressResponse {
@@ -21,7 +21,8 @@ export interface AddressResponse {
 
 export interface ListAddressResponse {
     code: number,
-    result: Address[]
+    result: Address[],
+    message? : string,
 }
 
 export interface AddAddress {

@@ -16,7 +16,7 @@ import { createOrderCartGuest, createOrderCartUser } from '../../lib/redux/reduc
 import { RootState } from '../../lib/redux/rootReducer';
 import { AppDispatch } from '../../lib/redux/store';
 import { NavigationProp, RootStackParamList } from '../../navigators';
-import { fetchAddressWithLocationNames, getListAddress } from '../../lib/redux/reducers/address.reducer';
+import { getListAddress } from '../../lib/redux/reducers/address.reducer';
 import { AddOrderUser } from '../../lib/schemas/order.schema';
 import { Coupon } from '../../lib/schemas/coupon.schema';
 import { CheckBox } from 'react-native-elements';
@@ -40,9 +40,9 @@ const OrderCartScreen = () => {
     address: '',
     addressCategory: '',
     addressDefault: false,
-    provinceName: '',
-    districtName: '',
-    villageName: '',
+    ProvinceName: '',
+    DistrictName: '',
+    WardName: '',
   });
   
   const {cart} = useSelector((state: RootState) => state.cart);
@@ -99,23 +99,29 @@ const OrderCartScreen = () => {
           address: selectedAddress.address,
           addressCategory: selectedAddress.addressCategory,
           addressDefault: selectedAddress.addressDefault,
-          provinceName: selectedAddress.provinceName ?? '',
-          districtName: selectedAddress.districtName ?? '',
-          villageName: selectedAddress.villageName ?? '',
+          ProvinceName: selectedAddress.ProvinceName ?? '',
+          DistrictName: selectedAddress.DistrictName ?? '',
+          WardName: selectedAddress.WardName ?? '',
         });
       } else if (listAddress && listAddress.length > 0) {
-        // const parsedData = JSON.parse(data);
-        const defaultAddress = listAddress.find(
-          item => item.addressDefault === true,
-        );
-        try {
-          const updatedAddress = await dispatch(fetchAddressWithLocationNames(defaultAddress)).unwrap();
-          setAddressData(updatedAddress);
-        } catch (error) {
-          console.error("Error fetching address names:", error);
-          // setAddressData(parsedData);
+        const defaultAddress = listAddress.find(item => item.addressDefault === true);
+        if (defaultAddress) {
+          setAddressData({
+            id: defaultAddress.id,
+            fullname: defaultAddress.fullname,
+            phone: defaultAddress.phone,
+            province: defaultAddress.province,
+            district: defaultAddress.district,
+            village: defaultAddress.village,
+            address: defaultAddress.address,
+            addressCategory: defaultAddress.addressCategory,
+            addressDefault: defaultAddress.addressDefault,
+            ProvinceName: defaultAddress.ProvinceName ?? '',
+            DistrictName: defaultAddress.DistrictName ?? '',
+            WardName: defaultAddress.WardName ?? '',
+          });
         }
-      }
+      }      
     };
   
     getData();
@@ -209,7 +215,11 @@ const OrderCartScreen = () => {
                     size={13}
                   />
                   <TextComponent
-                    text={selectedAddress ? selectedAddress.villageName ?? '' : addressData.villageName}
+                    text={
+                      selectedAddress
+                        ? `${selectedAddress.WardName || ''}, ${selectedAddress.DistrictName || ''}, ${selectedAddress.ProvinceName || ''}`
+                        : `${addressData?.WardName || ''}, ${addressData?.DistrictName || ''}, ${addressData?.ProvinceName || ''}`
+                    }
                     size={13}
                   />
                 </View>

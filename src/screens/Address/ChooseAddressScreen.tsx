@@ -6,7 +6,7 @@ import { NavigationProp } from '../../navigators';
 import { AppDispatch } from '../../lib/redux/store';
 import { RootState } from '../../lib/redux/rootReducer';
 import { useFocusEffect, useNavigation, useRoute } from '@react-navigation/native';
-import { fetchAddressWithLocationNames, getListAddress } from '../../lib/redux/reducers/address.reducer';
+import { getListAddress } from '../../lib/redux/reducers/address.reducer';
 import { Coupon } from '../../lib/schemas/coupon.schema';
 import { ProductDetailItem } from '../../lib/schemas/product.schema';
 
@@ -27,12 +27,6 @@ const ChooseAddressScreen = () => {
     const [updatedListAddress, setUpdatedListAddress] = useState(listAddress);
     const [selectedAddress, setSelectedAddress] = useState<string | null>(null);
 
-    useEffect(() => {
-        if (token) {
-            dispatch(getListAddress());
-        }
-    }, [dispatch, token]);
-
     useFocusEffect(
         React.useCallback(() => {
             if (token) {
@@ -44,15 +38,8 @@ const ChooseAddressScreen = () => {
     useEffect(() => {
         if (listAddress && listAddress.length > 0) {
             const fetchData = async () => {
-                const updatedAddresses = await Promise.all(
-                    listAddress.map(async (address) => {
-                        const updatedAddress = await dispatch(fetchAddressWithLocationNames(address)).unwrap();
-                        return updatedAddress;
-                    })
-                );
-                setUpdatedListAddress(updatedAddresses);
 
-                const defaultAddress = updatedAddresses.find(address => address.addressDefault);
+                const defaultAddress = updatedListAddress.find(address => address.addressDefault);
                 if (defaultAddress) {
                     setSelectedAddress(defaultAddress.id);
                 }
@@ -126,7 +113,7 @@ const ChooseAddressScreen = () => {
                                             {item.address}
                                         </Text>
                                         <Text style={{ fontSize: 13 }}>
-                                            {item.villageName || item.village}
+                                            {item.WardName + ", " + item.DistrictName + ", " + item.ProvinceName}
                                         </Text>
                                     </View>
                                 </View>

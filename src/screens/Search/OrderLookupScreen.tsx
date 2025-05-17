@@ -17,14 +17,14 @@ import { AppDispatch } from '../../lib/redux/store';
 import { getOrder, resetOrder } from '../../lib/redux/reducers/order.reducer';
 import { RootState } from '../../lib/redux/rootReducer';
 import Icon5 from 'react-native-vector-icons/FontAwesome6';
-import { getVillageName } from '../../lib/redux/reducers/location.reducer';
+import { getAddressDetail } from '../../lib/redux/reducers/location.reducer';
 
 const OrderLookupScreen = () => {
     const navigation = useNavigation<NavigationProp>();
     const dispatch: AppDispatch = useDispatch();
     const { orderGuest } = useSelector((state: RootState) => state.order);
     const [orderCode, setOrderCode] = useState('');
-    const { villageName } = useSelector((state: RootState) => state.location);
+    const { location } = useSelector((state: RootState) => state.location);
     const [notFound, setNotFound] = useState(false);
 
     useEffect(() => {
@@ -44,10 +44,16 @@ const OrderLookupScreen = () => {
     };
 
     useEffect(() => {
-        if (orderGuest) {
-            dispatch(getVillageName(orderGuest.address.village));
+        if (orderGuest && orderGuest.address) {
+            dispatch(getAddressDetail({
+                provinceId: orderGuest.address.province,
+                districtId: orderGuest.address.district,
+                wardCode: orderGuest.address.village
+            }));
         }
-    }, [orderGuest]);    
+    }, [orderGuest]);
+    
+    console.log(location)
 
     const getStatusDisplay = (status: string) => {
         switch (status) {
@@ -142,7 +148,7 @@ const OrderLookupScreen = () => {
                                     {orderGuest.address.address}
                                     </Text>
                                     <Text style={{ fontSize: 13 }}>
-                                    {villageName}
+                                        {location?.ward?.WardName + ', ' + location?.district.DistrictName  + ', ' + location?.province.ProvinceName}
                                     </Text>
                                 </View>
                             </View>

@@ -117,7 +117,7 @@ const AddAddressScreen = () => {
                 >
                     <Picker.Item style={{fontSize: 14}} label="Chọn Tỉnh/Thành phố" value={undefined} />
                     {provinces.map((province) => (
-                        <Picker.Item style={{fontSize: 14}} key={province.id} label={province.full_name} value={province.id} />
+                        <Picker.Item style={{fontSize: 14}} key={province.ProvinceID} label={province.ProvinceName} value={province.ProvinceID} />
                     ))}
                 </Picker>
 
@@ -130,7 +130,7 @@ const AddAddressScreen = () => {
                 >
                     <Picker.Item style={{fontSize: 14}} label="Chọn Quận/Huyện" value={undefined} />
                     {districts.map((district) => (
-                        <Picker.Item style={{fontSize: 14}} key={district.id} label={district.full_name} value={district.id} />
+                        <Picker.Item style={{fontSize: 14}} key={district.DistrictID} label={district.DistrictName} value={district.DistrictID} />
                     ))}
                 </Picker>
 
@@ -143,7 +143,7 @@ const AddAddressScreen = () => {
                 >
                     <Picker.Item style={{fontSize: 14}} label="Chọn Phường/Xã" value={undefined} />
                     {villages.map((village) => (
-                        <Picker.Item style={{fontSize: 14}} key={village.id} label={village.full_name} value={village.id} />
+                        <Picker.Item style={{fontSize: 14}} key={village.WardCode} label={village.WardName} value={village.WardCode} />
                     ))}
                 </Picker>
 

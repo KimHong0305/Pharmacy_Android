@@ -6,7 +6,7 @@ import { NavigationProp } from '../../navigators';
 import { AppDispatch } from '../../lib/redux/store';
 import { RootState } from '../../lib/redux/rootReducer';
 import { useFocusEffect, useNavigation } from '@react-navigation/native';
-import { fetchAddressWithLocationNames, getListAddress } from '../../lib/redux/reducers/address.reducer';
+import { getListAddress } from '../../lib/redux/reducers/address.reducer';
 
 const AddressUserScreen = () => {
 
@@ -16,14 +16,6 @@ const AddressUserScreen = () => {
     const { listAddress } = useSelector((state: RootState) => state.address);
     const { token } = useSelector((state: RootState) => state.auth);
 
-    const [updatedListAddress, setUpdatedListAddress] = useState(listAddress);
-
-    useEffect(() => {
-        if (token) {
-            dispatch(getListAddress());
-        }
-    }, [dispatch, token]);
-
     useFocusEffect(
         React.useCallback(() => {
             if (token) {
@@ -31,21 +23,6 @@ const AddressUserScreen = () => {
             }
         }, [dispatch, token])
     );
-
-    useEffect(() => {
-        if (listAddress && listAddress.length > 0) {
-            const fetchData = async () => {
-                const updatedAddresses = await Promise.all(
-                    listAddress.map(async (address) => {
-                        const updatedAddress = await dispatch(fetchAddressWithLocationNames(address)).unwrap();
-                        return updatedAddress;
-                    })
-                );
-                setUpdatedListAddress(updatedAddresses);
-            };
-            fetchData();
-        }
-    }, [listAddress, dispatch]);
 
     return (
         <View style={styles.container}>
@@ -58,7 +35,7 @@ const AddressUserScreen = () => {
             </View>
 
             <ScrollView contentContainerStyle={styles.scrollContainer}>
-                {updatedListAddress.map((item) => (
+                {listAddress.map((item) => (
                     <TouchableOpacity key={item.id} style={styles.addressItem} onPress={() => navigation.navigate('EditAddressScreen', {address: item })}>
                         <View style={{ flex: 1, gap: 5 }}>
                             <View style={{ flexDirection: 'row' }}>
@@ -75,7 +52,7 @@ const AddressUserScreen = () => {
                                         {item.address}
                                     </Text>
                                     <Text style={{ fontSize: 13 }}>
-                                        {item.villageName || item.village}
+                                        {item.WardName + ", " + item.DistrictName + ", " + item.ProvinceName}
                                     </Text>
                                 </View>
                             </View>

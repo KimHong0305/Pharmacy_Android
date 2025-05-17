@@ -158,7 +158,7 @@ const EditAddressScreen = () => {
                 >
                     <Picker.Item label="Chọn Tỉnh/Thành phố" value={undefined} />
                     {provinces.map((province) => (
-                        <Picker.Item key={province.id} label={province.full_name} value={province.id} />
+                        <Picker.Item key={province.ProvinceID} label={province.ProvinceName} value={province.ProvinceID} />
                     ))}
                 </Picker>
 
@@ -171,7 +171,7 @@ const EditAddressScreen = () => {
                 >
                     <Picker.Item label="Chọn Quận/Huyện" value={undefined} />
                     {districts.map((district) => (
-                        <Picker.Item key={district.id} label={district.full_name} value={district.id} />
+                        <Picker.Item key={district.DistrictID} label={district.DistrictName} value={district.DistrictID} />
                     ))}
                 </Picker>
 
@@ -184,7 +184,7 @@ const EditAddressScreen = () => {
                 >
                     <Picker.Item label="Chọn Phường/Xã" value={undefined} />
                     {villages.map((village) => (
-                        <Picker.Item key={village.id} label={village.full_name} value={village.id} />
+                        <Picker.Item key={village.WardCode} label={village.WardName} value={village.WardCode} />
                     ))}
                 </Picker>
 

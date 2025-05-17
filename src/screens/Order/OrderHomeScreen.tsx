@@ -15,7 +15,7 @@ import { createOrderHomeGuest, createOrderHomeUser } from '../../lib/redux/reduc
 import { RootState } from '../../lib/redux/rootReducer';
 import { AppDispatch } from '../../lib/redux/store';
 import { NavigationProp, RootStackParamList } from '../../navigators';
-import { fetchAddressWithLocationNames, getListAddress } from '../../lib/redux/reducers/address.reducer';
+import { getListAddress } from '../../lib/redux/reducers/address.reducer';
 import { Coupon } from '../../lib/schemas/coupon.schema';
 import { CheckBox } from 'react-native-elements';
 import { Address } from '../../lib/schemas/address.schema';
@@ -90,28 +90,21 @@ const OrderScreen = () => {
           address: selectedAddress.address,
           addressCategory: selectedAddress.addressCategory,
           addressDefault: selectedAddress.addressDefault,
-          provinceName: selectedAddress.provinceName ?? '',
-          districtName: selectedAddress.districtName ?? '',
-          villageName: selectedAddress.villageName ?? '',
+          ProvinceName: selectedAddress.ProvinceName ?? '',
+          DistrictName: selectedAddress.DistrictName ?? '',
+          WardName: selectedAddress.WardName ?? '',
         });
       } else if (listAddress && listAddress.length > 0) {
         // const parsedData = JSON.parse(data);
         const defaultAddress = listAddress.find(
           item => item.addressDefault === true,
         );
-        try {
-          const updatedAddress = await dispatch(fetchAddressWithLocationNames(defaultAddress)).unwrap();
-          setAddressData(updatedAddress);
-        } catch (error) {
-          console.error("Error fetching address names:", error);
-          // setAddressData(parsedData);
-        }
+        setAddressData(defaultAddress ?? null);
       }
     };
   
     getData();
   }, [dispatch, token]);
-  
   
   const handleOrder = async () => {
     try {
@@ -221,7 +214,11 @@ const OrderScreen = () => {
                     size={13}
                   />
                   <TextComponent
-                    text={selectedAddress ? selectedAddress.villageName ?? '' : addressData?.villageName ?? ''}
+                    text={
+                      selectedAddress
+                        ? `${selectedAddress.WardName || ''}, ${selectedAddress.DistrictName || ''}, ${selectedAddress.ProvinceName || ''}`
+                        : `${addressData?.WardName || ''}, ${addressData?.DistrictName || ''}, ${addressData?.ProvinceName || ''}`
+                    }
                     size={13}
                   />
                 </View>
