@@ -35,7 +35,7 @@ import {
   AddressUserScreen,
   AddAddressScreen,
   EditAddressScreen,
-  VNPAYScreen,
+  PaymentScreen,
   OrderLookupScreen,
   ProductCategoryScreen,
 } from '../screens';
@@ -125,7 +125,7 @@ const Navigation = () => {
             name="EditAddressScreen"
             component={EditAddressScreen}
           />
-          <Stack.Screen name="VNPAYScreen" component={VNPAYScreen} />
+          <Stack.Screen name="PaymentScreen" component={PaymentScreen} />
           <Stack.Screen
             name="CustomPaymentResultScreen"
             component={CustomPaymentResultScreen}

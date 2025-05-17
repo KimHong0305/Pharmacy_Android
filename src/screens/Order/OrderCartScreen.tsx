@@ -17,10 +17,13 @@ import { RootState } from '../../lib/redux/rootReducer';
 import { AppDispatch } from '../../lib/redux/store';
 import { NavigationProp, RootStackParamList } from '../../navigators';
 import { getListAddress } from '../../lib/redux/reducers/address.reducer';
-import { AddOrderUser } from '../../lib/schemas/order.schema';
+import { AddOrderGuest, AddOrderUser } from '../../lib/schemas/order.schema';
 import { Coupon } from '../../lib/schemas/coupon.schema';
 import { CheckBox } from 'react-native-elements';
 import { Address } from '../../lib/schemas/address.schema';
+import ShippingMethodSelector, { ShippingMethod } from '../../components/ShippingMethodSelector';
+import { createPaymentVNPay } from '../../lib/redux/reducers/vnpay.reducer';
+import { createPaymentMomo, createPaymentZaloPay } from '../../lib/redux/reducers/payment.reducer';
 
 const truncateText = (text: string, maxLength: number) => {
   if (text.length <= maxLength) return text;
@@ -49,6 +52,7 @@ const OrderCartScreen = () => {
   const {token} = useSelector((state: RootState) => state.auth);
   const {listAddress} = useSelector((state: RootState) => state.address);
   const [paymentMethod, setPaymentMethod] = useState('CASH');
+  const [shippingMethod, setShippingMethod] = useState<ShippingMethod>('standard');
   const dispatch: AppDispatch = useDispatch<AppDispatch>();
   
   const route = useRoute<RouteProp<RootStackParamList, 'OrderCartScreen'>>();
@@ -60,6 +64,8 @@ const OrderCartScreen = () => {
   const [selectedAddress, setSelectedAddress] = useState<Address | null>(
     route.params?.selectedAddress ?? null
   );
+
+  const { service, fee } = useSelector((state: RootState) => state.delivery);
 
   // console.log('dia chi duoc chon', selectedAddress)
 
@@ -134,17 +140,76 @@ const OrderCartScreen = () => {
         const orderUser: AddOrderUser & { couponId?: string } = {
             addressId: addressData.id,
             paymentMethod: paymentMethod,
+            isInsurance: false,
         };
+
+        if (Array.isArray(service) && service.length > 0 && service[0].service_id) {
+          orderUser.service_id = service?.[0]?.service_id
+        }
     
         if (selectedCoupon) {
             orderUser.couponId = selectedCoupon.id;
         }
     
-        await dispatch(createOrderCartUser(orderUser))
-            .then(() => getCartUser());
-        console.log(orderUser)
+        const result = await dispatch(createOrderCartUser(orderUser)).unwrap();
+        AsyncStorage.setItem("lastOrderId", result.result.id);
+        if (result.result.paymentMethod === 'VNPAY') {
+          try {
+            const orderId = result.result.id;
+            console.log(orderId);
+            const data = await dispatch(
+              createPaymentVNPay({orderId}),
+            ).unwrap();
+            if (data.result) {
+              navigation.navigate('PaymentScreen', {paymentUrl: data.result});
+            } else {
+              Alert.alert('Không tạo được thanh toán VNPay.');
+            }
+          } catch (error) {
+            console.error('Error creating VNPay payment:', error);
+            Alert.alert('Đã xảy ra lỗi khi tạo thanh toán VNPay.');
+          }
+        } else if (result.result.paymentMethod === 'ZALOPAY') {
+          try {
+            const orderId = result.result.id;
+            console.log(orderId);
+            const data = await dispatch(
+              createPaymentZaloPay({orderId}),
+            ).unwrap();
+            if (data.orderurl) {
+              navigation.navigate('PaymentScreen', {paymentUrl: data.orderurl});
+            } else {
+              Alert.alert('Không tạo được thanh toán ZaloPay.');
+            }
+          } catch (error) {
+            console.error('Error creating VNPay payment:', error);
+            Alert.alert('Đã xảy ra lỗi khi tạo thanh toán ZaloPay.');
+          }
+        } else if (result.result.paymentMethod === 'MOMO') {
+          try {
+            const orderId = result.result.id;
+            console.log(orderId);
+            const data = await dispatch(
+              createPaymentMomo({orderId}),
+            ).unwrap();
+            if (data.payUrl) {
+              navigation.navigate('PaymentScreen', {paymentUrl: data.payUrl});
+            } else {
+              Alert.alert('Không tạo được thanh toán Momo.');
+            }
+          } catch (error) {
+            console.error('Error creating VNPay payment:', error);
+            Alert.alert('Đã xảy ra lỗi khi tạo thanh toán Momo.');
+          }
+        }
+        else if (result.result.paymentMethod === 'CASH') {
+          Alert.alert('Thông báo', 'Đặt hàng thành công')
+          navigation.navigate('BottomTab', {screen: 'Giỏ hàng', params: {}})
+        } 
+            // .then(() => getCartUser());
+        // console.log(orderUser)
       } else {
-        const orderGuest = {
+        const orderGuest: AddOrderGuest = {
           fullname: addressData.fullname,
           phone: addressData.phone,
           province: addressData.province,
@@ -153,12 +218,69 @@ const OrderCartScreen = () => {
           address: addressData.address,
           addressCategory: addressData.addressCategory,
           paymentMethod: paymentMethod,
+          isInsurance: false,
         };
-        await dispatch(createOrderCartGuest(orderGuest))
-        .then(() => getCartGuest());
+        if (Array.isArray(service) && service.length > 0 && service[0].service_id) {
+          orderGuest.service_id = service?.[0]?.service_id
+        }
+        const result = await dispatch(createOrderCartGuest(orderGuest)).unwrap();
+        AsyncStorage.setItem("lastOrderId", result.result.id);
+        if (result.result.paymentMethod === 'VNPAY') {
+          try {
+            const orderId = result.result.id;
+            console.log(orderId);
+            const data = await dispatch(
+              createPaymentVNPay({orderId}),
+            ).unwrap();
+            if (data.result) {
+              navigation.navigate('PaymentScreen', {paymentUrl: data.result});
+            } else {
+              Alert.alert('Không tạo được thanh toán VNPay.');
+            }
+          } catch (error) {
+            console.error('Error creating VNPay payment:', error);
+            Alert.alert('Đã xảy ra lỗi khi tạo thanh toán VNPay.');
+          }
+        } else if (result.result.paymentMethod === 'ZALOPAY') {
+          try {
+            const orderId = result.result.id;
+            console.log(orderId);
+            const data = await dispatch(
+              createPaymentZaloPay({orderId}),
+            ).unwrap();
+            if (data.orderurl) {
+              navigation.navigate('PaymentScreen', {paymentUrl: data.orderurl});
+            } else {
+              Alert.alert('Không tạo được thanh toán ZaloPay.');
+            }
+          } catch (error) {
+            console.error('Error creating VNPay payment:', error);
+            Alert.alert('Đã xảy ra lỗi khi tạo thanh toán ZaloPay.');
+          }
+        } else if (result.result.paymentMethod === 'MOMO') {
+          try {
+            const orderId = result.result.id;
+            console.log(orderId);
+            const data = await dispatch(
+              createPaymentMomo({orderId}),
+            ).unwrap();
+            if (data.payUrl) {
+              navigation.navigate('PaymentScreen', {paymentUrl: data.payUrl});
+            } else {
+              Alert.alert('Không tạo được thanh toán Momo.');
+            }
+          } catch (error) {
+            console.error('Error creating VNPay payment:', error);
+            Alert.alert('Đã xảy ra lỗi khi tạo thanh toán Momo.');
+          }
+        }
+        else if (result.result.paymentMethod === 'CASH') {
+          Alert.alert('Thông báo', 'Đặt hàng thành công');
+          navigation.navigate('BottomTab', {screen: 'Giỏ hàng', params: {}})
+        } 
       }
-      Alert.alert('Thông báo', 'Đặt hàng thành công')
-      navigation.navigate('BottomTab', {screen: 'Giỏ hàng', params: {}})
+      // Alert.alert('Thông báo', 'Đặt hàng thành công')
+      // navigation.navigate('BottomTab', {screen: 'Giỏ hàng', params: {}})
     } catch (error) {
       
     }
@@ -269,6 +391,13 @@ const OrderCartScreen = () => {
             )}
           />
         </View>
+
+        <ShippingMethodSelector
+          selected={shippingMethod}
+          onSelect={setShippingMethod}
+          district={addressData?.district || ''}
+          village={addressData?.village || ''}
+        />
         
         <View style={styles.payment_method}>
           <TextComponent
@@ -354,7 +483,7 @@ const OrderCartScreen = () => {
               {selectedCoupon? (
                     <>
                     <TextComponent
-                      text={`${finalPrice.toLocaleString('vi-VN')}đ`}
+                      text={`${(finalPrice + (fee?.total ?? 0)).toLocaleString('vi-VN')}đ`}
                       size={20}
                       color='red'
                       styles={{marginTop: 12, fontWeight:'700'}}
@@ -368,7 +497,7 @@ const OrderCartScreen = () => {
                     </>
                   ):(
                   <TextComponent
-                      text={`${totalPrice.toLocaleString('vi-VN')}đ`}
+                      text={`${(totalPrice + (fee?.total ?? 0)).toLocaleString('vi-VN')}đ`}
                       size={20}
                       color='red'
                       styles={{marginTop: 12, fontWeight:'700'}}

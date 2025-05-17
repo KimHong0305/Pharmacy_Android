@@ -25,6 +25,10 @@ export interface Order {
   status: string;
   isConfirm: boolean;
   totalPrice: number;
+  deliveryTotal: number;
+  coupon: number;
+  newTotalPrice: number;
+  leadTime: number;
 }
 
 export interface OrderResponse {
@@ -41,14 +45,18 @@ export interface AddOrderGuest {
     village: string,
     address: string,
     addressCategory: string,
-    paymentMethod: string
+    paymentMethod: string,
+    isInsurance: boolean,
+    service_id?: string,
 }
 
 export interface AddOrderUser {
     priceId?: string,
     couponId?: string,
     addressId: string,
-    paymentMethod: string
+    paymentMethod: string,
+    isInsurance: boolean,
+    service_id?: string,
 }
 
 export interface HistoryOrderResponse {
@@ -76,6 +84,10 @@ export interface OrderGuest {
     status: string;
     isConfirm: boolean;
     totalPrice: number;
+    deliveryTotal: number;
+    coupon: number;
+    newTotalPrice: number;
+    leadTime: number;
 }
 
 export interface OrderGuestResponse {

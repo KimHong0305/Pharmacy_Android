@@ -4,7 +4,7 @@ import WebView from 'react-native-webview';
 import {useRoute, useNavigation} from '@react-navigation/native';
 import { NavigationProp } from '../../navigators';
 
-const VNPAYScreen = () => {
+const PaymentScreen = () => {
   const route = useRoute();
   const navigation = useNavigation<NavigationProp>();
   const {paymentUrl} = route.params as {paymentUrl: string};
@@ -39,4 +39,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default VNPAYScreen;
+export default PaymentScreen;

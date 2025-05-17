@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   View,
   Text,
@@ -8,10 +8,14 @@ import {
   TouchableOpacity,
   Alert,
 } from 'react-native';
-import {useRoute, useNavigation} from '@react-navigation/native';
+import { useRoute, useNavigation } from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import Clipboard from '@react-native-clipboard/clipboard';
 import { NavigationProp } from '../../navigators';
+import { useDispatch } from 'react-redux';
+import { updateCallBack } from '../../lib/redux/reducers/payment.reducer';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { AppDispatch } from '../../lib/redux/store';
 
 const parseQueryParams = (url: string): Record<string, string> => {
   const queryString = url.split('?')[1] || '';
@@ -30,42 +34,75 @@ const parseQueryParams = (url: string): Record<string, string> => {
 const CustomPaymentResultScreen = () => {
   const route = useRoute();
   const navigation = useNavigation<NavigationProp>();
-  const {callbackUrl} = route.params as {callbackUrl: string};
+  const dispatch: AppDispatch = useDispatch<AppDispatch>();
+  const { callbackUrl } = route.params as { callbackUrl: string };
 
   const [paymentInfo, setPaymentInfo] = useState({
     amount: 0,
     orderInfo: '',
     responseCode: '',
     transactionNo: '',
-    orderId: '', // <-- thêm orderId riêng
+    orderId: '',
   });
 
   const [isSuccess, setIsSuccess] = useState(false);
 
   useEffect(() => {
-    const params = parseQueryParams(callbackUrl);
-
-    const amount = params['vnp_Amount']
-      ? Number(params['vnp_Amount']) / 100
-      : 0;
-
-    const orderInfo = params['vnp_OrderInfo'] || '';
-    const responseCode = params['vnp_ResponseCode'] || '';
-    const transactionNo = params['vnp_TransactionNo'] || '';
-
-    // Tách mã đơn hàng từ orderInfo
-    const orderId = orderInfo.split(':')[1]?.trim() || '';
-
-    setPaymentInfo({
-      amount,
-      orderInfo,
-      responseCode,
-      transactionNo,
-      orderId,
-    });
-
-    setIsSuccess(responseCode === '00');
-  }, [callbackUrl]);
+    const handleCallback = async () => {
+      const params = parseQueryParams(callbackUrl);
+  
+      let paymentMethod = '';
+      let isSuccess = false;
+      let amount = 0;
+      let orderInfo = '';
+      let transactionNo = '';
+      let code = '';
+      const orderId = await AsyncStorage.getItem('lastOrderId');
+  
+      // === ZALOPAY ===
+      if (params.hasOwnProperty('appid')) {
+        paymentMethod = 'ZaloPay';
+        amount = Number(params.amount || 0);
+        transactionNo = params.apptransid || '';
+        isSuccess = params.status === '1';
+        code = params.status;
+      }
+  
+      // === VNPAY ===
+      else if (params.hasOwnProperty('vnp_Amount')) {
+        paymentMethod = 'VNPay';
+        amount = Number(params.vnp_Amount || 0) / 100;
+        transactionNo = params.vnp_TransactionNo || '';
+        isSuccess = params.vnp_ResponseCode === '00';
+        code = params.vnp_ResponseCode;
+      }
+  
+      // === MOMO ===
+      else if (params.hasOwnProperty('partnerCode')) {
+        paymentMethod = 'MoMo';
+        amount = Number(params.amount || 0);
+        transactionNo = params.transId || '';
+        isSuccess = params.errorCode === '0';
+        code = params.errorCode;
+      }
+  
+      setPaymentInfo({
+        amount,
+        orderInfo,
+        responseCode: isSuccess ? '0' : '1',
+        transactionNo,
+        orderId: orderId || '',
+      });
+  
+      setIsSuccess(isSuccess);
+  
+      if (orderId && code !== '') {
+        dispatch(updateCallBack({ code, orderId }));
+      }
+    };
+  
+    handleCallback();
+  }, [callbackUrl, dispatch]);  
 
   const copyToClipboard = () => {
     if (paymentInfo.orderId) {
@@ -135,7 +172,7 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     padding: 24,
     shadowColor: '#000',
-    shadowOffset: {width: 0, height: 2},
+    shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 6,
     elevation: 5,

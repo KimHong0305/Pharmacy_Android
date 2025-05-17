@@ -52,7 +52,7 @@ export type RootStackParamList = {
   AddressUserScreen: undefined;
   AddAddressScreen: undefined;
   EditAddressScreen: {address: Address};
-  VNPAYScreen: {paymentUrl: string};
+  PaymentScreen: {paymentUrl: string};
   CustomPaymentResultScreen: {callbackUrl: string};
   OrderLookupScreen: undefined;
   ProductCategoryScreen: {categoryId: string};

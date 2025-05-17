@@ -178,7 +178,7 @@ const OrderLookupScreen = () => {
             <Text style={{textAlign:'right'}}>
                 Tổng tiền:{' '}
                 <Text style={{ fontWeight: 'bold', color: 'red', fontSize: 20 }}>
-                    {orderGuest.totalPrice.toLocaleString()} đ
+                    {orderGuest.newTotalPrice.toLocaleString()} đ
                 </Text>
             </Text>
 

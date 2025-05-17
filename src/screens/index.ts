@@ -33,11 +33,10 @@ import StatisticScreen from "./Statistic/StatisticScreen";
 import AddressUserScreen from "./Address/AddressUserScreen";
 import AddAddressScreen from "./Address/AddAddressScreen";
 import EditAddressScreen from "./Address/EditAddressScreen";
-import VNPAYScreen from "./Payment/VNPAYScreen";
+import PaymentScreen from "./Payment/PaymentScreen";
 import OrderLookupScreen from "./Search/OrderLookupScreen";
 import ProductCategoryScreen from "./Product/ProductCategoryScreen";
 import CreateOrderScreen from './Nurse/CreateOrderScreen';
-
 
 export {
   AccountScreen,
@@ -75,7 +74,7 @@ export {
   AddressUserScreen,
   AddAddressScreen,
   EditAddressScreen,
-  VNPAYScreen,
+  PaymentScreen,
   OrderLookupScreen,
   ProductCategoryScreen,
   CreateOrderScreen,

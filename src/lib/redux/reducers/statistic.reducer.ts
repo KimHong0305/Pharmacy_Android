@@ -13,11 +13,11 @@ interface StatisticState {
 }
 
 const initialState: StatisticState = {
-    loading: false,
-    error: null,
-    statisticMonth: [],
-    statisticDay: [],
-    statisticTime: [],
+  loading: false,
+  error: null,
+  statisticMonth: [],
+  statisticDay: [],
+  statisticTime: [],
 };
 
 export const getStatisticByYear = createAsyncThunk<

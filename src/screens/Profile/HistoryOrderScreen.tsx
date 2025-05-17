@@ -269,7 +269,7 @@ const HistoryOrderScreen = () => {
                   </View>
 
                   <Text style={styles.totalPrice}>
-                    Tổng tiền: {order.totalPrice.toLocaleString()} VND
+                    Tổng tiền: {order.newTotalPrice.toLocaleString()} VND
                   </Text>
                 </View>
 
