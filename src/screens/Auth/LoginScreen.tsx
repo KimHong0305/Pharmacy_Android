@@ -21,7 +21,7 @@ const LoginScreen = () => {
 
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
-  const { loading, error, message, token } = useSelector((state: RootState) => state.auth);
+  const { loading, error, message, token, role } = useSelector((state: RootState) => state.auth);
 
   const handleLogin = () => {
     if (!username || !password) {
@@ -33,7 +33,11 @@ const LoginScreen = () => {
       .then(() => {
         if (message) {
           Alert.alert('Thông báo', message);
-          navigation.navigate('BottomTab');
+          if(role == 'ROLE_NURSE'){
+            navigation.navigate('BottomTabNurse', {screen: 'Tạo đơn hàng'});
+          } else {
+            navigation.navigate('BottomTab');
+          }
           setUsername('');
           setPassword('');
         }

@@ -56,6 +56,7 @@ export type RootStackParamList = {
   CustomPaymentResultScreen: {callbackUrl: string};
   OrderLookupScreen: undefined;
   ProductCategoryScreen: {categoryId: string};
+  BottomTabNurse?: {screen: string};
 };
 
 export type NavigationProp = NativeStackNavigationProp<RootStackParamList>; 

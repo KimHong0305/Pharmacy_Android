@@ -1,7 +1,10 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import api from "../../api/api";
+import {jwtDecode} from 'jwt-decode';
+
 import {
+  DecodedToken,
     Login,
     LoginResponse,
     LoginWithGoogle,
@@ -53,28 +56,6 @@ export const loadToken = createAsyncThunk<string | null>(
         return token;
     }
 );
-
-// const returnRole = async (token: string | null): Promise<string> => {
-//     if (token) {
-//         try {
-//             const decodeToken: DecodedToken = jwtDecode<DecodedToken>(token);
-//             const expireTime = new Date(decodeToken.exp * 1000);
-
-//             if (new Date() > expireTime) {
-//                 console.log("Token hết hạn");
-//                 await removeToken();
-//                 return "";
-//             } else {
-//                 return decodeToken.scope;
-//             }
-//         } catch (error) {
-//             console.error("Lỗi giải mã token:", error);
-//             return "";
-//         }
-//     } else {
-//         return "";
-//     }
-// };
 
 export const login = createAsyncThunk<LoginResponse, Login, { rejectValue: string }>(
     "auth/login",
@@ -224,8 +205,23 @@ const authSlice = createSlice({
             state.loading = false;
             state.message = action.payload.message;
             if (action.payload.result) {
-              state.token = action.payload.result.token;
+              const token = action.payload.result.token;
+              state.token = token;
+              try {
+                const decoded: DecodedToken = jwtDecode(token);
+                const expireTime = new Date(decoded.exp * 1000);
+                if (new Date() > expireTime) {
+                  state.role = '';
+                } else {
+                  state.role = decoded.scope;
+                }
+                console.log(decoded.scope)
+              } catch (err) {
+                console.error('Lỗi giải mã token:', err);
+                state.role = '';
+              }
             }
+            
           })
           .addCase(login.rejected, (state, action) => {
             state.loading = false;
@@ -250,6 +246,9 @@ const authSlice = createSlice({
           //LOGOUT
           .addCase(logout.fulfilled, (state, action) => {
             state.token = null;
+            state.role = '';
+            state.message = null;
+            state.error = null;
           })
           // REGISTER
           .addCase(register.pending, state => {

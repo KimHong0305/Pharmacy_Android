@@ -1,11 +1,10 @@
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { Linking, View } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { useSelector } from 'react-redux';
 import { RootState } from '../lib/redux/rootReducer';
-import { AccountScreen, AccScreen, CartScreen, CategoryScreen, ConsultantScreen, HomeScreen, NotificationScreen } from '../screens';
+import { AccountScreen, AccScreen, CartScreen, CategoryScreen, ConsultantScreen, HomeScreen } from '../screens';
 
 const BottomTabNavigation = () => {
   const BottomTab = createBottomTabNavigator();

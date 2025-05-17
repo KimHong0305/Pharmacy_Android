@@ -51,7 +51,7 @@ const AddressUserScreen = () => {
         <View style={styles.container}>
             {/* Header */}
             <View style={styles.header}>
-                <TouchableOpacity onPress={() => navigation.navigate('BottomTab', {screen: 'Tài khoản'})}>
+                <TouchableOpacity onPress={() => navigation.navigate('BottomTab', {screen: 'Tài khoản', params: {}})}>
                     <Icon name="arrow-left" size={25} />
                 </TouchableOpacity>
                 <Text style={styles.title}>Địa chỉ</Text>
