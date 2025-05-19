@@ -6,7 +6,6 @@ import { CreateOrderScreen } from '../../screens';
 import AccountNurseScreen from '../../screens/Nurse/AccountNurseScreen';
 import ConsultantScreen from '../../screens/Nurse/ConsultantScreen';
 
-
 const BottomTabNurseNavigation = () => {
   const BottomTab = createBottomTabNavigator();
 

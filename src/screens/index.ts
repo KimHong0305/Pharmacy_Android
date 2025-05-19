@@ -37,6 +37,7 @@ import PaymentScreen from "./Payment/PaymentScreen";
 import OrderLookupScreen from "./Search/OrderLookupScreen";
 import ProductCategoryScreen from "./Product/ProductCategoryScreen";
 import CreateOrderScreen from './Nurse/CreateOrderScreen';
+import ChooseProductScreen from './Nurse/ChooseProductScreen';
 
 export {
   AccountScreen,
@@ -78,4 +79,5 @@ export {
   OrderLookupScreen,
   ProductCategoryScreen,
   CreateOrderScreen,
+  ChooseProductScreen,
 };

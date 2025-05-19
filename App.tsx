@@ -19,7 +19,10 @@ const AppContent = () => {
   const [isShowIntroduce, setIsShowIntroduce] = useState(true);
   const dispatch: AppDispatch = useDispatch();
   
-  const token = useSelector((state: RootState) => state.auth.token);
+  const token  = useSelector((state: RootState) => state.auth.token);
+  const role  = useSelector((state: RootState) => state.auth.role);
+
+  // console.log('role', role);
 
   useEffect(() => {
     dispatch(loadToken());
@@ -59,7 +62,7 @@ const AppContent = () => {
         <IntroduceScreen />
       ) : (
         <NavigationContainer>
-          <Navigation />
+          <Navigation role={role}/>
         </NavigationContainer>
       )}
     </>

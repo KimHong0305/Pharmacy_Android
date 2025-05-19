@@ -49,13 +49,41 @@ const removeToken = async (): Promise<void> => {
     }
 };
 
-export const loadToken = createAsyncThunk<string | null>(
-    'auth/loadToken',
-    async () => {
-        const token = await getToken();
-        return token;
-    }
+export const loadToken = createAsyncThunk<{ token: string | null; role: string | null }>(
+  'auth/loadToken',
+  async () => {
+    const token = await getToken();
+    const role = await getRole();
+    return { token, role };
+  }
 );
+
+const saveRole = async (role: string): Promise<void> => {
+  try {
+    await AsyncStorage.setItem('role', role);
+  } catch (error) {
+    console.error('Lỗi khi lưu role:', error);
+  }
+};
+
+const getRole = async (): Promise<string | null> => {
+  try {
+    const role = await AsyncStorage.getItem('role');
+    return role;
+  } catch (error) {
+    console.error('Lỗi khi lấy role:', error);
+    return null;
+  }
+};
+
+const removeRole = async (): Promise<void> => {
+  try {
+    await AsyncStorage.removeItem('role');
+  } catch (error) {
+    console.error('Lỗi khi xóa role:', error);
+  }
+};
+
 
 export const login = createAsyncThunk<LoginResponse, Login, { rejectValue: string }>(
     "auth/login",
@@ -65,6 +93,8 @@ export const login = createAsyncThunk<LoginResponse, Login, { rejectValue: strin
             const token = response.data.result?.token;
             if (token) {
                 await saveToken(token);
+                const decoded: DecodedToken = jwtDecode(token);
+                await saveRole(decoded.scope);
             }
             return response.data;
         } catch (error) {
@@ -84,6 +114,8 @@ export const loginWithGoogle = createAsyncThunk<
     const token = response.data.result?.token;
     if (token) {
       await saveToken(token);
+      const decoded: DecodedToken = jwtDecode(token);
+      await saveRole(decoded.scope);
     }
     return response.data;
   } catch (error) {
@@ -99,6 +131,7 @@ export const logout = createAsyncThunk(
       const token = await AsyncStorage.getItem('token');
       const response = await api.post('/auth/logout', {token});
       await removeToken();
+      await removeRole();
       await AsyncStorage.removeItem('AddressGuest');
       return {message: response.data.message};
     } catch (error:any) {
@@ -321,8 +354,9 @@ const authSlice = createSlice({
             state.error = action.payload || 'reset password failed';
           })
           .addCase(loadToken.fulfilled, (state, action) => {
-            state.token = action.payload;
-          });
+            state.token = action.payload.token;
+            state.role = action.payload.role || '';
+          });          
     }
 });
 

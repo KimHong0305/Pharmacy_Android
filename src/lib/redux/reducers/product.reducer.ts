@@ -33,7 +33,9 @@ export const getAllProduct = createAsyncThunk<ProductResponse, void, { rejectVal
     "product/getAll",
     async (_, { rejectWithValue }) => {
         try {
-            const response = await api.get<ProductResponse>("/product");
+            const page = 0;
+            const size = 300;
+            const response = await api.get<ProductResponse>(`/product?page=${page}&size=${size}`);
             return response.data;
         } catch (error) {
             console.error("Error fetching products:", error);

@@ -14,6 +14,7 @@ import whistlistReducer from './reducers/whistlist.reducer';
 import statisticReducer from './reducers/statistic.reducer';
 import deliveryReducer from './reducers/delivery.reducer';
 import paymentReducer from './reducers/payment.reducer';
+import nurseReducer from './reducers/nurse.reducer';
 
 const rootReducer = combineReducers({
   auth: authReducer,
@@ -31,6 +32,7 @@ const rootReducer = combineReducers({
   statistic: statisticReducer,
   delivery: deliveryReducer,
   payment: paymentReducer,
+  nurse: nurseReducer,
 });
 
 export type RootState = ReturnType<typeof rootReducer>;
