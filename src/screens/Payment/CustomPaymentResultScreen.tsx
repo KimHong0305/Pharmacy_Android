@@ -151,7 +151,14 @@ const CustomPaymentResultScreen = () => {
         <View style={styles.buttonContainer}>
           <Button
             title="Quay về trang chủ"
-            onPress={() => navigation.navigate('BottomTab')}
+            onPress={async () => {
+              const role = await AsyncStorage.getItem('role');
+              if (role === 'NURSE') {
+                navigation.navigate('BottomTabNurse');
+              } else {
+                navigation.navigate('BottomTab');
+              }
+            }}
             color={isSuccess ? 'green' : 'red'}
           />
         </View>

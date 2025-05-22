@@ -14,7 +14,7 @@ import {CheckBox} from 'react-native-elements';
 import { appColors } from '../../constants/appColors';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../../lib/redux/rootReducer';
-import { getUserByPhone } from '../../lib/redux/reducers/nurse.reducer';
+import { clearUser, confirmOrderShop, createOrderShop, getUserByPhone } from '../../lib/redux/reducers/nurse.reducer';
 import { AppDispatch } from '../../lib/redux/store';
 import { RouteProp, useNavigation, useRoute } from '@react-navigation/native';
 import { NavigationProp } from '../../navigators';
@@ -22,6 +22,8 @@ import Icon from 'react-native-vector-icons/AntDesign';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import TextComponent from '../../components/TextComponent';
 import { fontFamilies } from '../../constants/fontFamilies';
+import { createPaymentVNPay } from '../../lib/redux/reducers/vnpay.reducer';
+import { createPaymentMomo, createPaymentZaloPay } from '../../lib/redux/reducers/payment.reducer';
 const paymentMethods = [
   {
     label: 'Tiền mặt',
@@ -69,6 +71,18 @@ export default function CreateOrderScreen() {
   const navigation = useNavigation<NavigationProp>();
 
   const PRODUCT_LIST_KEY = 'listProduct';
+
+  const clearOrderData = async () => {
+    try {
+      await AsyncStorage.removeItem(PRODUCT_LIST_KEY);
+      setProductList([]);
+      setPhone('');
+      dispatch(clearUser());
+    } catch (error) {
+      console.error('Lỗi khi xóa dữ liệu:', error);
+    }
+  };
+
 
   const saveProductListToStorage = async (list: ProductItem[]) => {
     try {
@@ -146,6 +160,74 @@ export default function CreateOrderScreen() {
     };
 
     console.log(payload);
+    const result = await dispatch(createOrderShop(payload)).unwrap();
+    AsyncStorage.setItem("lastOrderId", result.result.id);
+    if (result.result.paymentMethod === 'VNPAY') {
+      try {
+        const orderId = result.result.id;
+        console.log(orderId);
+        const data = await dispatch(
+          createPaymentVNPay({orderId}),
+        ).unwrap();
+        if (data.result) {
+          await clearOrderData();
+          navigation.navigate('PaymentScreen', {paymentUrl: data.result});
+        } else {
+          Alert.alert('Không tạo được thanh toán VNPay.');
+        }
+      } catch (error) {
+        console.error('Error creating VNPay payment:', error);
+        Alert.alert('Đã xảy ra lỗi khi tạo thanh toán VNPay.');
+      }
+    } else if (result.result.paymentMethod === 'ZALOPAY') {
+      try {
+        const orderId = result.result.id;
+        console.log(orderId);
+        const data = await dispatch(
+          createPaymentZaloPay({orderId}),
+        ).unwrap();
+        if (data.orderurl) {
+          await clearOrderData();
+          navigation.navigate('PaymentScreen', {paymentUrl: data.orderurl});
+        } else {
+          Alert.alert('Không tạo được thanh toán ZaloPay.');
+        }
+      } catch (error) {
+        console.error('Error creating VNPay payment:', error);
+        Alert.alert('Đã xảy ra lỗi khi tạo thanh toán ZaloPay.');
+      }
+    } else if (result.result.paymentMethod === 'MOMO') {
+      try {
+        const orderId = result.result.id;
+        console.log(orderId);
+        const data = await dispatch(
+          createPaymentMomo({orderId}),
+        ).unwrap();
+        if (data.payUrl) {
+          await clearOrderData();
+          navigation.navigate('PaymentScreen', {paymentUrl: data.payUrl});
+        } else {
+          Alert.alert('Không tạo được thanh toán Momo.');
+        }
+      } catch (error) {
+        console.error('Error creating VNPay payment:', error);
+        Alert.alert('Đã xảy ra lỗi khi tạo thanh toán Momo.');
+      }
+    }
+    else if (result.result.paymentMethod === 'CASH') {
+      try {
+        const orderId = result.result.id;
+        console.log(orderId);
+        const data = await dispatch(
+          confirmOrderShop({ orderId, confirm: true }),
+        ).unwrap();
+        await clearOrderData();
+        Alert.alert('Đặt hàng thành công.');
+      } catch (error) {
+        console.error('Error creating cash:', error);
+        Alert.alert('Đã xảy ra lỗi khi tạo thanh toán.');
+      }
+    } 
   };
 
   return (
