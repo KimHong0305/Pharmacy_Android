@@ -505,7 +505,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent:'flex-start',
-    paddingTop: 30,
+    paddingTop: 40,
     paddingLeft: 20,
     backgroundColor: appColors.white,
   },

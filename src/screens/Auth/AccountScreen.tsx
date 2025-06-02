@@ -42,7 +42,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
   },
   title: {
-    fontSize: 24,
+    fontSize: 20,
     marginTop: 40,
     fontFamily: fontFamilies.Medium,
     marginBottom: 10,

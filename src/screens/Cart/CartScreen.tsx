@@ -106,7 +106,7 @@ const CartScreen = () => {
                       <View>
                         <TextComponent
                           text={truncateText(item.productName, 25)}
-                          size={16}
+                          size={14}
                         />
                         <View style={{
                           height: 30,
@@ -120,16 +120,11 @@ const CartScreen = () => {
                             {item.unitName}
                           </Text>
                         </View>
-                        <View style={{flexDirection: 'row', justifyContent:'space-between', marginTop: 10,}}>
+                        <View style={{flexDirection: 'row', justifyContent:'space-between', marginTop: 10}}>
                           <Text style={styles.priceText}>
                             {item.price.toLocaleString('vi-VN')}đ
                           </Text>
-                          <View
-                          style={{
-                            flexDirection: 'row',
-                            justifyContent: 'flex-end',
-                            gap: 10,
-                          }}>
+                          <View style={{flexDirection: 'row', justifyContent: 'flex-end', gap: 10, marginRight: 30}}>
                           <TouchableOpacity
                             style={styles.add_sub}
                             onPress={() => handleIncreaseQuantity(item.id)}>
@@ -246,7 +241,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
   },
   title: {
-    marginTop: 30,
+    marginTop: 40,
     marginBottom: 10,
   },
   body: {

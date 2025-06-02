@@ -201,7 +201,7 @@ const styles = StyleSheet.create({
     },
     header: {
         height: 30,
-        marginTop: 30,
+        marginTop: 50,
         flexDirection: 'row',
         gap: 20,
     },
@@ -211,7 +211,7 @@ const styles = StyleSheet.create({
         marginLeft: 20,
     },
     inputContainer: {
-        marginTop: 40,
+        marginTop: 20,
         paddingHorizontal: 20,
         flexDirection: 'row',
         gap: 10,

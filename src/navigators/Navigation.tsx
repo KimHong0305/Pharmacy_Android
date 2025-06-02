@@ -44,6 +44,8 @@ import OrderCartScreen from '../screens/Order/OrderCartScreen';
 import BottomTabNavigation from './BottomTabNavigation';
 import CustomPaymentResultScreen from '../screens/Payment/CustomPaymentResultScreen';
 import BottomTabNurseNavigation from './Nurse/BottomTabNurseNavigation';
+import ChatHistoryScreen from '../screens/Nurse/ChatHistoryScreen';
+import ConsultantScreen from '../screens/Nurse/ConsultantScreen';
 
 const Navigation = ({ role }: { role?: string }) => {
   const Stack = createNativeStackNavigator();
@@ -67,7 +69,6 @@ const Navigation = ({ role }: { role?: string }) => {
       <Stack.Screen name="SignUpScreen" component={SignUpScreen} />
       <Stack.Screen name="OtpScreen" component={OtpScreen} />
       <Stack.Screen name="BottomTab" component={BottomTabNavigation} />
-      <Stack.Screen name="BottomTabNurse" component={BottomTabNurseNavigation} />
       <Stack.Screen name="VerifyEmailSignup" component={VerifyEmailSignup} />
       <Stack.Screen name="UpdateEmailScreen" component={UpdateEmailScreen} />
       <Stack.Screen name="VerifyEmailScreen" component={VerifyEmailScreen} />
@@ -96,6 +97,11 @@ const Navigation = ({ role }: { role?: string }) => {
       <Stack.Screen name="OrderLookupScreen" component={OrderLookupScreen} />
       <Stack.Screen name="ProductCategoryScreen" component={ProductCategoryScreen} />
       <Stack.Screen name="ChooseProductScreen" component={ChooseProductScreen} />
+
+      {/* Role Nurse */}
+      <Stack.Screen name="BottomTabNurse" component={BottomTabNurseNavigation} />
+      <Stack.Screen name="ConsultantScreen" component={ConsultantScreen} />
+      <Stack.Screen name="ChatHistoryScreen" component={ChatHistoryScreen} />
     </Stack.Navigator>
   );
 };

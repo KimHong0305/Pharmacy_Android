@@ -1,29 +1,31 @@
-import React, {useEffect, useState} from 'react';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useNavigation } from '@react-navigation/native';
+import React, { useEffect, useState } from 'react';
 import {
-  View,
-  Text,
-  TextInput,
-  ScrollView,
-  Image,
-  TouchableOpacity,
-  StyleSheet,
   Alert,
   FlatList,
+  Image,
+  Modal,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
 } from 'react-native';
-import {CheckBox} from 'react-native-elements';
-import { appColors } from '../../constants/appColors';
+import { CheckBox } from 'react-native-elements';
 import { useDispatch, useSelector } from 'react-redux';
-import { RootState } from '../../lib/redux/rootReducer';
-import { clearUser, confirmOrderShop, createOrderShop, getUserByPhone } from '../../lib/redux/reducers/nurse.reducer';
-import { AppDispatch } from '../../lib/redux/store';
-import { RouteProp, useNavigation, useRoute } from '@react-navigation/native';
-import { NavigationProp } from '../../navigators';
-import Icon from 'react-native-vector-icons/AntDesign';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import TextComponent from '../../components/TextComponent';
+import { appColors } from '../../constants/appColors';
 import { fontFamilies } from '../../constants/fontFamilies';
-import { createPaymentVNPay } from '../../lib/redux/reducers/vnpay.reducer';
+import { clearUser, confirmOrderShop, createOrderShop, getUserByPhone, setLatestMessage } from '../../lib/redux/reducers/nurse.reducer';
 import { createPaymentMomo, createPaymentZaloPay } from '../../lib/redux/reducers/payment.reducer';
+import { createPaymentVNPay } from '../../lib/redux/reducers/vnpay.reducer';
+import { RootState } from '../../lib/redux/rootReducer';
+import { AppDispatch } from '../../lib/redux/store';
+import { ChatRoomNurse } from '../../lib/schemas/nurse.schemea';
+import { NavigationProp } from '../../navigators';
+
 const paymentMethods = [
   {
     label: 'Tiền mặt',
@@ -82,7 +84,6 @@ export default function CreateOrderScreen() {
       console.error('Lỗi khi xóa dữ liệu:', error);
     }
   };
-
 
   const saveProductListToStorage = async (list: ProductItem[]) => {
     try {
@@ -246,7 +247,9 @@ export default function CreateOrderScreen() {
           onChangeText={setPhone}
           keyboardType="phone-pad"
         />
-        <TouchableOpacity style={styles.button} onPress={() => handleSearchUser()}>
+        <TouchableOpacity
+          style={styles.button}
+          onPress={() => handleSearchUser()}>
           <Text style={styles.buttonText}>Xác nhận</Text>
         </TouchableOpacity>
       </View>
@@ -257,7 +260,9 @@ export default function CreateOrderScreen() {
           <Text style={styles.title}>Thông tin người dùng</Text>
           <View style={styles.userInfoRow}>
             <Text style={styles.label}>Họ tên:</Text>
-            <Text style={styles.value}>{user.lastname} {user.firstname}</Text>
+            <Text style={styles.value}>
+              {user.lastname} {user.firstname}
+            </Text>
           </View>
           <View style={styles.userInfoRow}>
             <Text style={styles.label}>Số điện thoại:</Text>
@@ -273,20 +278,22 @@ export default function CreateOrderScreen() {
           <Text style={styles.info}>Chưa có sản phẩm nào được chọn.</Text>
         ) : (
           <View>
-              <FlatList
-                data={productList}
-                showsVerticalScrollIndicator={false}
-                keyExtractor={item => item.id.toString()}
-                renderItem={({item}) => (
-                  <TouchableOpacity>
-                    <View style={styles.item}>
-                      <Image source={{uri: item.image}} style={styles.image} />
-                      <View style={{width:'70%'}}>
-                        <TextComponent
-                          text={truncateText(item.name, 25)}
-                          size={14}
-                        />
-                        <View style={{
+            <FlatList
+              data={productList}
+              showsVerticalScrollIndicator={false}
+              keyExtractor={item => item.id.toString()}
+              scrollEnabled={false}
+              renderItem={({item}) => (
+                <TouchableOpacity>
+                  <View style={styles.item}>
+                    <Image source={{uri: item.image}} style={styles.image} />
+                    <View style={{width: '70%'}}>
+                      <TextComponent
+                        text={truncateText(item.name, 25)}
+                        size={14}
+                      />
+                      <View
+                        style={{
                           height: 30,
                           width: 40,
                           borderRadius: 10,
@@ -294,23 +301,25 @@ export default function CreateOrderScreen() {
                           alignItems: 'center',
                           justifyContent: 'center',
                         }}>
-                          <Text>
-                            {item.unitName}
-                          </Text>
-                        </View>
-                        <View style={{flexDirection: 'row', marginTop: 10, justifyContent: 'space-between'}}>
-                          <Text style={styles.priceText}>
-                            {item.price.toLocaleString('vi-VN')}đ
-                          </Text>
-                          <View
+                        <Text>{item.unitName}</Text>
+                      </View>
+                      <View
+                        style={{
+                          flexDirection: 'row',
+                          marginTop: 10,
+                          justifyContent: 'space-between',
+                        }}>
+                        <Text style={styles.priceText}>
+                          {item.price.toLocaleString('vi-VN')}đ
+                        </Text>
+                        <View
                           style={{
                             flexDirection: 'row',
                             gap: 10,
                           }}>
                           <TouchableOpacity
                             style={styles.add_sub}
-                            onPress={() => handleIncreaseQuantity(item.id)}
-                            >
+                            onPress={() => handleIncreaseQuantity(item.id)}>
                             <TextComponent
                               text="+"
                               size={15}
@@ -324,8 +333,7 @@ export default function CreateOrderScreen() {
                           />
                           <TouchableOpacity
                             style={styles.add_sub}
-                            onPress={() => handleDecreaseQuantity(item.id)}
-                            >
+                            onPress={() => handleDecreaseQuantity(item.id)}>
                             <TextComponent
                               text="-"
                               size={15}
@@ -335,18 +343,21 @@ export default function CreateOrderScreen() {
                         </View>
                       </View>
                     </View>
-                      
-                    </View>
-                  </TouchableOpacity>
-                )}
-              />
-              <View style={styles.totalPriceContainer}>
-                <Text style={styles.totalPriceText}>Tổng tiền:</Text>
-                <Text style={styles.totalPriceValue}>{totalPrice.toLocaleString('vi-VN')}đ</Text>
-              </View>
+                  </View>
+                </TouchableOpacity>
+              )}
+            />
+            <View style={styles.totalPriceContainer}>
+              <Text style={styles.totalPriceText}>Tổng tiền:</Text>
+              <Text style={styles.totalPriceValue}>
+                {totalPrice.toLocaleString('vi-VN')}đ
+              </Text>
             </View>
+          </View>
         )}
-        <TouchableOpacity style={styles.addButton} onPress={() => navigation.navigate('ChooseProductScreen')}>
+        <TouchableOpacity
+          style={styles.addButton}
+          onPress={() => navigation.navigate('ChooseProductScreen')}>
           <Text style={styles.addButtonText}>+ Thêm sản phẩm</Text>
         </TouchableOpacity>
       </View>
@@ -370,7 +381,9 @@ export default function CreateOrderScreen() {
       </View>
 
       {/* Nút tạo đơn */}
-      <TouchableOpacity style={[styles.button, {marginBottom: 40}]} onPress={handleCreateOrder}>
+      <TouchableOpacity
+        style={[styles.button, {marginBottom: 40}]}
+        onPress={handleCreateOrder}>
         <Text style={styles.buttonText}>Tạo đơn hàng</Text>
       </TouchableOpacity>
     </ScrollView>
@@ -400,7 +413,7 @@ const styles = StyleSheet.create({
     marginBottom: 16,
     shadowColor: '#000',
     shadowOpacity: 0.05,
-    shadowOffset: { width: 0, height: 4 },
+    shadowOffset: {width: 0, height: 4},
     shadowRadius: 10,
     elevation: 2,
   },
@@ -518,5 +531,47 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: '700',
     color: '#ff3131',
+  },
+  //Modal
+  modalWrapper: {
+    flex: 1,
+    justifyContent: 'flex-start',
+    alignItems: 'center',
+    marginTop: 40,
+    backgroundColor: 'transparent',
+  },
+  modalContent: {
+    backgroundColor: appColors.white,
+    padding: 15,
+    borderRadius: 12,
+    width: '90%',
+    elevation: 5,
+    shadowColor: '#000',
+    shadowOpacity: 0.3,
+    shadowOffset: {width: 0, height: 2},
+    shadowRadius: 4,
+  },
+  modalHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 10,
+  },
+  modalImage: {
+    width: 50,
+    height: 50,
+    borderRadius: 8,
+  },
+  modalTitle: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: appColors.black,
+  },
+  modalDate: {
+    fontSize: 12,
+    color: appColors.black,
+  },
+  modalText: {
+    fontSize: 14,
+    color: appColors.black,
   },
 });

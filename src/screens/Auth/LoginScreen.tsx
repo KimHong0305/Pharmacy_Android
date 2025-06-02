@@ -10,6 +10,7 @@ import {
   GoogleSignin
 } from '@react-native-google-signin/google-signin';
 import { LoginWithGoogle } from '../../lib/schemas/auth.schema';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 GoogleSignin.configure({
   webClientId:
@@ -30,11 +31,17 @@ const LoginScreen = () => {
     }
 
     dispatch(login({ username, password }) as any)
-      .then(() => {
+      .then(async () => {
         if (message) {
           Alert.alert('Thông báo', message);
+          try {
+            await AsyncStorage.setItem('username', username);
+            await AsyncStorage.setItem('role', role);
+          } catch (error) {
+            console.error('Lỗi lưu AsyncStorage:', error);
+          }
           if(role == 'ROLE_NURSE'){
-            navigation.navigate('BottomTabNurse', {screen: 'Tạo đơn hàng'});
+            navigation.navigate('BottomTabNurse', {screen: 'Tạo đơn hàng', params: {}});
           } else {
             navigation.navigate('BottomTab');
           }
@@ -170,7 +177,7 @@ const styles = StyleSheet.create({
   },
   closeButton: {
     position: 'absolute',
-    top: 25,
+    top: 30,
     right: 20,
     zIndex: 10,
     padding: 10,
@@ -193,7 +200,7 @@ const styles = StyleSheet.create({
   forgotPasswordText: {
     color: 'red',
     marginBottom: 20,
-    right: -120,
+    right: -100,
     fontFamily: fontFamilies.Medium,
   },
   loginButton: {

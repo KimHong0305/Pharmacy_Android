@@ -58,6 +58,8 @@ export type RootStackParamList = {
   ProductCategoryScreen: {categoryId: string};
   BottomTabNurse?: {screen: string; params: {}};
   ChooseProductScreen: undefined;
+  ChatHistoryScreen: undefined;
+  ConsultantScreen: {roomId: string, senderId: string};
 };
 
 export type NavigationProp = NativeStackNavigationProp<RootStackParamList>; 

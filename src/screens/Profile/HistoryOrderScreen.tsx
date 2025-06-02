@@ -268,9 +268,11 @@ const HistoryOrderScreen = () => {
                     )}
                   </View>
 
-                  <Text style={styles.totalPrice}>
-                    Tổng tiền: {order.newTotalPrice.toLocaleString()} VND
-                  </Text>
+                  <View style = {{marginTop: 15, right: 20}}>
+                    <Text style={styles.totalPrice}>
+                      Tổng tiền: {order.newTotalPrice.toLocaleString()} VND
+                    </Text>
+                  </View>
                 </View>
 
                 {/* Tab Review */}
@@ -350,7 +352,7 @@ const HistoryOrderScreen = () => {
             <View>
               {filteredFeedbacks.length === 0 ? (
                 <View style={styles.emptyContainer}>
-                  <Text>Không có đánh giá nào.</Text>
+                  <Text style={styles.noOrderText}>Không có đánh giá nào.</Text>
                 </View>
               ) : (
                 filteredFeedbacks.map(item => (
@@ -709,7 +711,6 @@ const styles = StyleSheet.create({
   },
   emptyContainer: {
     alignItems: 'center',
-    paddingVertical: 20,
   },
   feedbackCard: {
     borderWidth: 1,

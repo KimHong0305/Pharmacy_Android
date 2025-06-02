@@ -48,7 +48,7 @@ const HomeScreen = () => {
   useEffect(() => {
     if (!token) return;
 
-    const socket = new WebSocket('ws://10.0.2.2:8080/api/v1/pharmacy/ws-notifications');
+    const socket = new WebSocket('ws://192.168.34.166:8080/api/v1/pharmacy/ws-notifications');
 
     socket.onopen = () => {
       console.log('✅ WebSocket connected');
@@ -317,7 +317,7 @@ const styles = StyleSheet.create({
   searchContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    width: 280,
+    width: 230,
     height: 40,
     borderColor: '#ccc',
     borderWidth: 1,
@@ -368,7 +368,7 @@ const styles = StyleSheet.create({
     fontFamily: fontFamilies.SemiBold,
     fontSize: 23,
     marginTop: 20,
-    left: -50,
+    left: -40,
   },
   categoryContainer: {
     flexDirection: 'row',
@@ -396,7 +396,7 @@ const styles = StyleSheet.create({
     fontFamily: fontFamilies.SemiBold,
     fontSize: 23,
     marginTop: 10,
-    left: -70,
+    left: -60,
   },
   productItem: {
     width: 100,
@@ -427,14 +427,14 @@ const styles = StyleSheet.create({
     fontFamily: fontFamilies.SemiBold,
     fontSize: 23,
     marginTop: 10,
-    left: -90,
+    left: -80,
   },
   //Top Company
   topCompanyTitle: {
     fontFamily: fontFamilies.SemiBold,
     fontSize: 23,
     marginTop: 10,
-    left: -85,
+    left: -75,
   },
   companyItem: {
     width: 100,

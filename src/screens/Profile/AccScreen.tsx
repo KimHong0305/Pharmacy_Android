@@ -180,7 +180,6 @@ const styles = StyleSheet.create({
   func: {
     alignItems:'center',
     width: 70,
-    marginRight: 10,
   },
   nameFunc: {
     textAlign: 'center', 

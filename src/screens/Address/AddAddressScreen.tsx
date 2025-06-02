@@ -8,6 +8,7 @@ import { useNavigation } from '@react-navigation/native';
 import { getProvinces, getDistricts, getVillages } from '../../lib/redux/reducers/location.reducer';
 import { Picker } from '@react-native-picker/picker';
 import { addAddress } from '../../lib/redux/reducers/address.reducer';
+import { appColors } from '../../constants/appColors';
 
 const AddAddressScreen = () => {
     const navigation = useNavigation();
@@ -84,138 +85,158 @@ const AddAddressScreen = () => {
     };
 
     return (
-        <View style={styles.container}>
-            <View style={styles.header}>
-                <TouchableOpacity onPress={() => navigation.goBack()}>
-                    <Icon name="arrow-left" size={25} />
-                </TouchableOpacity>
-                <Text style={styles.title}>Thêm </Text>
-            </View>
-
-            <ScrollView style={styles.formContainer} contentContainerStyle={{ paddingBottom: 20 }}>
-                <Text style={styles.label}>Họ và tên</Text>
-                <TextInput
-                    placeholder="Nhập họ và tên"
-                    value={fullname}
-                    onChangeText={setFullname}
-                    style={styles.input}
-                />
-                
-                <Text style={styles.label}>Số điện thoại</Text>
-                <TextInput
-                    placeholder="Nhập số điện thoại"
-                    value={phone}
-                    onChangeText={setPhone}
-                    style={styles.input}
-                />
-
-                <Text style={styles.label}>Tỉnh/Thành phố</Text>
-                <Picker
-                    selectedValue={selectedProvince}
-                    onValueChange={handleProvinceChange}
-                    style={styles.picker}
-                >
-                    <Picker.Item style={{fontSize: 14}} label="Chọn Tỉnh/Thành phố" value={undefined} />
-                    {provinces.map((province) => (
-                        <Picker.Item style={{fontSize: 14}} key={province.ProvinceID} label={province.ProvinceName} value={province.ProvinceID} />
-                    ))}
-                </Picker>
-
-                <Text style={styles.label}>Quận/Huyện</Text>
-                <Picker
-                    selectedValue={selectedDistrict}
-                    onValueChange={handleDistrictChange}
-                    style={styles.picker}
-                    enabled={!!selectedProvince}
-                >
-                    <Picker.Item style={{fontSize: 14}} label="Chọn Quận/Huyện" value={undefined} />
-                    {districts.map((district) => (
-                        <Picker.Item style={{fontSize: 14}} key={district.DistrictID} label={district.DistrictName} value={district.DistrictID} />
-                    ))}
-                </Picker>
-
-                <Text style={styles.label}>Phường/Xã</Text>
-                <Picker
-                    selectedValue={selectedVillage}
-                    onValueChange={setSelectedVillage}
-                    style={styles.picker}
-                    enabled={!!selectedDistrict}
-                >
-                    <Picker.Item style={{fontSize: 14}} label="Chọn Phường/Xã" value={undefined} />
-                    {villages.map((village) => (
-                        <Picker.Item style={{fontSize: 14}} key={village.WardCode} label={village.WardName} value={village.WardCode} />
-                    ))}
-                </Picker>
-
-                <Text style={styles.label}>Địa chỉ</Text>
-                <TextInput
-                    placeholder="Nhập địa chỉ"
-                    value={address}
-                    onChangeText={setAddress}
-                    style={styles.input}
-                />
-
-                <View style={styles.addressTypeContainer}>
-                    <Text style={[styles.label, {marginRight: 60}]}>Loại địa chỉ </Text>
-                    <TouchableOpacity
-                        style={[
-                            styles.addressTypeButton,
-                            addressType === 'Nhà riêng' ? styles.selected : styles.default,
-                        ]}
-                        onPress={() => setAddressType('Nhà riêng')}
-                    >
-                        <Text
-                            style={[
-                                addressType === 'Nhà riêng' ? styles.selectedText : {},
-                            ]}
-                        >
-                            Nhà riêng
-                        </Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity
-                        style={[
-                            styles.addressTypeButton,
-                            addressType === 'Văn phòng' ? styles.selected : styles.default,
-                        ]}
-                        onPress={() => setAddressType('Văn phòng')}
-                    >
-                        <Text
-                            style={[
-                                addressType === 'Văn phòng' ? styles.selectedText : {},
-                            ]}
-                        >
-                            Văn phòng
-                        </Text>
-                    </TouchableOpacity>
-                </View>
-
-
-                <View style={styles.defaultContainer}>
-                    <View style={styles.switchContainer}>
-                        <Text style={styles.label}>
-                            Đặt làm địa chỉ mặc định
-                        </Text>
-                        <TouchableOpacity
-                            style={[
-                                styles.switchWrapper,
-                                isDefault ? styles.switchOn : styles.switchOff,
-                            ]}
-                            onPress={() => setIsDefault(!isDefault)}
-                        >
-                            <View
-                                style={[
-                                    styles.switchCircle,
-                                    isDefault ? styles.circleOn : styles.circleOff,
-                                ]}
-                            />
-                        </TouchableOpacity>
-                    </View>
-                </View>
-                
-                <Button title="Thêm" onPress={handleSubmit} color="#4CAF50" />
-            
-            </ScrollView>
+      <View style={styles.container}>
+        <View style={styles.header}>
+          <TouchableOpacity onPress={() => navigation.goBack()}>
+            <Icon name="arrow-left" size={25} />
+          </TouchableOpacity>
+          <Text style={styles.title}>Thêm </Text>
         </View>
+
+        <ScrollView
+          style={styles.formContainer}
+          contentContainerStyle={{paddingBottom: 20}}>
+          <Text style={styles.label}>Họ và tên</Text>
+          <TextInput
+            placeholder="Nhập họ và tên"
+            placeholderTextColor={appColors.blue}
+            value={fullname}
+            onChangeText={setFullname}
+            style={styles.input}
+          />
+
+          <Text style={styles.label}>Số điện thoại</Text>
+          <TextInput
+            placeholder="Nhập số điện thoại"
+            placeholderTextColor={appColors.blue}
+            value={phone}
+            onChangeText={setPhone}
+            style={styles.input}
+          />
+
+          <Text style={styles.label}>Tỉnh/Thành phố</Text>
+          <Picker
+            selectedValue={selectedProvince}
+            onValueChange={handleProvinceChange}
+            style={styles.picker}>
+            <Picker.Item
+              style={{fontSize: 14}}
+              label="Chọn Tỉnh/Thành phố"
+              value={undefined}
+            />
+            {provinces.map(province => (
+              <Picker.Item
+                style={{fontSize: 14}}
+                key={province.ProvinceID}
+                label={province.ProvinceName}
+                value={province.ProvinceID}
+              />
+            ))}
+          </Picker>
+
+          <Text style={styles.label}>Quận/Huyện</Text>
+          <Picker
+            selectedValue={selectedDistrict}
+            onValueChange={handleDistrictChange}
+            style={styles.picker}
+            enabled={!!selectedProvince}>
+            <Picker.Item
+              style={{fontSize: 14}}
+              label="Chọn Quận/Huyện"
+              value={undefined}
+            />
+            {districts.map(district => (
+              <Picker.Item
+                style={{fontSize: 14}}
+                key={district.DistrictID}
+                label={district.DistrictName}
+                value={district.DistrictID}
+              />
+            ))}
+          </Picker>
+
+          <Text style={styles.label}>Phường/Xã</Text>
+          <Picker
+            selectedValue={selectedVillage}
+            onValueChange={setSelectedVillage}
+            style={styles.picker}
+            enabled={!!selectedDistrict}>
+            <Picker.Item
+              style={{fontSize: 14}}
+              label="Chọn Phường/Xã"
+              value={undefined}
+            />
+            {villages.map(village => (
+              <Picker.Item
+                style={{fontSize: 14}}
+                key={village.WardCode}
+                label={village.WardName}
+                value={village.WardCode}
+              />
+            ))}
+          </Picker>
+
+          <Text style={styles.label}>Địa chỉ</Text>
+          <TextInput
+            placeholder="Nhập địa chỉ"
+            placeholderTextColor={appColors.blue}
+            value={address}
+            onChangeText={setAddress}
+            style={styles.input}
+          />
+
+          <View style={styles.addressTypeContainer}>
+            <Text style={[styles.label, {marginRight: 60}]}>Loại địa chỉ </Text>
+            <TouchableOpacity
+              style={[
+                styles.addressTypeButton,
+                addressType === 'Nhà riêng' ? styles.selected : styles.default,
+              ]}
+              onPress={() => setAddressType('Nhà riêng')}>
+              <Text
+                style={[
+                  addressType === 'Nhà riêng' ? styles.selectedText : {},
+                ]}>
+                Nhà riêng
+              </Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={[
+                styles.addressTypeButton,
+                addressType === 'Văn phòng' ? styles.selected : styles.default,
+              ]}
+              onPress={() => setAddressType('Văn phòng')}>
+              <Text
+                style={[
+                  addressType === 'Văn phòng' ? styles.selectedText : {},
+                ]}>
+                Văn phòng
+              </Text>
+            </TouchableOpacity>
+          </View>
+
+          <View style={styles.defaultContainer}>
+            <View style={styles.switchContainer}>
+              <Text style={styles.label}>Đặt làm địa chỉ mặc định</Text>
+              <TouchableOpacity
+                style={[
+                  styles.switchWrapper,
+                  isDefault ? styles.switchOn : styles.switchOff,
+                ]}
+                onPress={() => setIsDefault(!isDefault)}>
+                <View
+                  style={[
+                    styles.switchCircle,
+                    isDefault ? styles.circleOn : styles.circleOff,
+                  ]}
+                />
+              </TouchableOpacity>
+            </View>
+          </View>
+
+          <Button title="Thêm" onPress={handleSubmit} color="#4CAF50" />
+        </ScrollView>
+      </View>
     );
 };
 
@@ -254,11 +275,13 @@ const styles = StyleSheet.create({
         borderRadius: 5,
         backgroundColor: '#f1f1f1',
         fontSize: 14,
+        color: appColors.blue
     },
     picker: {
         height: 55,
         marginBottom: 15,
         backgroundColor: '#f1f1f1',
+        color: appColors.blue
     },
     addressTypeContainer: {
         flexDirection: 'row',
