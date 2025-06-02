@@ -48,7 +48,7 @@ const HomeScreen = () => {
   useEffect(() => {
     if (!token) return;
 
-    const socket = new WebSocket('ws://192.168.34.166:8080/api/v1/pharmacy/ws-notifications');
+    const socket = new WebSocket('ws://10.0.2.2:8080/api/v1/pharmacy/ws-notifications');
 
     socket.onopen = () => {
       console.log('✅ WebSocket connected');

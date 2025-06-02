@@ -7,7 +7,7 @@ import EventBus from './EventBus';
 let socket: WebSocket | null = null;
 
 export const initWebSocket = (username: string, role: string) => {
-  const WS_URL = `ws://192.168.34.166:8080/api/v1/pharmacy/ws-chats?username=${username}&role=${role}`;
+  const WS_URL = `ws://10.0.2.2:8080/api/v1/pharmacy/ws-chats?username=${username}&role=${role}`;
   console.log('🌐 Kết nối WebSocket tới:', WS_URL);
 
   socket = new WebSocket(WS_URL);
