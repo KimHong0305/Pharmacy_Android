@@ -10,21 +10,21 @@ const IntroduceScreen = () => {
   const [imageLoaded, setImageLoaded] = useState(false);
   const [displayedText, setDisplayedText] = useState("");
   
-   //Set chữ xuất hiện sau logo 1s và xuất hiện lần lượt từng chữ
-   useEffect(() => {
-     if (imageLoaded) {
-       const timer = setTimeout(() => {
-         setDisplayedText(fullText[0]);
-         let index = 0;
-         const interval = setInterval(() => {
-           setDisplayedText(prev => prev + fullText[index]);
-           index++;
-           if (index === fullText.length) clearInterval(interval); 
-         }, 100);
-       }, 1000);
-       return () => clearTimeout(timer);
-     }
-   }, [imageLoaded]);
+  //Set chữ xuất hiện sau logo 1s và xuất hiện lần lượt từng chữ
+  useEffect(() => {
+    if (imageLoaded) {
+      const timer = setTimeout(() => {
+        setDisplayedText(fullText[0]);
+        let index = 0;
+        const interval = setInterval(() => {
+          setDisplayedText(prev => prev + fullText[index]);
+          index++;
+          if (index === fullText.length) clearInterval(interval); 
+        }, 100);
+      }, 1000);
+      return () => clearTimeout(timer);
+    }
+  }, [imageLoaded]);
   
   return (
     <ImageBackground

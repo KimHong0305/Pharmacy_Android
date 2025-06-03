@@ -14,7 +14,7 @@ import { loadToken } from './src/lib/redux/reducers/auth.reducer';
 import { RootState } from './src/lib/redux/rootReducer';
 import { getListAddress } from './src/lib/redux/reducers/address.reducer';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-
+import { Provider as PaperProvider } from 'react-native-paper';
 const AppContent = () => {
   const [isShowIntroduce, setIsShowIntroduce] = useState(true);
   const dispatch: AppDispatch = useDispatch();
@@ -72,7 +72,9 @@ const AppContent = () => {
 const App = () => {
   return (
     <Provider store={store}>
-      <AppContent />
+      <PaperProvider>
+        <AppContent />
+      </PaperProvider>
     </Provider>
   );
 };
