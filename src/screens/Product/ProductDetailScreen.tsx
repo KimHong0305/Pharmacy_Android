@@ -1,7 +1,7 @@
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import React, { useEffect, useState } from 'react';
-import { Image, ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native';
+import { Alert, Image, ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native';
 import Swiper from 'react-native-swiper';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import Icon2 from 'react-native-vector-icons/Feather';
@@ -30,7 +30,6 @@ import { ProductDetailItem } from '../../lib/schemas/product.schema';
 import type { NavigationProp } from '../../navigators/index';
 import { getReplayListFeedBackByProductId, getRootListFeedBackByProductId } from '../../lib/redux/reducers/feedback.reducer';
 import { addWhistlist } from '../../lib/redux/reducers/whistlist.reducer';
-import { Snackbar } from 'react-native-paper';
 
 const Tab = createMaterialTopTabNavigator()
 
@@ -46,13 +45,6 @@ const ProductDetailScreen = () => {
   const {token} = useSelector((state : RootState) => state.auth);
   const {listRootFeedBackByProductId, listReplayFeedBackByProductId} = useSelector((state : RootState) => state.feedback);
   const [whistlist, setWhistlist] = useState<string | null>(null);
-  const [snackbarVisible, setSnackbarVisible] = useState(false);
-  const [snackbarText, setSnackbarText] = useState('');
-
-  const showSnackbar = (message: string) => {
-    setSnackbarText(message);
-    setSnackbarVisible(true);
-  };
 
   //Get Product Detail
   useEffect(() => {
@@ -98,12 +90,12 @@ const ProductDetailScreen = () => {
 
     if(token){
       dispatch(addCartUser(newItem))
-        .then(() => showSnackbar('Đã thêm vào giỏ hàng'))
+        .then(() => Alert.alert('Thông báo', 'Thêm vào giỏ hàng thành công'))
         .then(() => dispatch(getCartUser()));
     } else {
       dispatch(addCartGuest(newItem))
-        .then(() => showSnackbar('Đã thêm vào giỏ hàng'))
-        .then(() => dispatch(getCartGuest()));
+        .then(() => Alert.alert('Thông báo', 'Thêm vào giỏ hàng thành công'))
+        .then(() => dispatch(getCartGuest()))
     }
   };
 
@@ -128,10 +120,10 @@ const ProductDetailScreen = () => {
   const handleAddWhistlist = async () => {
     if(token){
       dispatch(addWhistlist(productId))
-        .then(() => showSnackbar('Đã thêm sản phẩm yêu thích'))
-        .then(() => setWhistlist('have'));
+        .then(() => Alert.alert('Thông báo', 'Thêm vào yêu thích thành công'))
+        .then(() => setWhistlist('have'))
     } else {
-      showSnackbar('Vui lòng đăng nhập để thêm yêu thích');
+        Alert.alert('Thông báo', 'Vui lòng đăng nhập để thêm sản phẩm yêu thích')
     }
   }
 
@@ -340,20 +332,6 @@ const ProductDetailScreen = () => {
           <TextComponent text="Mua ngay" color={appColors.white} />
         </TouchableOpacity>
       </View>
-      
-      
-      <Snackbar
-        visible={snackbarVisible}
-        onDismiss={() => setSnackbarVisible(false)}
-        duration={3000}
-        style={{ backgroundColor: appColors.blue }}
-        action={{
-          label: '',
-          onPress: () => setSnackbarVisible(false),
-        }}
-      >
-        {snackbarText}
-      </Snackbar>
     </View>
   );
 }

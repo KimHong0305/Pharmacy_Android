@@ -9,7 +9,6 @@ import { getBio, updateBio } from '../../lib/redux/reducers/user.reducer';
 import { RootState } from '../../lib/redux/rootReducer';
 import { AppDispatch } from '../../lib/redux/store';
 import type { NavigationProp } from '../../navigators/index';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const ProfileScreen = () => {
   const navigation = useNavigation<NavigationProp>();
@@ -23,7 +22,6 @@ const ProfileScreen = () => {
   useEffect(() => {
     dispatch(getBio());
   }, []);
-  
 
   // const handleLogout = async () => {
   //   dispatch(logout());
@@ -120,10 +118,6 @@ const ProfileScreen = () => {
             <Text style={styles.value}>{bio.username}</Text>
           </View>
           <View style={styles.infoRow}>
-            <Text style={styles.label}>Họ và tên:</Text>
-            <Text style={styles.value}>{bio.lastname} {bio.firstname}</Text>
-          </View>
-          <View style={styles.infoRow}>
             <Text style={styles.label}>Email:</Text>
             <TouchableOpacity
               onPress={() => navigation.navigate('UpdateEmailScreen')}>
@@ -138,7 +132,7 @@ const ProfileScreen = () => {
           </View>
           <View style={styles.infoRow}>
             <Text style={styles.label}>Số điện thoại:</Text>
-            <Text style={styles.value}>{bio.phoneNumber}</Text>
+            <Text style={styles.value}>{bio.phone_number}</Text>
           </View>
           <View style={styles.infoRow}>
             <Text style={styles.label}>Ngày sinh:</Text>

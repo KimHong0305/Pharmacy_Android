@@ -13,7 +13,6 @@ import Fontisto from 'react-native-vector-icons/Fontisto';
 import Icon2 from 'react-native-vector-icons/Entypo';
 import Icon3 from 'react-native-vector-icons/MaterialIcons';
 import {GoogleSignin} from '@react-native-google-signin/google-signin';
-import Toast from 'react-native-toast-message';
 
 const AccScreen = () => {
   const navigation = useNavigation<NavigationProp>();
@@ -33,10 +32,7 @@ const AccScreen = () => {
     } catch (error) {
         console.error(error);
     }
-    Toast.show({
-      type: 'success',
-      text1: 'Đăng xuất thành công',
-    });
+    console.log('Đã đăng xuất');
     navigation.navigate('BottomTab', {screen: 'Tài khoản', params: {}});
   };
   
@@ -120,6 +116,11 @@ const AccScreen = () => {
       <View style={styles.account}>
         <Text style={{fontWeight:'bold', fontSize: 16}}>Khác</Text>
         <View style={styles.listFunc}>
+          <TouchableOpacity style={styles.func}>
+            <Icon name="eye" size={20} color="#000000" />
+            <Text style={styles.nameFunc}>Sản phẩm đã xem</Text>
+          </TouchableOpacity>
+
           <TouchableOpacity style={styles.func} onPress={() => navigation.navigate('WhistlistScreen')} >
             <Icon name="heart" size={20} color="#000000"/>
             <Text style={styles.nameFunc}>Sản phẩm yêu thích</Text>

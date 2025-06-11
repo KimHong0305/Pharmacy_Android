@@ -10,24 +10,24 @@ interface UserState {
 }  
 
 export const getBio = createAsyncThunk<BioResponse, void, { rejectValue: string }>(
-    'user/getBio',
-    async (_, { rejectWithValue }) => {
-        try {
-        const token = await AsyncStorage.getItem('token');
+  'user/getBio',
+  async (_, { rejectWithValue }) => {
+    try {
+      const token = await AsyncStorage.getItem('token');
 
-        const response = await api.get<BioResponse>('/user/bio',
-            {
-            headers: {
-                Authorization: `Bearer ${token}`,
-            },
-            }
-        );
-
-        return response.data;
-        } catch (error: any) {
-        return rejectWithValue(error.response?.data?.message || 'Failed to fetch user bio');
+      const response = await api.get<BioResponse>('/user/bio',
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
         }
+      );
+
+      return response.data;
+    } catch (error: any) {
+      return rejectWithValue(error.response?.data?.message || 'Failed to fetch user bio');
     }
+  }
 );
 
 export const updateBio = createAsyncThunk<

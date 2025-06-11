@@ -7,11 +7,9 @@ export interface Role {
 export interface UserBio {
     id: string;
     username: string;
-    firstname: string;
-    lastname: string;
     dob: string;
     sex: string;
-    phoneNumber: number;
+    phone_number: number;
     email: string;
     image: string;
     point: number;
@@ -32,7 +30,7 @@ export interface UpdateBioResult {
     username: string;
     dob: string;
     sex: string;
-    phoneNumber: number;
+    phone_number: number;
     email: string;
     image: string;
     point: number;

@@ -1,8 +1,8 @@
-import { View, Text, TouchableOpacity, TextInput, Image, StyleSheet, ActivityIndicator } from 'react-native';
-import React, { useState } from 'react';
+import { View, Text, TouchableOpacity, TextInput, Image, StyleSheet, ActivityIndicator, Alert } from 'react-native';
+import React, { useState, useEffect } from 'react';
 import { useNavigation } from '@react-navigation/native';
 import { useDispatch, useSelector } from 'react-redux';
-import { login, loginWithGoogle } from '../../lib/redux/reducers/auth.reducer';
+import { login, clearMessages, loginWithGoogle } from '../../lib/redux/reducers/auth.reducer';
 import { RootState } from '../../lib/redux/rootReducer';
 import { fontFamilies } from '../../constants/fontFamilies';
 import type {NavigationProp} from '../../navigators/index';
@@ -11,8 +11,6 @@ import {
 } from '@react-native-google-signin/google-signin';
 import { LoginWithGoogle } from '../../lib/schemas/auth.schema';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { Snackbar } from 'react-native-paper';
-import { jwtDecode } from 'jwt-decode';
 
 GoogleSignin.configure({
   webClientId:
@@ -26,44 +24,33 @@ const LoginScreen = () => {
   const [password, setPassword] = useState('');
   const { loading, error, message, token, role } = useSelector((state: RootState) => state.auth);
 
-  const [snackbarVisible, setSnackbarVisible] = useState(false);
-  const [snackbarMessage, setSnackbarMessage] = useState('');
-  const [snackbarType, setSnackbarType] = useState<'error' | 'success'>('success');
-
   const handleLogin = () => {
     if (!username || !password) {
-      setSnackbarMessage('Vui lòng nhập đầy đủ thông tin!');
-      setSnackbarType('error');
-      setSnackbarVisible(true);
+      Alert.alert('Lỗi', 'Vui lòng nhập đầy đủ thông tin!');
       return;
     }
 
     dispatch(login({ username, password }) as any)
-      .unwrap()
-      .then(async (res: any) => {
-        const decodedToken: any = jwtDecode(res.result.token);
-        const userRole = decodedToken?.scope;
-        setSnackbarMessage('Đăng nhập thành công!');
-        setSnackbarType('success');
-        setSnackbarVisible(true);
-        try {
-          await AsyncStorage.setItem('username', username);
-          await AsyncStorage.setItem('role', role);
-        } catch (error) {
-          console.error('Lỗi lưu AsyncStorage:', error);
+      .then(async () => {
+        if (message) {
+          Alert.alert('Thông báo', message);
+          try {
+            await AsyncStorage.setItem('username', username);
+            await AsyncStorage.setItem('role', role);
+          } catch (error) {
+            console.error('Lỗi lưu AsyncStorage:', error);
+          }
+          if(role == 'ROLE_NURSE'){
+            navigation.navigate('BottomTabNurse', {screen: 'Tạo đơn hàng', params: {}});
+          } else {
+            navigation.navigate('BottomTab');
+          }
+          setUsername('');
+          setPassword('');
         }
-        if(userRole == 'ROLE_NURSE'){
-          navigation.navigate('BottomTabNurse', {screen: 'Tạo đơn hàng', params: {}});
-        } else {
-          navigation.navigate('BottomTab');
-        }
-        setUsername('');
-        setPassword('');
       })
       .catch(() => {
-        setSnackbarMessage('Đăng nhập thất bại. Vui lòng kiểm tra lại tài khoản hoặc mật khẩu');
-        setSnackbarType('error');
-        setSnackbarVisible(true);
+        Alert.alert('Đăng nhập thất bại', 'Vui lòng kiểm tra lại tài khoản hoặc mật khẩu.');
         setUsername('');
         setPassword('');
       });
@@ -84,9 +71,7 @@ const LoginScreen = () => {
       }
       dispatch(loginWithGoogle(loginWithGoogleRequest) as any)
         .then(() => {
-          setSnackbarMessage('Đăng nhập thành công');
-          setSnackbarType('success');
-          setSnackbarVisible(true);
+          Alert.alert('Thông báo', 'Đăng nhập thành công')
           navigation.navigate('BottomTab');
         });
       console.log(userInfo.data?.user)
@@ -105,20 +90,6 @@ const LoginScreen = () => {
 
   return (
     <View style={styles.container}>
-      <Snackbar
-        visible={snackbarVisible}
-        onDismiss={() => setSnackbarVisible(false)}
-        duration={3000}
-        style={{
-          backgroundColor: snackbarType === 'error' ? '#d32f2f' : '#4caf50',
-        }}
-        action={{
-          label: '',
-          onPress: () => setSnackbarVisible(false),
-        }}
-      >
-        {snackbarMessage}
-      </Snackbar>
       <TouchableOpacity
         style={styles.closeButton}
         onPress={() =>
