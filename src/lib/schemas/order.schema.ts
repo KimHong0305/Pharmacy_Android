@@ -29,6 +29,7 @@ export interface Order {
   coupon: number;
   newTotalPrice: number;
   leadTime: number;
+  isReceived: boolean;
 }
 
 export interface OrderResponse {
@@ -88,6 +89,7 @@ export interface OrderGuest {
     coupon: number;
     newTotalPrice: number;
     leadTime: number;
+    isReceived: boolean;
 }
 
 export interface OrderGuestResponse {

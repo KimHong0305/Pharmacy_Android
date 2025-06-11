@@ -104,12 +104,16 @@ const OrderLookupScreen = () => {
                 <View style={styles.statusBadge}>
                     <Text
                         style={{
-                            color: orderGuest.isConfirm === false ? '#ed7532' : '#1E90FF',
+                            color: 
+                            orderGuest?.isReceived === true
+                            ? '#16A34A'
+                            :orderGuest.isConfirm === false ? '#ed7532' : '#1E90FF',
                             fontWeight: '500',
                             fontSize: 16,
                         }}
                     >
-                        {orderGuest.isConfirm === false ? 'Đang xử lý' : 'Đang giao hàng'}
+                        {orderGuest?.isReceived === true
+                            ? 'Đã nhận hàng': orderGuest.isConfirm === false ? 'Đang xử lý' : 'Đang giao hàng'}
                     </Text>
                 </View>
 

@@ -11,6 +11,7 @@ import {
 } from '@react-native-google-signin/google-signin';
 import { LoginWithGoogle } from '../../lib/schemas/auth.schema';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { jwtDecode } from 'jwt-decode';
 
 GoogleSignin.configure({
   webClientId:
@@ -30,27 +31,27 @@ const LoginScreen = () => {
       return;
     }
 
-    dispatch(login({ username, password }) as any)
-      .then(async () => {
-        if (message) {
-          Alert.alert('Thông báo', message);
-          try {
-            await AsyncStorage.setItem('username', username);
-            await AsyncStorage.setItem('role', role);
-          } catch (error) {
-            console.error('Lỗi lưu AsyncStorage:', error);
-          }
-          if(role == 'ROLE_NURSE'){
-            navigation.navigate('BottomTabNurse', {screen: 'Tạo đơn hàng', params: {}});
-          } else {
-            navigation.navigate('BottomTab');
-          }
-          setUsername('');
-          setPassword('');
+    dispatch(login({ username, password }) as any).unwrap()
+      .then(async (res: any) => {
+        const decodedToken: any = jwtDecode(res.result.token);
+        const userRole = decodedToken?.scope;
+        Alert.alert('Đăng nhập thành công!');
+        try {
+          await AsyncStorage.setItem('username', username);
+          await AsyncStorage.setItem('role', role);
+        } catch (error) {
+          console.error('Lỗi lưu AsyncStorage:', error);
         }
+        if(userRole == 'ROLE_NURSE'){
+          navigation.navigate('BottomTabNurse', {screen: 'Tạo đơn hàng', params: {}});
+        } else {
+          navigation.navigate('BottomTab');
+        }
+        setUsername('');
+        setPassword('');
       })
       .catch(() => {
-        Alert.alert('Đăng nhập thất bại', 'Vui lòng kiểm tra lại tài khoản hoặc mật khẩu.');
+        Alert.alert('Đăng nhập thất bại. Vui lòng kiểm tra lại tài khoản hoặc mật khẩu');
         setUsername('');
         setPassword('');
       });

@@ -123,6 +123,36 @@ export const getOrder = createAsyncThunk<
   }
 });
 
+export const cancelOrder = createAsyncThunk<string, string, { rejectValue: string }>(
+  'order/cancelOrder',
+  async (orderId, { rejectWithValue }) => {
+    try {
+      const response = await api.post<{message: string}>(`/order/cancel?orderId=${orderId}`);
+      return response.data.message;
+    } catch (error: any) {
+      return rejectWithValue(error.response?.data?.message || 'Không thể lấy lịch sử đơn hàng');
+    }
+  }
+);
+
+export const receiverOrder = createAsyncThunk<string, string, { rejectValue: string }>(
+  'order/receiverOrder',
+  async (orderId, { rejectWithValue }) => {
+    try {
+      const token = await AsyncStorage.getItem('token');
+      const response = await api.put<{message: string}>(`/order/user/receiver/${orderId}`, {}, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      return response.data.message;
+    } catch (error: any) {
+      return rejectWithValue(error.response?.data?.message || 'Không thể lấy lịch sử đơn hàng');
+    }
+  }
+);
+
+
 const orderSlice = createSlice({
   name: 'order',
   initialState,

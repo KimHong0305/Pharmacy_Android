@@ -4,7 +4,7 @@ import Icon from 'react-native-vector-icons/Feather';
 import {Picker} from '@react-native-picker/picker';
 import { useNavigation, useRoute  } from '@react-navigation/native';
 import { useDispatch, useSelector } from 'react-redux';
-import { getHistoryOrder } from '../../lib/redux/reducers/order.reducer';
+import { cancelOrder, getHistoryOrder, receiverOrder } from '../../lib/redux/reducers/order.reducer';
 import { RootState } from '../../lib/redux/rootReducer';
 import { AppDispatch } from '../../lib/redux/store';
 import type { NavigationProp } from '../../navigators/index';
@@ -105,7 +105,6 @@ const HistoryOrderScreen = () => {
       setShowDeleteReview(false);
     };
 
-
     useEffect(() => {
         dispatch(getHistoryOrder());
         dispatch(getFeedbackByUser());
@@ -114,15 +113,15 @@ const HistoryOrderScreen = () => {
     const filteredHistory = orders.filter((order) => {
         switch (activeTab) {
             case "processing":
-                return !order.isConfirm && (order.status === "SUCCESS" || order.paymentMethod === "CASH");
+                return (!order.isConfirm && order.status === 'SUCCESS' ) || (order.status === "PENDING" && order.paymentMethod === "CASH");
             case "shipping":
-                return order.isConfirm && order.status !== "CANCELLED";
+                return order.isConfirm && order?.isReceived !== true;
             case "cancelled":
-                return order.status === "FAILED" && !order.isConfirm;
+                return order.status === "FAILED" || order.status === "CANCELLED";
             case "pendingPayment":
                 return order.status === "PENDING" && order.paymentMethod !== "CASH";
             case "review":
-                return order.isConfirm && (order.status === "SUCCESS" || order.paymentMethod === "CASH");
+                return order.isReceived === true;
             case "reviewed":
                 return false;
             default:
@@ -140,6 +139,26 @@ const HistoryOrderScreen = () => {
         { label: 'Đánh giá', value: 'review' },
         { label: 'Đã đánh giá', value: 'reviewed' },
     ];
+
+    const handleCancelOrder = async (orderId: string) => {
+      try {
+        await dispatch(cancelOrder(orderId)).unwrap();
+        Alert.alert('Hủy đơn hàng thành công!');
+        dispatch(getHistoryOrder());
+      } catch (error) {
+        Alert.alert('Hủy đơn hàng thất bại!');
+      }
+    };
+
+    const handleReceiverOrder = async (orderId: string) => {
+      try {
+        await dispatch(receiverOrder(orderId)).unwrap();
+        Alert.alert('Nhận hàng thành công. Bạn có thể đánh giá đơn hàng!');
+        dispatch(getHistoryOrder());
+      } catch (error) {
+        Alert.alert('Xác nhận nhận đơn hàng thất bại!');
+      }
+    };
 
     return (
       <View style={styles.container}>
@@ -194,13 +213,18 @@ const HistoryOrderScreen = () => {
                   <View style={[styles.statusBadge]}>
                     <Text
                       style={[
-                        order.isConfirm === false
+                        order?.isReceived === true
+                          ? styles.receicerText
+                          : order.isConfirm === false
                           ? styles.processingText
                           : styles.shippingText,
                       ]}>
-                      {order.isConfirm === false
+                      { order?.isReceived === true
+                        ? 'Đã nhận hàng'
+                        : order.isConfirm === false
                         ? 'Đang xử lý'
-                        : 'Đang giao hàng'}
+                        : 'Đang giao hàng'
+                        }
                     </Text>
                   </View>
                 </View>
@@ -268,12 +292,35 @@ const HistoryOrderScreen = () => {
                     )}
                   </View>
 
-                  <View style = {{marginTop: 15, right: 20}}>
+                  <View style = {{alignItems: 'flex-end'}}>
                     <Text style={styles.totalPrice}>
-                      Tổng tiền: {order.newTotalPrice.toLocaleString()} VND
+                      Tổng tiền:
+                    </Text>
+                    <Text style={{fontSize: 16, fontWeight: 'bold', marginTop: 5}}>
+                      {order.newTotalPrice.toLocaleString()} VND
                     </Text>
                   </View>
                 </View>
+
+                {activeTab === 'shipping' && (
+                  <>
+                    <TouchableOpacity
+                      style={styles.receiverButton}
+                      onPress={() => handleReceiverOrder(order.id)}>
+                      <TextComponent text="Đã nhận hàng" size={15} color="#fff" />
+                    </TouchableOpacity>
+                  </>
+                )}
+
+                {activeTab === 'processing' && (
+                  <>
+                    <TouchableOpacity
+                      style={styles.cancelButton1}
+                      onPress={() => handleCancelOrder(order.id)}>
+                      <TextComponent text="Hủy đơn" size={15} color="#fff" />
+                    </TouchableOpacity>
+                  </>
+                )}
 
                 {/* Tab Review */}
                 {activeTab === 'review' && (
@@ -560,6 +607,9 @@ const styles = StyleSheet.create({
   shippingText: {
     color: '#1E90FF',
   },
+  receicerText:{
+    color: '#16A34A',
+  },
   orderContent: {
     marginTop: 10,
     borderBottomWidth: 1,
@@ -638,7 +688,7 @@ const styles = StyleSheet.create({
   },
   totalPrice: {
     fontSize: 14,
-    fontWeight: 'bold',
+    fontWeight: '500',
   },
   //Review
   reviewButton: {
@@ -649,6 +699,24 @@ const styles = StyleSheet.create({
     alignSelf: 'flex-end',
     alignItems: 'center',
     width: 100,
+  },
+  cancelButton1: {
+    marginTop: 10,
+    backgroundColor: '#EF4444',
+    padding: 5,
+    borderRadius: 5,
+    alignSelf: 'flex-end',
+    alignItems: 'center',
+    width: 100,
+  },
+  receiverButton: {
+    marginTop: 10,
+    backgroundColor: '#0284c7',
+    padding: 5,
+    borderRadius: 5,
+    alignSelf: 'flex-end',
+    alignItems: 'center',
+    width: 130,
   },
   modalOverlay: {
     flex: 1,
